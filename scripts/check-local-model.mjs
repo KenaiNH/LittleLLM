@@ -38,6 +38,8 @@ try {
         retryAttempts: 0,
       });
       await window.companion.setConfig('bubble', { ...config.value.bubble, textReveal: 'instant' });
+      const connection = await window.companion.testModelConnection();
+      if (!connection.ok) throw new Error(connection.error.userMessage);
       return new Promise((resolve, reject) => {
         let text = '',
           chunks = 0,
@@ -56,7 +58,18 @@ try {
             clearTimeout(timer);
             stop();
             if (event.delta.type === 'error') reject(new Error(event.delta.error.userMessage));
-            else resolve({ text, chunks, firstTokenMs, elapsedMs: performance.now() - started });
+            else
+              resolve({
+                text,
+                chunks,
+                firstTokenMs,
+                elapsedMs: performance.now() - started,
+                connectionTest: {
+                  passed: true,
+                  latencyMs: connection.value.latencyMs,
+                  modelsFound: connection.value.models.length,
+                },
+              });
           }
         });
         const timer = setTimeout(() => {

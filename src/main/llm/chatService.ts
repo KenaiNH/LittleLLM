@@ -2,11 +2,11 @@ import { randomUUID } from 'node:crypto';
 import type { Config } from '../../shared/config';
 import { chatDeltaSchema, type ChatDelta, type ChatEvent } from '../../shared/llm';
 import type { LLMProvider } from './types';
-import { OpenAICompatibleProvider } from './openaiCompatible';
-import { MockLLMProvider, MOCK_FIXTURES } from '../testing/mockProviders';
+import { createLLMProvider } from './registry';
 import { historyMessages, type Exchange } from './history';
 import { buildSystemPrompt } from './persona';
-import { ProviderError, providerError } from './errors';
+import { providerError } from './errors';
+import type { ConversationStore } from '../services/conversationStore';
 type Active = { id: string; controller: AbortController; terminal: boolean };
 export class ChatService {
   private active: Active | null = null;
@@ -18,7 +18,13 @@ export class ChatService {
     private emit: (event: ChatEvent) => void,
     private getKey: () => Promise<string | undefined> = async () => undefined,
     private makeProvider?: (config: Config) => LLMProvider,
-  ) {}
+    private history?: ConversationStore,
+  ) {
+    if (getConfig().llm.persistence === 'permanent') this.exchanges = history?.load() ?? [];
+  }
+  persistenceChanged() {
+    if (this.getConfig().llm.persistence === 'permanent') this.history?.save(this.exchanges);
+  }
   start(text: string, regenerate = false): string {
     this.abort();
     const cfg = this.getConfig();
@@ -49,6 +55,7 @@ export class ChatService {
   }
   clear() {
     this.abort();
+    this.history?.clear();
     this.exchanges = [];
     this.lastPrompt = null;
     this.lastCompleted = false;
@@ -60,24 +67,7 @@ export class ChatService {
   }
   private provider(cfg: Config): LLMProvider {
     if (this.makeProvider) return this.makeProvider(cfg);
-    if (cfg.llm.provider === 'mock') {
-      if (!cfg.advanced.developerMode)
-        throw new ProviderError({
-          code: 'INVALID_RESPONSE',
-          userMessage: 'The test provider requires Developer Mode.',
-          retryable: false,
-        });
-      const fixture =
-        cfg.llm.model in MOCK_FIXTURES ? (cfg.llm.model as keyof typeof MOCK_FIXTURES) : 'short';
-      return new MockLLMProvider(fixture, cfg.llm.mockReplySpeed);
-    }
-    if (cfg.llm.provider !== 'openai-compatible')
-      throw new ProviderError({
-        code: 'INVALID_RESPONSE',
-        userMessage: 'This model provider is not available yet. Choose OpenAI-compatible.',
-        retryable: false,
-      });
-    return new OpenAICompatibleProvider(cfg.llm, this.getKey);
+    return createLLMProvider(cfg, this.getKey);
   }
   private async run(active: Active, text: string, cfg: Config) {
     let reply = '';
@@ -106,6 +96,11 @@ export class ChatService {
           if (reply) {
             this.exchanges.push({ user: text, assistant: reply });
             this.lastCompleted = true;
+            if (
+              cfg.llm.persistence === 'permanent' &&
+              this.getConfig().llm.persistence === 'permanent'
+            )
+              this.history?.save(this.exchanges);
           }
           this.send(active, delta);
           return;

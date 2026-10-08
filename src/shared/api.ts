@@ -6,13 +6,31 @@ import type { PetViewport } from './petLayout';
 import type { ChatEvent } from './llm';
 import type { CompanionState } from './state';
 import type { SpriteState } from './enums';
+import type { SecretId, SecretStatus, SettingsEnvironment } from './settings';
+import type { ModelInfo, ConnectionTest } from './llm';
 export type Result<T> = { ok: true; value: T } | { ok: false; error: AppError };
 export interface CompanionAPI {
+  getSettingsEnvironment(): Promise<Result<SettingsEnvironment>>;
+  onSettingsEnvironment(callback: (value: SettingsEnvironment) => void): () => void;
+  onSettingsPanel(
+    callback: (panel: NonNullable<Parameters<CompanionAPI['openSettings']>[0]>) => void,
+  ): () => void;
+  resetSettingsPanel(
+    panel: NonNullable<Parameters<CompanionAPI['openSettings']>[0]>,
+  ): Promise<Result<{ config: Config; reset: boolean }>>;
+  restartApp(): Promise<Result<null>>;
+  confirmClearHistory(): Promise<Result<boolean>>;
+  getSecretStatus(id: SecretId): Promise<Result<SecretStatus>>;
+  setSecret(id: SecretId, value: string): Promise<Result<SecretStatus>>;
+  clearSecret(id: SecretId): Promise<Result<SecretStatus>>;
+  listModels(): Promise<Result<ModelInfo[]>>;
+  testModelConnection(): Promise<Result<ConnectionTest>>;
   getState(): Promise<Result<CompanionState>>;
   onState(callback: (value: CompanionState) => void): () => void;
   overrideState(state: SpriteState | 'auto'): Promise<Result<null>>;
   getConfig(): Promise<Result<Config>>;
   setConfig(section: ConfigSection, value: unknown): Promise<Result<Config>>;
+  patchConfig(section: ConfigSection, value: Record<string, unknown>): Promise<Result<Config>>;
   resetConfig(section: ConfigSection): Promise<Result<Config>>;
   onConfig(callback: (value: Config) => void): () => void;
   getSpriteAssets(): Promise<Result<SpriteAssets>>;

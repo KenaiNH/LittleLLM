@@ -8,6 +8,9 @@ import { normalizeError } from '../../shared/errors';
 import { preloadPath, secureWindow, loadRenderer } from './security';
 import { StateController } from '../services/stateController';
 import { companionStateSchema, overrideStateSchema } from '../../shared/state';
+import type { SecretStore } from '../services/secretStore';
+import { getSettingsWindow } from './settingsWindow';
+import type { ConversationStore } from '../services/conversationStore';
 import { booleanSchema } from '../ipc/schemas';
 import { ChatService } from '../llm/chatService';
 import {
@@ -32,6 +35,8 @@ export class InputWindow {
   constructor(
     private config: ConfigStore,
     private pet: BrowserWindow,
+    secrets?: SecretStore,
+    private history?: ConversationStore,
   ) {
     this.lifecycle = new StateController(
       () => config.get(),
@@ -45,12 +50,22 @@ export class InputWindow {
     this.chat = new ChatService(
       () => config.get(),
       (event) => this.delta(event),
+      async () => {
+        const provider = config.get().llm.provider;
+        return provider === 'openai-compatible' || provider === 'anthropic'
+          ? secrets?.get(`llm.${provider}`)
+          : undefined;
+      },
+      undefined,
+      history,
     );
     let connection = config.get().llm;
     const removeConfig = config.onChange((section, cfg) => {
+      if (section === 'input' || section === 'bubble') this.position();
       if (section === 'bubble') this.lifecycle.settingsChanged();
       if (section === 'advanced' && !cfg.advanced.developerMode) this.lifecycle.force('auto');
       if (section === 'llm') {
+        if (cfg.llm.persistence !== connection.persistence) this.chat.persistenceChanged();
         if (
           cfg.llm.provider !== connection.provider ||
           cfg.llm.baseUrl !== connection.baseUrl ||
@@ -62,7 +77,9 @@ export class InputWindow {
     });
     const trusted = (event: Electron.IpcMainEvent | Electron.IpcMainInvokeEvent) =>
       event.senderFrame === event.sender.mainFrame &&
-      (event.sender === this.win?.webContents || event.sender === pet.webContents);
+      (event.sender === this.win?.webContents ||
+        event.sender === pet.webContents ||
+        event.sender === getSettingsWindow()?.webContents);
     const handle = <S extends z.ZodTypeAny, R extends z.ZodTypeAny>(
       channel: string,
       request: S,
@@ -180,7 +197,16 @@ export class InputWindow {
       if (!this.queued) this.queued = setTimeout(() => this.broadcast(), 32);
     } else {
       const aborted = event.delta.type === 'error' && event.delta.error.code === 'ABORTED',
-        error = event.delta.type === 'error' && !aborted ? event.delta.error : null;
+        error =
+          event.delta.type === 'error' && !aborted
+            ? event.delta.error
+            : event.delta.type === 'done' && this.history?.warning
+              ? {
+                  code: 'FILE_INVALID' as const,
+                  userMessage: this.history.warning,
+                  retryable: false,
+                }
+              : null;
       this.state = {
         ...this.state,
         reply: aborted && !reply.text ? null : { ...reply, streaming: false },

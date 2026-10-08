@@ -4,6 +4,7 @@ import { CHANNELS } from '../main/ipc/channels';
 import {
   emptySchema,
   configSetSchema,
+  configPatchSchema,
   configResetSchema,
   configResultSchema,
   settingsRequestSchema,
@@ -21,9 +22,79 @@ import { chatUiSchema, draftSchema, submitSchema, copyTextSchema } from '../shar
 import { petViewportSchema, petLayoutRequestSchema } from '../shared/petLayout';
 import { externalUrlSchema } from '../main/ipc/schemas';
 import { wheelSchema } from '../main/ipc/schemas';
-import { abortChatSchema, requestIdSchema, chatEventSchema } from '../shared/llm';
+import {
+  abortChatSchema,
+  requestIdSchema,
+  chatEventSchema,
+  modelInfoSchema,
+  connectionTestSchema,
+} from '../shared/llm';
+import {
+  secretRequestSchema,
+  secretSetSchema,
+  secretStatusSchema,
+  settingsEnvironmentSchema,
+  settingsPanelSchema,
+  resetPanelSchema,
+  resetPanelResultSchema,
+} from '../shared/settings';
+import { z } from 'zod';
 import { companionStateSchema, overrideStateSchema } from '../shared/state';
 const api: CompanionAPI = {
+  patchConfig: async (section, value) =>
+    configResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.configPatch, configPatchSchema.parse({ section, value })),
+    ),
+  getSettingsEnvironment: async () =>
+    resultSchema(settingsEnvironmentSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.settingsEnvironment, emptySchema.parse({})),
+    ),
+  onSettingsEnvironment: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => {
+      const parsed = settingsEnvironmentSchema.safeParse(value);
+      if (parsed.success) callback(parsed.data);
+    };
+    ipcRenderer.on(CHANNELS.settingsEnvironmentChanged, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.settingsEnvironmentChanged, listener);
+  },
+  onSettingsPanel: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => {
+      const parsed = settingsPanelSchema.safeParse(value);
+      if (parsed.success) callback(parsed.data);
+    };
+    ipcRenderer.on(CHANNELS.settingsPanel, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.settingsPanel, listener);
+  },
+  resetSettingsPanel: async (panel) =>
+    resultSchema(resetPanelResultSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.settingsResetPanel, resetPanelSchema.parse({ panel })),
+    ),
+  restartApp: async () =>
+    voidResultSchema.parse(await ipcRenderer.invoke(CHANNELS.appRestart, emptySchema.parse({}))),
+  confirmClearHistory: async () =>
+    resultSchema(z.boolean()).parse(
+      await ipcRenderer.invoke(CHANNELS.historyConfirmClear, emptySchema.parse({})),
+    ),
+  getSecretStatus: async (id) =>
+    resultSchema(secretStatusSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.secretHas, secretRequestSchema.parse({ id })),
+    ),
+  setSecret: async (id, value) =>
+    resultSchema(secretStatusSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.secretSet, secretSetSchema.parse({ id, value })),
+    ),
+  clearSecret: async (id) =>
+    resultSchema(secretStatusSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.secretClear, secretRequestSchema.parse({ id })),
+    ),
+  listModels: async () =>
+    resultSchema(z.array(modelInfoSchema).max(10000)).parse(
+      await ipcRenderer.invoke(CHANNELS.llmModels, emptySchema.parse({})),
+    ),
+  testModelConnection: async () =>
+    resultSchema(connectionTestSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.llmTest, emptySchema.parse({})),
+    ),
   getState: async () =>
     resultSchema(companionStateSchema).parse(
       await ipcRenderer.invoke(CHANNELS.stateGet, emptySchema.parse({})),

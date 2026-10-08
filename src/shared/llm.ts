@@ -26,8 +26,16 @@ export const modelInfoSchema = z
   })
   .strict();
 export const connectionTestSchema = z
-  .object({ model: z.string(), latencyMs: z.number().nonnegative() })
+  .object({
+    model: z.string(),
+    latencyMs: z.number().nonnegative(),
+    models: z.array(modelInfoSchema).max(10000),
+    provider: z.string(),
+    baseUrl: z.string(),
+    credentialRevision: z.string().max(64),
+  })
   .strict();
+export type ConnectionTest = z.infer<typeof connectionTestSchema>;
 export type ChatDelta = z.infer<typeof chatDeltaSchema>;
 export type ChatEvent = z.infer<typeof chatEventSchema>;
 export type ModelInfo = z.infer<typeof modelInfoSchema>;

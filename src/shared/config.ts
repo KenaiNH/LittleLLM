@@ -25,8 +25,16 @@ export const relativePathSchema = z
   );
 export const httpUrlSchema = z
   .string()
+  .max(2000)
   .url()
-  .refine((s) => ['http:', 'https:'].includes(new URL(s).protocol), 'Use an HTTP or HTTPS URL');
+  .refine((s) => {
+    try {
+      const url = new URL(s);
+      return ['http:', 'https:'].includes(url.protocol) && !url.username && !url.password;
+    } catch {
+      return false;
+    }
+  }, 'Use an HTTP or HTTPS URL without credentials');
 const headersSchema = z
   .record(z.string().max(4096))
   .refine(
@@ -92,6 +100,7 @@ export const spriteSchema = z
 export const windowSchema = z
   .object({
     launchAtLogin: z.boolean().default(false),
+    settingsDarkMode: z.boolean().default(false),
     startMinimized: z.boolean().default(false),
     showInTaskbar: z.boolean().default(false),
     restorePosition: z.boolean().default(true),

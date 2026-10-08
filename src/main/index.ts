@@ -8,6 +8,8 @@ import { registerHandlers } from './ipc/handlers';
 import { SpriteLoader } from './services/spriteLoader';
 import { InputWindow } from './windows/inputWindow';
 import { OutputImages } from './services/outputImages';
+import { SecretStore } from './services/secretStore';
+import { ConversationStore } from './services/conversationStore';
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'companion',
@@ -57,12 +59,14 @@ if (!app.requestSingleInstanceLock()) {
         return new Response(null, { status: 404 });
       }
     });
-    registerHandlers(config, openSettings, sprites);
+    const secrets = new SecretStore(app.getPath('userData'));
+    const history = new ConversationStore(app.getPath('userData'));
+    registerHandlers(config, openSettings, sprites, secrets, history);
     await createPetWindow(
       config,
       openSettings,
       (pet) => {
-        new InputWindow(config, pet);
+        new InputWindow(config, pet, secrets, history);
       },
       async () =>
         (await sprites.assets(config.get().sprite, config.get().advanced.spriteCacheMb)).idle,

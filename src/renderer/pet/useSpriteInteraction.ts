@@ -139,6 +139,10 @@ export function useSpriteInteraction(config: Config | null, scene: SpriteScene |
         void window.companion.toggleInput();
     };
     const key = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === ',') {
+        event.preventDefault();
+        void window.companion.openSettings('General');
+      }
       if (event.key === 'Escape')
         void window.companion.abortChat().then(() => window.companion.closeInput());
     };

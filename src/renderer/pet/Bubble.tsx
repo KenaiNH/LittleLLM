@@ -38,7 +38,7 @@ export function Bubble({
   const cfg = config.bubble,
     limits = bubbleLimits(config, viewport.workArea, viewport.dpi, viewport.sprite.height),
     scale = limits.scale;
-  const revealed = useReveal(text, cfg.textReveal, cfg.revealRate),
+  const revealed = useReveal(text, config.llm.stream ? cfg.textReveal : 'instant', cfg.revealRate),
     html = useMemo(
       () => (cfg.renderMarkdown ? dialogueHtml(revealed) : null),
       [cfg.renderMarkdown, revealed],

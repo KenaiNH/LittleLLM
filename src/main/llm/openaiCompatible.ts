@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { setTimeout as delay } from 'node:timers/promises';
-import type { ChatDelta, ChatMessage, ChatOptions, LLMProvider } from './types';
+import type { ChatDelta, ChatMessage, ChatOptions, LLMProvider, ModelInfo } from './types';
 import { parseSse } from './streamParser';
 import { httpError, networkCode, providerError, ProviderError } from './errors';
 import type { Config } from '../../shared/config';
@@ -68,6 +68,45 @@ export class OpenAICompatibleProvider implements LLMProvider {
     private getKey: () => Promise<string | undefined> = async () => undefined,
     private fetcher: typeof fetch = fetch,
   ) {}
+  async listModels(): Promise<ModelInfo[]> {
+    const signal = AbortSignal.timeout(this.config.timeoutMs),
+      url = new URL(this.config.baseUrl);
+    try {
+      if (url.username || url.password) throw new Error('Credentials in endpoint URL');
+      const key = await this.getKey();
+      const headers = new Headers({ Accept: 'application/json' });
+      if (key) headers.set('Authorization', `Bearer ${key}`);
+      if (url.hostname === 'api.openai.com' && !key)
+        throw new ProviderError({
+          code: 'AUTH_MISSING',
+          userMessage: 'Add an API key, or configure a local model server.',
+          retryable: false,
+        });
+      for (const [name, value] of Object.entries(this.config.customHeaders)) {
+        if (
+          ['host', 'content-length', 'connection', 'transfer-encoding'].includes(name.toLowerCase())
+        )
+          throw new Error('Unsupported header');
+        if (value.includes('{{apiKey}}') && !key)
+          throw new ProviderError({
+            code: 'AUTH_MISSING',
+            userMessage: 'A custom request header needs the saved API key.',
+            retryable: false,
+          });
+        headers.set(name, value.replaceAll('{{apiKey}}', key ?? ''));
+      }
+      url.pathname = url.pathname.replace(/\/+$/, '') + '/models';
+      url.hash = '';
+      const response = await this.fetcher(url, { headers, signal, redirect: 'error' });
+      if (!response.ok) throw httpError(response.status, false);
+      const models = z
+        .object({ data: z.array(z.object({ id: z.string().min(1).max(200) })).max(10000) })
+        .parse(await boundedJson(response));
+      return models.data.map(({ id }) => ({ id, name: id, supportsImages: null }));
+    } catch (error) {
+      throw new ProviderError(providerError(error, this.config.baseUrl, signal));
+    }
+  }
   async *chat(messages: ChatMessage[], options: ChatOptions): AsyncIterable<ChatDelta> {
     const signal = AbortSignal.any([options.signal, AbortSignal.timeout(this.config.timeoutMs)]),
       url = new URL(this.config.baseUrl);

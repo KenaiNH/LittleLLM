@@ -195,7 +195,43 @@ export async function createPetWindow(
   let timer: ReturnType<typeof setTimeout> | undefined;
   let anchorOffset = { x: 0, y: 0 };
   let artworkGeneration = 0;
-  const removeConfig = config.onChange((section) => {
+  let windowConfig = cfg;
+  const removeConfig = config.onChange((section, changed) => {
+    if (section === 'window') {
+      const now = changed.window,
+        previous = windowConfig;
+      windowConfig = now;
+      if (now.showInTaskbar !== previous.showInTaskbar) win.setSkipTaskbar(!now.showInTaskbar);
+      if (now.allWorkspaces !== previous.allWorkspaces)
+        win.setVisibleOnAllWorkspaces(now.allWorkspaces, { visibleOnFullScreen: false });
+      if (
+        now.displayTarget !== previous.displayTarget ||
+        (!now.restorePosition &&
+          (now.defaultAnchor !== previous.defaultAnchor ||
+            now.edgeMarginPx !== previous.edgeMarginPx ||
+            previous.restorePosition))
+      ) {
+        const target =
+          now.displayTarget === 'cursor'
+            ? screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
+            : (screen.getAllDisplays().find((value) => String(value.id) === now.displayTarget) ??
+              screen.getPrimaryDisplay());
+        const idle = idleGeometry(target.scaleFactor),
+          bounds = win.getBounds();
+        const origin = now.restorePosition ? now.positions[String(target.id)] : undefined;
+        const point =
+          origin ?? defaultPosition(idle, target.workArea, now.defaultAnchor, now.edgeMarginPx);
+        const next = clampPosition(
+          { x: point.x - anchorOffset.x, y: point.y - anchorOffset.y },
+          bounds,
+          target.workArea,
+        );
+        win.setPosition(Math.round(next.x), Math.round(next.y));
+        viewport = { ...viewport, dpi: target.scaleFactor };
+        win.webContents.send(CHANNELS.windowDpi, { scaleFactor: target.scaleFactor });
+        emitViewport();
+      } else if (now.keepOnScreen && !previous.keepOnScreen) reassert();
+    }
     if (section !== 'sprite' || !idleDimensions) return;
     const epoch = ++artworkGeneration;
     void idleDimensions()

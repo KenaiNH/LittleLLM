@@ -6,6 +6,14 @@ export const configSetSchema = z
   .object({ section: configSectionSchema, value: z.unknown() })
   .strict();
 export const configResetSchema = z.object({ section: configSectionSchema }).strict();
+export const configPatchSchema = z
+  .object({
+    section: configSectionSchema,
+    value: z
+      .record(z.unknown())
+      .refine((value) => Object.keys(value).length <= 100, 'Too many settings'),
+  })
+  .strict();
 export const settingsRequestSchema = z
   .object({
     panel: z
@@ -54,10 +62,13 @@ export const externalUrlSchema = z
       .string()
       .url()
       .max(4096)
-      .refine(
-        (value) => ['http:', 'https:', 'mailto:'].includes(new URL(value).protocol),
-        'Unsupported link scheme',
-      ),
+      .refine((value) => {
+        try {
+          return ['http:', 'https:', 'mailto:'].includes(new URL(value).protocol);
+        } catch {
+          return false;
+        }
+      }, 'Unsupported link scheme'),
   })
   .strict();
 export const wheelSchema = z
