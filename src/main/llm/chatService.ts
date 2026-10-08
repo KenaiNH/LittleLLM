@@ -29,7 +29,7 @@ export class ChatService {
   persistenceChanged() {
     if (this.getConfig().llm.persistence === 'permanent') this.history?.save(this.exchanges);
   }
-  start(text: string, regenerate = false, images: ChatImage[] = []): string {
+  start(text: string, regenerate = false, images: ChatImage[] = [], id: string = randomUUID()): string {
     this.abort();
     const cfg = this.getConfig();
     if (regenerate) {
@@ -42,7 +42,7 @@ export class ChatService {
       this.lastImages = images;
     }
     this.lastCompleted = false;
-    const active = { id: randomUUID(), controller: new AbortController(), terminal: false };
+    const active = { id, controller: new AbortController(), terminal: false };
     this.active = active;
     // Start after the invoke response so renderers can subscribe by request ID.
     setImmediate(() => void this.run(active, text, cfg, images));

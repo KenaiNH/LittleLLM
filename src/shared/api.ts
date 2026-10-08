@@ -11,8 +11,15 @@ import type { ModelInfo, ConnectionTest } from './llm';
 import type { SpriteTarget } from './spriteImport';
 import type { SpriteStateConfig } from './config';
 import type { Attachment, ImageCapability } from './attachments';
+import type { TTSPacket, TTSFeedback } from './tts';
+import type { z } from 'zod';
+import type { ttsTestSchema } from './tts';
 export type Result<T> = { ok: true; value: T } | { ok: false; error: AppError };
 export interface CompanionAPI {
+  listVoices(): Promise<Result<{ id: string; name: string }[]>>;
+  testVoice(): Promise<Result<z.infer<typeof ttsTestSchema>>>;
+  onTTSAudio(callback: (event: TTSPacket) => void): () => void;
+  speechFeedback(event: TTSFeedback): void;
   getAttachmentCapability(): Promise<Result<ImageCapability>>;
   attachClipboardImage(): Promise<Result<Attachment[]>>;
   browseAttachments(): Promise<Result<Attachment[]>>;

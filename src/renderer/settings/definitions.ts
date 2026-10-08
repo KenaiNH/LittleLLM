@@ -43,6 +43,7 @@ export type Setting = {
   visible?: (cfg: Config) => boolean;
   disabled?: (cfg: Config) => boolean;
   disabledHint?: string;
+  unavailableOptions?: readonly string[];
 };
 const field = <S extends ConfigSection>(
   section: S,
@@ -65,7 +66,26 @@ const input = (
 ) => field('input', key, { ...definition, panel: 'Appearance' });
 const notMock = (cfg: Config) => cfg.llm.provider !== 'mock';
 const speech = (cfg: Config) => cfg.tts.provider !== 'none';
+const voice = (key: keyof Config['tts'], definition: Omit<Setting, 'section' | 'key' | 'panel'>) => field('tts', key, { ...definition, panel:'Voice' });
 export const SETTINGS: Setting[] = [
+  voice('provider', {id:83,group:'Provider',label:'Text-to-speech provider',kind:'select',options:OPTIONS.ttsProvider,unavailableOptions:['elevenlabs','custom-http']}),
+  voice('voice', {id:84,group:'Windows built-in (SAPI)',label:'Voice',kind:'select',visible:cfg=>cfg.tts.provider==='windows-sapi'}),
+  voice('pitch', {id:85,group:'Windows built-in (SAPI)',label:'Pitch',kind:'range',min:-10,max:10,visible:cfg=>cfg.tts.provider==='windows-sapi'}),
+  voice('baseUrl', {id:86,group:'OpenAI-compatible endpoint',label:'Base URL',kind:'text',maxLength:2000,visible:cfg=>cfg.tts.provider==='openai-compatible-tts',hint:'Kokoro-FastAPI in Docker typically runs at http://localhost:8880/v1. LocalAI uses http://localhost:8080/v1. A local Kokoro endpoint needs no API key or account and can run offline.'}),
+  voice('model', {id:88,group:'OpenAI-compatible endpoint',label:'Model',kind:'model',maxLength:200,visible:cfg=>cfg.tts.provider==='openai-compatible-tts'}),
+  voice('voice', {id:89,group:'OpenAI-compatible endpoint',label:'Voice',kind:'model',maxLength:200,visible:cfg=>cfg.tts.provider==='openai-compatible-tts'}),
+  voice('format', {id:90,group:'OpenAI-compatible endpoint',label:'Audio format',kind:'select',options:OPTIONS.audioFormat,visible:cfg=>cfg.tts.provider==='openai-compatible-tts'}),
+  voice('outputDeviceId', {id:106,group:'Playback',label:'Output device',kind:'select',visible:speech}),
+  voice('volume', {id:107,group:'Playback',label:'Volume',kind:'range',min:0,max:100,multiplier:.01,suffix:'%',visible:speech}),
+  voice('speed', {id:108,group:'Playback',label:'Speaking rate',kind:'range',min:.5,max:2,step:.05,visible:speech}),
+  voice('beginSpeaking', {id:109,group:'Playback',label:'Begin speaking',kind:'select',options:OPTIONS.beginSpeaking,visible:speech}),
+  voice('onNewMessage', {id:110,group:'Playback',label:'If I send a new message while speaking',kind:'select',options:OPTIONS.onNewMessage,visible:speech}),
+  voice('codeBlockSpeech', {id:112,group:'Text Processing',label:'Code blocks',kind:'select',options:OPTIONS.codeBlockSpeech,visible:speech}),
+  voice('linkSpeech', {id:113,group:'Text Processing',label:'Links',kind:'select',options:OPTIONS.linkSpeech,visible:speech}),
+  voice('emojiSpeech', {id:114,group:'Text Processing',label:'Emoji',kind:'select',options:OPTIONS.emojiSpeech,visible:speech}),
+  voice('maxSpeechChars', {id:115,group:'Text Processing',label:'Max characters to speak',kind:'number',min:100,max:20000,visible:speech,hint:'Longer replies are truncated for speech only. The full text always appears in the bubble.'}),
+  voice('cacheAudio', {id:116,group:'Text Processing',label:'Cache synthesized audio',kind:'toggle',visible:speech}),
+  voice('onFailure', {id:117,group:'Text Processing',label:'If speech fails',kind:'select',options:OPTIONS.ttsFailure,visible:speech}),
   field('sprite', 'scale', {
     id: 37,
     panel: 'Sprites',

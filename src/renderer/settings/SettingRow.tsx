@@ -14,6 +14,7 @@ export function SettingRow({
   refreshModels,
   testing = false,
   fallbackValue,
+  choices,
 }: {
   definition: Setting;
   config: Config;
@@ -22,6 +23,7 @@ export function SettingRow({
   refreshModels?: () => void;
   testing?: boolean;
   fallbackValue?: unknown;
+  choices?: readonly (readonly [string, string])[];
 }) {
   const { patch, invalid, drafts, draft, markInvalid, environment } = useSettingsStore();
   let value: unknown = config[d.section];
@@ -92,6 +94,10 @@ export function SettingRow({
       if (next === 'openai-compatible' && config.llm.provider === 'anthropic')
         changes.baseUrl = 'https://api.openai.com/v1';
     }
+    if (key === 'tts.provider') {
+      if (next === 'windows-sapi') { changes.voice = ''; if (config.tts.onFailure === 'sapi') changes.onFailure = 'text-only'; }
+      if (next === 'openai-compatible-tts' && config.tts.provider === 'windows-sapi') changes.voice = 'alloy';
+    }
     const [target, ...path] = d.key.split('.');
     const error =
       d.section === 'sprite' && path.length && target
@@ -118,7 +124,8 @@ export function SettingRow({
     if (immediate) void save(raw);
     else timer.current = setTimeout(() => void save(raw), 400);
   };
-  let options = [...(d.options ?? [])];
+  let options = [...(choices ?? d.options ?? [])];
+  if (key === 'tts.onFailure' && config.tts.provider === 'windows-sapi') options = options.filter(([id]) => id !== 'sapi');
   if (key === 'window.displayTarget') {
     options.push(
       ...(environment?.displays.map((display) => [display.id, display.label] as const) ?? []),
@@ -177,6 +184,7 @@ export function SettingRow({
             disabled={
               (d.key === 'mouth.driver' && id === 'amplitude' && config.tts.provider === 'none') ||
               (key === 'bubble.backdropBlur' && id === 'acrylic')
+              || d.unavailableOptions?.includes(id)
             }
           >
             {label}
@@ -274,11 +282,11 @@ export function SettingRow({
           <input
             {...props}
             type="text"
-            list={d.kind === 'model' ? 'models' : d.kind === 'font' ? 'fonts' : undefined}
+            list={d.kind === 'model' ? key + '-choices' : d.kind === 'font' ? 'fonts' : undefined}
           />
         )}
         {d.kind === 'model' && (
-          <datalist id="models">
+          <datalist id={key + '-choices'}>
             {models.map((id) => (
               <option key={id} value={id} />
             ))}
@@ -311,7 +319,7 @@ export function SettingRow({
       <label className={styles.label} htmlFor={key}>
         {d.label}
         {d.restart && <span className={styles.badge}>Restart required</span>}
-        {key === 'llm.baseUrl' && (
+        {(key === 'llm.baseUrl' || key === 'tts.baseUrl') && (
           <span
             className={styles.dot}
             data-verified={verified && !dirty.current}
@@ -322,7 +330,7 @@ export function SettingRow({
       <div
         className={styles.control}
         data-invalid={Boolean(invalid[key])}
-        data-unverified={key === 'llm.baseUrl' && (!verified || dirty.current)}
+        data-unverified={(key === 'llm.baseUrl' || key === 'tts.baseUrl') && (!verified || dirty.current)}
       >
         {control}
       </div>

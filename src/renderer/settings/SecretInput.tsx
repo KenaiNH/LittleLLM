@@ -9,11 +9,13 @@ export function SecretInput({
   local,
   verified,
   onStatus,
+  controlId = 62,
 }: {
   id: SecretId;
   local: boolean;
   verified: boolean;
   onStatus: (status: SecretStatus) => void;
+  controlId?: number;
 }) {
   const [status, setStatus] = useState<SecretStatus | null>(null),
     [value, setValue] = useState(''),
@@ -64,8 +66,8 @@ export function SecretInput({
       .catch(() => setError('The key could not be saved securely.'));
   };
   return (
-    <div className={styles.row} data-control="62">
-      <label className={styles.label} htmlFor="api-key">
+    <div className={styles.row} data-control={controlId}>
+      <label className={styles.label} htmlFor={'api-key-' + id}>
         API key
         <span
           className={styles.dot}
@@ -79,7 +81,7 @@ export function SecretInput({
         data-unverified={!verified || dirty.current}
       >
         <input
-          id="api-key"
+          id={'api-key-' + id}
           aria-label="API key"
           type={show ? 'text' : 'password'}
           value={value}
@@ -90,7 +92,7 @@ export function SecretInput({
             status?.has
               ? '••••••••' + status.last4
               : local
-                ? 'Usually not required for local models'
+                ? 'Optional for local endpoints'
                 : 'Enter API key'
           }
           onChange={(event) => {

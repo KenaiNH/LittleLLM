@@ -332,6 +332,7 @@ export function registerHandlers(
       Model: ['llm'],
       Appearance: ['bubble', 'input'],
       Sprites: ['sprite'],
+      Voice: ['tts'],
     };
     const selected = sections[p.panel];
     if (!selected) throw new Error('Panel reset is not implemented yet');
@@ -352,6 +353,9 @@ export function registerHandlers(
     if (p.panel === 'Model') {
       secrets.clear('llm.openai-compatible');
       secrets.clear('llm.anthropic');
+    }
+    if (p.panel === 'Voice') {
+      secrets.clear('tts.openai-compatible-tts'); secrets.clear('tts.elevenlabs'); secrets.clear('tts.custom-http');
     }
     for (const section of selected) {
       if (section === 'sprite') await spriteManager.resetAll();

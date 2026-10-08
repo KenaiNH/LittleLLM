@@ -7,8 +7,10 @@ import { Bubble } from './Bubble';
 import type { PetViewport } from '../../shared/petLayout';
 import styles from './App.module.css';
 import { useSpriteScene } from './useSpriteScene';
+import { useSpeech } from './useSpeech';
 export function PetApp() {
   const { config, assets, state, error, initialize, setState } = usePetStore();
+  useSpeech(config);
   const [ui, setUi] = useState<ChatUi | null>(null),
     [viewport, setViewport] = useState<PetViewport | null>(null),
     [bubbleSize, setBubbleSize] = useState<{ width: number; height: number } | null>(null);
@@ -108,6 +110,9 @@ export function PetApp() {
             viewport={viewport}
             onMeasure={measure}
             error={ui.error?.userMessage}
+            speaking={ui.speaking}
+            speechNotice={ui.speechNotice}
+            queuedMessage={ui.queuedMessage}
             onStop={() => void window.companion.abortChat(ui.reply?.requestId)}
             onRegenerate={() => void window.companion.regenerateChat()}
           />

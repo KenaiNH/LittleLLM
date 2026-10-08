@@ -39,6 +39,7 @@ import {
   resetPanelResultSchema,
 } from '../shared/settings';
 import { z } from 'zod';
+import { ttsPacketSchema, ttsFeedbackSchema, ttsTestSchema, voiceListSchema } from '../shared/tts';
 import {
   attachmentFileSchema,
   attachmentRemoveSchema,
@@ -52,6 +53,14 @@ import {
   spritePatchSchema,
 } from '../shared/spriteImport';
 const api: CompanionAPI = {
+  listVoices: async () => resultSchema(voiceListSchema).parse(await ipcRenderer.invoke(CHANNELS.ttsVoices, emptySchema.parse({}))),
+  testVoice: async () => resultSchema(ttsTestSchema).parse(await ipcRenderer.invoke(CHANNELS.ttsTest, emptySchema.parse({}))),
+  onTTSAudio: callback => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => { const parsed = ttsPacketSchema.safeParse(value); if(parsed.success) callback(parsed.data); };
+    ipcRenderer.on(CHANNELS.ttsAudio, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.ttsAudio, listener);
+  },
+  speechFeedback: event => ipcRenderer.send(CHANNELS.ttsFeedback, ttsFeedbackSchema.parse(event)),
   getAttachmentCapability: async () =>
     resultSchema(capabilitySchema).parse(await ipcRenderer.invoke(CHANNELS.attachCapability, {})),
   attachClipboardImage: async () =>

@@ -25,6 +25,7 @@ export const CHANNELS = {
   ttsVoices: 'tts:voices',
   ttsTest: 'tts:test',
   ttsAudio: 'tts:audio',
+  ttsFeedback: 'tts:feedback',
   sttStart: 'stt:start',
   sttStop: 'stt:stop',
   sttAbort: 'stt:abort',

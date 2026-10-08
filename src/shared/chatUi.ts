@@ -22,6 +22,9 @@ export const chatUiSchema = z
       .strict()
       .nullable(),
     error: appErrorSchema.nullable(),
+    speechNotice: z.string().max(300).nullable().default(null),
+    speaking: z.boolean().default(false),
+    queuedMessage: z.boolean().default(false),
   })
   .strict();
 export type ChatUi = z.infer<typeof chatUiSchema>;

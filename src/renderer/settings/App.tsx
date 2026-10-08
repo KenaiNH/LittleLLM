@@ -10,13 +10,15 @@ import { SecretInput, flushSecrets } from './SecretInput';
 import { Hotkeys, hotkeyMatches, HOTKEY_ACTIONS } from './Hotkeys';
 import { AppearancePreview } from './AppearancePreview';
 import { SpritesPanel } from './SpritesPanel';
+import { VoicePanel } from './VoicePanel';
 import searchIcon from '../../../assets/figma/2004-411-imgSearch.svg';
 import chevron from '../../../assets/figma/16-205-imgChevronDown.svg';
 import toggleOn from '../../../assets/figma/2004-411-imgToggleOn.svg';
 import toggleOff from '../../../assets/figma/16-205-imgToggleOff.svg';
 import styles from './Settings.module.css';
-const implemented = new Set<Panel>(['General', 'Sprites', 'Model', 'Appearance']);
+const implemented = new Set<Panel>(['General', 'Sprites', 'Model', 'Voice', 'Appearance']);
 const extras: Partial<Record<Panel, string[]>> = {
+  Voice:['API key authentication password','Test Voice','Test Connection'],
   Sprites: SPRITE_SEARCH_LABELS,
   General: [
     'Hotkeys shortcut keyboard',
@@ -202,6 +204,7 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
       const belongs = (key: string) =>
         SETTINGS.some((d) => d.panel === panel && `${d.section}.${d.key}` === key) ||
         (panel === 'Model' && key.startsWith('secret.llm.')) ||
+        (panel === 'Voice' && key.startsWith('secret.tts.')) ||
         (panel === 'General' && key.startsWith('hotkeys.')) ||
         (panel === 'Sprites' && key.startsWith('sprite.'));
       useSettingsStore.setState((state) => ({
@@ -295,6 +298,7 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
               {(SETTINGS.some((d) => d.panel === name && invalid[`${d.section}.${d.key}`]) ||
                 (name === 'Model' &&
                   Object.keys(invalid).some((key) => key.startsWith('secret.llm.'))) ||
+                (name === 'Voice' && Object.keys(invalid).some(key=>key.startsWith('secret.tts.'))) ||
                 (name === 'General' &&
                   Object.keys(invalid).some((key) => key.startsWith('hotkeys.'))) ||
                 (name === 'Sprites' &&
@@ -336,8 +340,9 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
           )}
           {groups.length === 0 && <p>No matching settings.</p>}
           {panel === 'Sprites' && <SpritesPanel config={config} query={query} />}
+          {panel === 'Voice' && <VoicePanel config={config} query={query} />}
           {groups
-            .filter(() => panel !== 'Sprites')
+            .filter(() => panel !== 'Sprites' && panel !== 'Voice')
             .map((group) => (
               <section key={group} className={styles.section}>
                 <h2>{group}</h2>

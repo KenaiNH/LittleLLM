@@ -21,6 +21,9 @@ export function Bubble({
   error,
   attachments = [],
   userText = '',
+  speechNotice,
+  speaking = false,
+  queuedMessage = false,
 }: {
   name: string;
   text: string;
@@ -33,6 +36,9 @@ export function Bubble({
   error?: string;
   attachments?: Attachment[];
   userText?: string;
+  speechNotice?: string | null;
+  speaking?: boolean;
+  queuedMessage?: boolean;
 }) {
   const root = useRef<HTMLElement>(null),
     content = useRef<HTMLDivElement>(null),
@@ -260,7 +266,10 @@ export function Bubble({
         {cfg.showTokenCount && <span>{text.length} chars</span>}
         <button onClick={() => void window.companion.copyText(text)}>Copy reply</button>
         <button onClick={onRegenerate}>Regenerate</button>
-        {streaming && <button onClick={onStop}>Stop</button>}
+        {(streaming || speaking) && <button onClick={onStop}>Stop</button>}
+        {config.tts.provider !== 'none' && <button aria-label={config.tts.muted ? 'Unmute speech' : 'Mute speech'} aria-pressed={config.tts.muted} onClick={()=>void window.companion.patchConfig('tts',{muted:!config.tts.muted})}>{config.tts.muted ? '🔇' : '🔊'}</button>}
+        {speechNotice && <span role="status">{speechNotice}</span>}
+        {queuedMessage && <span role="status">1 message queued</span>}
         {pending && <button onClick={latest}>↓ New messages</button>}
       </footer>
       <button
