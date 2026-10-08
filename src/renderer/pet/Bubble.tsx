@@ -17,6 +17,7 @@ export function Bubble({
   streaming = false,
   onStop,
   onRegenerate,
+  error,
 }: {
   name: string;
   text: string;
@@ -26,6 +27,7 @@ export function Bubble({
   streaming?: boolean;
   onStop?: () => void;
   onRegenerate?: () => void;
+  error?: string;
 }) {
   const root = useRef<HTMLElement>(null),
     content = useRef<HTMLDivElement>(null),
@@ -164,6 +166,7 @@ export function Bubble({
       style={style}
       className={styles.bubble}
       data-testid="bubble"
+      data-streaming={streaming}
       data-interactive
       data-scrollbar={cfg.scrollbar}
       data-scrolling={scrolling}
@@ -196,6 +199,11 @@ export function Bubble({
         </div>
       )}
       <p className={styles.name}>{name}</p>
+      {error && (
+        <span role="alert" className={styles.unavailable}>
+          {error}
+        </span>
+      )}
       <div
         ref={content}
         className={styles.content}

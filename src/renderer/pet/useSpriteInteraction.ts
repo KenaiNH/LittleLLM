@@ -140,7 +140,8 @@ export function useSpriteInteraction(config: Config | null, state: SpriteState) 
         void window.companion.toggleInput();
     };
     const key = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') void window.companion.closeInput();
+      if (event.key === 'Escape')
+        void window.companion.abortChat().then(() => window.companion.closeInput());
     };
     document.addEventListener('mousemove', move);
     document.addEventListener('mousedown', down);

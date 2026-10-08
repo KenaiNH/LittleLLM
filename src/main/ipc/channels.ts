@@ -11,6 +11,8 @@ export const CHANNELS = {
   llmTest: 'llm:test',
   llmModels: 'llm:models',
   llmDelta: 'llm:delta',
+  llmRegenerate: 'llm:regenerate',
+  llmClear: 'llm:clear',
   ttsSynthesize: 'tts:synthesize',
   ttsAbort: 'tts:abort',
   ttsVoices: 'tts:voices',

@@ -17,11 +17,34 @@ import {
 } from '../main/ipc/schemas';
 import { spriteAssetsSchema, spriteMasksSchema } from '../shared/sprites';
 import type { CompanionAPI } from '../shared/api';
-import { chatUiSchema, draftSchema, submitSchema } from '../shared/chatUi';
+import { chatUiSchema, draftSchema, submitSchema, copyTextSchema } from '../shared/chatUi';
 import { petViewportSchema, petLayoutRequestSchema } from '../shared/petLayout';
 import { externalUrlSchema } from '../main/ipc/schemas';
 import { wheelSchema } from '../main/ipc/schemas';
+import { abortChatSchema, requestIdSchema, chatEventSchema } from '../shared/llm';
 const api: CompanionAPI = {
+  chat: async (text) =>
+    resultSchema(requestIdSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.llmChat, submitSchema.parse({ text })),
+    ),
+  abortChat: async (requestId) =>
+    voidResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.llmAbort, abortChatSchema.parse({ requestId })),
+    ),
+  regenerateChat: async () =>
+    resultSchema(requestIdSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.llmRegenerate, emptySchema.parse({})),
+    ),
+  clearConversation: async () =>
+    voidResultSchema.parse(await ipcRenderer.invoke(CHANNELS.llmClear, emptySchema.parse({}))),
+  onChatDelta: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => {
+      const parsed = chatEventSchema.safeParse(value);
+      if (parsed.success) callback(parsed.data);
+    };
+    ipcRenderer.on(CHANNELS.llmDelta, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.llmDelta, listener);
+  },
   getConfig: async () =>
     configResultSchema.parse(await ipcRenderer.invoke(CHANNELS.configGet, emptySchema.parse({}))),
   getChatUi: async () =>
@@ -53,7 +76,7 @@ const api: CompanionAPI = {
     ),
   copyText: async (text) =>
     voidResultSchema.parse(
-      await ipcRenderer.invoke(CHANNELS.clipboardCopy, draftSchema.parse({ text })),
+      await ipcRenderer.invoke(CHANNELS.clipboardCopy, copyTextSchema.parse({ text })),
     ),
   forwardWheel: async (value) =>
     voidResultSchema.parse(

@@ -67,7 +67,7 @@ export function PetApp() {
     void window.companion
       .layoutPet(
         { width: asset.width * scale, height: asset.height * scale },
-        ui?.echo ? bubbleSize : null,
+        ui?.reply ? bubbleSize : null,
       )
       .then((result) => {
         if (active && result.ok) setViewport(result.value);
@@ -80,7 +80,7 @@ export function PetApp() {
     config,
     scale,
     bubbleSize,
-    ui?.echo,
+    Boolean(ui?.reply),
     viewport?.workArea.width,
     viewport?.workArea.height,
   ]);
@@ -92,17 +92,19 @@ export function PetApp() {
       style={{ width: viewport?.window.width ?? 128, height: viewport?.window.height ?? 128 }}
     >
       {error && <span role="alert">{error}</span>}
-      {ui?.echo && config && viewport && (
+      {ui?.reply && config && viewport && (
         <div
           className={styles.layer}
           style={{ left: viewport.bubble?.x ?? 0, top: viewport.bubble?.y ?? 0 }}
         >
           <Bubble
-            {...ui.echo}
+            {...ui.reply}
             config={config}
             viewport={viewport}
             onMeasure={measure}
-            onRegenerate={() => void window.companion.submitInput(ui.echo?.text ?? '')}
+            error={ui.error?.userMessage}
+            onStop={() => void window.companion.abortChat(ui.reply?.requestId)}
+            onRegenerate={() => void window.companion.regenerateChat()}
           />
         </div>
       )}

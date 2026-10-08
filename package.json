@@ -13,6 +13,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "smoke": "playwright test",
+    "smoke:local": "node scripts/check-local-model.mjs",
     "package": "npm run build && electron-builder --win nsis",
     "assets": "node scripts/create-placeholders.mjs"
   },

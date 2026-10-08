@@ -3,6 +3,7 @@ import type { AppError } from './errors';
 import type { SpriteAssets, SpriteMasks } from './sprites';
 import type { ChatUi } from './chatUi';
 import type { PetViewport } from './petLayout';
+import type { ChatEvent } from './llm';
 export type Result<T> = { ok: true; value: T } | { ok: false; error: AppError };
 export interface CompanionAPI {
   getConfig(): Promise<Result<Config>>;
@@ -36,6 +37,11 @@ export interface CompanionAPI {
   closeInput(): Promise<Result<null>>;
   saveDraft(text: string): void;
   submitInput(text: string): Promise<Result<null>>;
+  chat(text: string): Promise<Result<string>>;
+  abortChat(requestId?: string): Promise<Result<null>>;
+  regenerateChat(): Promise<Result<string>>;
+  clearConversation(): Promise<Result<null>>;
+  onChatDelta(callback: (event: ChatEvent) => void): () => void;
   setIgnoreMouse(ignore: boolean): void;
   movePet(x: number, y: number): void;
   resizePet(

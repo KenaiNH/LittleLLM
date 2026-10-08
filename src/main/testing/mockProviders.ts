@@ -9,6 +9,7 @@ export const MOCK_FIXTURES = {
     '# Hello\n\n**Bold** and *italic*.\n\n- One\n- Two\n\n```ts\nconst greeting = "hello";\n```\n\n[Example](https://example.com)\n\n| A | B |\n|---|---|\n| 1 | 2 |',
   error: 'Partial reply before a failure.',
   never: 'Waiting indefinitely.',
+  echo: '', // Explicit Developer Mode fixture; never a production fallback.
 };
 export class MockLLMProvider implements LLMProvider {
   readonly id = 'mock';
@@ -21,12 +22,32 @@ export class MockLLMProvider implements LLMProvider {
     _messages: ChatMessage[],
     opts: { signal: AbortSignal; model: string },
   ): AsyncIterable<ChatDelta> {
-    for (const text of MOCK_FIXTURES[this.fixture]) {
-      await delay(1000 / this.speed, undefined, { signal: opts.signal });
-      yield { type: 'text', text };
+    const text =
+        this.fixture === 'echo' ? (_messages.at(-1)?.content ?? '') : MOCK_FIXTURES[this.fixture],
+      units = Array.from(text),
+      started = performance.now();
+    let index = 0;
+    while (index < units.length) {
+      await delay(Math.max(10, 1000 / this.speed), undefined, { signal: opts.signal });
+      const end = Math.min(
+        units.length,
+        Math.floor(((performance.now() - started) * this.speed) / 1000),
+      );
+      if (end > index) {
+        yield { type: 'text', text: units.slice(index, end).join('') };
+        index = end;
+      }
     }
     if (this.fixture === 'never') await delay(2147483647, undefined, { signal: opts.signal });
-    if (this.fixture === 'error') yield { type: 'error', message: 'Fixture failure' };
+    if (this.fixture === 'error')
+      yield {
+        type: 'error',
+        error: {
+          code: 'SERVER_ERROR',
+          userMessage: 'The test provider stopped before completing its reply.',
+          retryable: true,
+        },
+      };
     else yield { type: 'done' };
   }
 }

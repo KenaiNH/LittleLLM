@@ -3,9 +3,10 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { launchEnvironment } from './environment';
+import { configureMock } from './mock';
 // Playwright requires a destructured fixture argument to provide TestInfo.
 // eslint-disable-next-line no-empty-pattern
-test('sprite opens full-width input, submits an echo and remembers drafts', async ({}, info) => {
+test('sprite opens full-width input, streams a developer fixture and remembers drafts', async ({}, info) => {
   const directory = await mkdtemp(join(tmpdir(), 'littlellm-input-'));
   const app = await _electron.launch({
     args: ['out/main/index.js'],
@@ -14,6 +15,7 @@ test('sprite opens full-width input, submits an echo and remembers drafts', asyn
   try {
     const pet = await app.firstWindow();
     await pet.getByTestId('sprite').waitFor();
+    await configureMock(pet);
     const opened = app.waitForEvent('window');
     await pet.getByTestId('sprite').click({ position: { x: 64, y: 65 } });
     const input = await opened;

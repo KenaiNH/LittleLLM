@@ -8,21 +8,46 @@ import { normalizeError } from '../../shared/errors';
 import { preloadPath, secureWindow, loadRenderer } from './security';
 import { DwellTimer } from '../services/dwellTimer';
 import { booleanSchema } from '../ipc/schemas';
+import { ChatService } from '../llm/chatService';
+import {
+  chatEventSchema,
+  abortChatSchema,
+  requestIdSchema,
+  type ChatEvent,
+} from '../../shared/llm';
 
 export class InputWindow {
-  private state: ChatUi = { inputOpen: false, draft: '', echo: null };
+  private state: ChatUi = { inputOpen: false, draft: '', reply: null, error: null };
+  private chat: ChatService;
+  private queued: ReturnType<typeof setTimeout> | null = null;
   private win: BrowserWindow | null = null;
   private ready: Promise<void> | null = null;
   private quitting = false;
   private hovering = false;
   private lifetime = new DwellTimer(() => {
-    this.state = { ...this.state, echo: null };
+    this.state = { ...this.state, reply: null, error: null };
     this.broadcast();
   });
   constructor(
     private config: ConfigStore,
     private pet: BrowserWindow,
   ) {
+    this.chat = new ChatService(
+      () => config.get(),
+      (event) => this.delta(event),
+    );
+    let connection = config.get().llm;
+    const removeConfig = config.onChange((section, cfg) => {
+      if (section === 'llm') {
+        if (
+          cfg.llm.provider !== connection.provider ||
+          cfg.llm.baseUrl !== connection.baseUrl ||
+          cfg.llm.model !== connection.model
+        )
+          this.chat.abort();
+        connection = cfg.llm;
+      }
+    });
     const trusted = (event: Electron.IpcMainEvent | Electron.IpcMainInvokeEvent) =>
       event.senderFrame === event.sender.mainFrame &&
       (event.sender === this.win?.webContents || event.sender === pet.webContents);
@@ -54,17 +79,26 @@ export class InputWindow {
       return null;
     });
     handle(CHANNELS.inputSubmit, submitSchema, z.null(), (p) => {
-      // Build phase 6 echo. The LLM milestone replaces this with real generation.
-      this.state = { ...this.state, draft: '', echo: { name: 'You', text: p.text } };
-      this.lifetime.pause(this.hovering && this.config.get().bubble.keepOpenOnHover);
-      this.lifetime.start(this.config.get().bubble.dwellMs);
-      if (!this.config.get().input.keepOpenAfterSend) this.close();
-      else this.broadcast();
+      this.begin(p.text);
+      return null;
+    });
+    handle(CHANNELS.llmChat, submitSchema, requestIdSchema, (p) => this.begin(p.text));
+    handle(CHANNELS.llmAbort, abortChatSchema, z.null(), (p) => {
+      this.chat.abort(p.requestId);
+      return null;
+    });
+    handle(CHANNELS.llmRegenerate, emptySchema, requestIdSchema, () => this.begin('', true));
+    handle(CHANNELS.llmClear, emptySchema, z.null(), () => {
+      this.chat.clear();
+      this.lifetime.stop();
+      this.state = { ...this.state, reply: null, error: null };
+      this.broadcast();
       return null;
     });
     handle(CHANNELS.bubbleDismiss, emptySchema, z.null(), () => {
+      this.chat.abort();
       this.lifetime.stop();
-      this.state = { ...this.state, echo: null };
+      this.state = { ...this.state, reply: null, error: null };
       this.broadcast();
       return null;
     });
@@ -87,6 +121,9 @@ export class InputWindow {
     pet.on('hide', () => this.close());
     app.on('before-quit', this.beforeQuit);
     pet.once('closed', () => {
+      this.chat.abort();
+      removeConfig();
+      if (this.queued) clearTimeout(this.queued);
       this.lifetime.stop();
       screen.removeListener('display-metrics-changed', this.position);
       screen.removeListener('display-removed', this.position);
@@ -95,8 +132,44 @@ export class InputWindow {
     });
   }
   private beforeQuit = () => {
+    this.chat.abort();
     this.quitting = true;
   };
+  private begin(text: string, regenerate = false) {
+    const requestId = regenerate ? this.chat.regenerate() : this.chat.start(text);
+    this.lifetime.stop();
+    this.state = {
+      ...this.state,
+      draft: '',
+      reply: { requestId, name: 'Companion', text: '', streaming: true },
+      error: null,
+    };
+    if (!this.config.get().input.keepOpenAfterSend) this.close();
+    else this.broadcast();
+    return requestId;
+  }
+  private delta(event: ChatEvent) {
+    for (const win of [this.pet, this.win])
+      if (win && !win.isDestroyed())
+        win.webContents.send(CHANNELS.llmDelta, chatEventSchema.parse(event));
+    const reply = this.state.reply;
+    if (!reply || reply.requestId !== event.requestId) return;
+    if (event.delta.type === 'text') {
+      this.state = { ...this.state, reply: { ...reply, text: reply.text + event.delta.text } };
+      if (!this.queued) this.queued = setTimeout(() => this.broadcast(), 32);
+    } else {
+      const aborted = event.delta.type === 'error' && event.delta.error.code === 'ABORTED',
+        error = event.delta.type === 'error' && !aborted ? event.delta.error : null;
+      this.state = {
+        ...this.state,
+        reply: aborted && !reply.text ? null : { ...reply, streaming: false },
+        error,
+      };
+      this.lifetime.pause(this.hovering && this.config.get().bubble.keepOpenOnHover);
+      this.lifetime.start(this.config.get().bubble.dwellMs);
+      this.broadcast();
+    }
+  }
   private initialize() {
     if (this.ready) return this.ready;
     const win = new BrowserWindow({
@@ -151,6 +224,8 @@ export class InputWindow {
     });
   };
   private broadcast() {
+    if (this.queued) clearTimeout(this.queued);
+    this.queued = null;
     for (const win of [this.pet, this.win])
       if (win && !win.isDestroyed()) win.webContents.send(CHANNELS.chatUiChanged, this.state);
   }

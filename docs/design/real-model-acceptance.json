@@ -1,0 +1,1 @@
+{"acceptance":"real-local-model-streaming","passed":true,"baseUrl":"http://127.0.0.1:24975/v1","model":"smollm2:135m-instruct-q4_K_M","text":"\"We appreciate your effort and look forward to meeting you in your office.\"","chunks":15,"firstTokenMs":1168.5,"elapsedMs":1292.2000000476837}

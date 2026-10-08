@@ -17,7 +17,7 @@ import { spriteAssetsSchema, spriteMasksSchema } from '../../shared/sprites';
 import { AlphaMaskCache } from '../services/alphaMask';
 import { app } from 'electron';
 import { externalUrlSchema } from './schemas';
-import { draftSchema } from '../../shared/chatUi';
+import { copyTextSchema } from '../../shared/chatUi';
 export function registerHandlers(
   config: ConfigStore,
   settings: (panel: string) => void,
@@ -87,7 +87,7 @@ export function registerHandlers(
     await shell.openExternal(p.url);
     return null;
   });
-  handle(CHANNELS.clipboardCopy, draftSchema, z.null(), async (p) => {
+  handle(CHANNELS.clipboardCopy, copyTextSchema, z.null(), async (p) => {
     await clipboard.writeText(p.text);
     return null;
   });

@@ -5,6 +5,7 @@ import { configSchema, configSections, type Config, type ConfigSection } from '.
 import { recoverConfig } from './configRecovery';
 export class ConfigStore {
   private store: Store<Config>;
+  private listeners = new Set<(section: ConfigSection, config: Config) => void>();
   readonly recovered: string[];
   readonly backupPath: string | undefined;
   readonly firstRun: boolean;
@@ -37,9 +38,15 @@ export class ConfigStore {
   set(section: ConfigSection, value: unknown): Config {
     const data = configSections[section].parse(value);
     this.store.set(section, data);
-    return this.get();
+    const config = this.get();
+    for (const listener of this.listeners) listener(section, config);
+    return config;
   }
   reset(section: ConfigSection): Config {
     return this.set(section, {});
+  }
+  onChange(listener: (section: ConfigSection, config: Config) => void) {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
   }
 }

@@ -6,6 +6,7 @@ import { promisify } from 'node:util';
 import { tmpdir } from 'node:os';
 import { launchEnvironment } from './environment';
 import sharp from 'sharp';
+import { configureMock } from './mock';
 // eslint-disable-next-line no-empty-pattern
 test('Markdown bubble caps, scrolls, sanitizes and scales', async ({}, info) => {
   const directory = await mkdtemp(join(tmpdir(), 'littlellm-bubble-'));
@@ -24,6 +25,7 @@ test('Markdown bubble caps, scrolls, sanitizes and scales', async ({}, info) => 
   try {
     const pet = await app.firstWindow();
     await pet.getByTestId('sprite').waitFor();
+    await configureMock(pet);
     await app.evaluate(async ({ clipboard }) => {
       (clipboard as unknown as { testBackup: string }).testBackup = await clipboard.readText();
     });
@@ -55,10 +57,6 @@ test('Markdown bubble caps, scrolls, sanitizes and scales', async ({}, info) => 
       .toBeLessThanOrEqual(24);
     await content.evaluate((el) => (el.scrollTop = 0));
     await expect(bubble).toHaveAttribute('data-autoscroll', 'suspended');
-    await pet.evaluate(
-      (text) => window.companion.submitInput(text),
-      markdown + '\n\nNewest paragraph.',
-    );
     await expect(bubble.getByRole('button', { name: '↓ New messages' })).toBeVisible();
     expect(await content.evaluate((el) => el.scrollTop)).toBe(0);
     await bubble.getByRole('button', { name: '↓ New messages' }).click();
@@ -74,6 +72,7 @@ test('Markdown bubble caps, scrolls, sanitizes and scales', async ({}, info) => 
         ),
       )
       .toBe(true);
+    await expect(bubble).toHaveAttribute('data-streaming', 'false', { timeout: 10000 });
     for (const scale of [0.5, 1, 2.5]) {
       await pet.evaluate(async (value) => {
         const cfg = await window.companion.getConfig();
@@ -119,6 +118,7 @@ test('wheel pass-through delivers a wheel message behind the bubble', async () =
   try {
     const pet = await app.firstWindow();
     await pet.getByTestId('sprite').waitFor();
+    await configureMock(pet);
     await pet.evaluate(async () => {
       const cfg = await window.companion.getConfig();
       if (cfg.ok) {

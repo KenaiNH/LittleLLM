@@ -50,7 +50,7 @@ export function InputApp() {
           onKeyDown={(event) => {
             if (event.key === 'Escape') {
               event.preventDefault();
-              void window.companion.closeInput();
+              void window.companion.abortChat().then(() => window.companion.closeInput());
             } else if (
               event.key === 'Enter' &&
               !event.shiftKey &&
@@ -69,7 +69,7 @@ export function InputApp() {
             className={styles.mic}
             aria-label="Voice input"
             disabled
-            title="Voice input will be enabled in the speech-input milestone"
+            title="Voice input is not available yet"
           >
             <span>
               <img src={mic} alt="" />
