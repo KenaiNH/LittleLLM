@@ -8,3 +8,4 @@ playwright-report/
 *.log
 .test-user-data/
 .tmp/
+docs/features.md
