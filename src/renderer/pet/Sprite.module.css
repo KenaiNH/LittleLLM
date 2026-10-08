@@ -1,1 +1,1 @@
-.sprite { display:block; -webkit-app-region:drag; }
+.sprite { display:block; touch-action:none; user-select:none; }
