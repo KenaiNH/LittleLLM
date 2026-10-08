@@ -33,6 +33,7 @@ export function SettingRow({
   value ??= fallbackValue;
   const key = `${d.section}.${d.key}`,
     multiplier = d.multiplier ?? 1;
+  if (key === 'stt.includeTranscriptsInLogs' && config.advanced.redactPrompts) value = false;
   const displayed = typeof value === 'number' ? Number((value / multiplier).toFixed(4)) : value;
   const [text, setText] = useState(drafts[key] ?? String(displayed ?? ''));
   const [tagText, setTagText] = useState('');
@@ -139,6 +140,10 @@ export function SettingRow({
   }
   if (key === 'llm.provider' && !config.advanced.developerMode)
     options = options.filter(([id]) => id !== 'mock');
+  if (key === 'stt.provider' && !config.advanced.developerMode)
+    options = options.filter(([id]) => id !== 'mock');
+  if (key === 'stt.onFailure' && config.stt.provider === 'windows-dictation')
+    options = options.filter(([id]) => id !== 'sapi-dictation');
   if (d.kind === 'font')
     options = [
       ['system-ui', 'System UI default'],
@@ -208,8 +213,15 @@ export function SettingRow({
           min={d.min}
           max={d.max}
           step={d.step ?? 1}
-          value={Number(text)}
-          onChange={(event) => edit(event.target.value, true)}
+          value={d.reverse ? (d.min ?? 0) + (d.max ?? 0) - Number(text) : Number(text)}
+          onChange={(event) =>
+            edit(
+              d.reverse
+                ? String((d.min ?? 0) + (d.max ?? 0) - Number(event.target.value))
+                : event.target.value,
+              true,
+            )
+          }
         />
         {numeric}
         <span className={styles.suffix}>{d.suffix}</span>

@@ -92,7 +92,7 @@ export function SecretInput({
             status?.has
               ? '••••••••' + status.last4
               : local
-                ? id.startsWith('llm.')
+                ? id.startsWith('llm.') || id.startsWith('stt.')
                   ? 'Usually not required for local models'
                   : 'Optional for local endpoints'
                 : 'Enter API key'

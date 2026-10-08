@@ -1,8 +1,21 @@
-import { app, BrowserWindow, ipcMain, screen, dialog, clipboard } from 'electron';
+import { app, BrowserWindow, ipcMain, screen, dialog, clipboard, shell } from 'electron';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import type { SpeechService } from '../tts/speechService';
+import type { SttSession } from '../stt/sttSession';
+import { VOICE_INPUT_ENABLED } from '../../shared/featureScope';
+import {
+  sttUiSchema,
+  sttCaptureSchema,
+  sttActionSchema,
+  sttPreviewSchema,
+  sttFrameSchema,
+  sttFeedbackSchema,
+  sttTestSchema,
+  sttDevicesSchema,
+  caretSchema,
+} from '../../shared/stt';
 import type { ChatImage, Attachment } from '../../shared/attachments';
 import { synthesisScope } from '../../shared/ttsCustom';
 import {
@@ -24,7 +37,13 @@ import { CHANNELS } from '../ipc/channels';
 import { emptySchema, resultSchema } from '../ipc/schemas';
 import { chatUiSchema, draftSchema, submitSchema, type ChatUi } from '../../shared/chatUi';
 import { normalizeError } from '../../shared/errors';
-import { preloadPath, secureWindow, loadRenderer, configureOutputPermissions } from './security';
+import {
+  preloadPath,
+  secureWindow,
+  loadRenderer,
+  configureOutputPermissions,
+  configureMicrophonePermissions,
+} from './security';
 import { StateController } from '../services/stateController';
 import { companionStateSchema, overrideStateSchema } from '../../shared/state';
 import type { SecretStore } from '../services/secretStore';
@@ -59,8 +78,15 @@ export class InputWindow {
     speechNotice: null,
     speaking: false,
     queuedMessage: false,
+    stt: sttUiSchema.parse({}),
   };
   private voice: SpeechService | null = null;
+  private microphone: SttSession | null = null;
+  private loadingMicrophone: Promise<SttSession> | null = null;
+  private caret = { start: 0, end: 0 };
+  private sttBubbleId: string | null = null;
+  private previewEpoch = 0;
+  private previewHost: BrowserWindow | null = null;
   private loadingVoice: Promise<SpeechService> | null = null;
   private pendingTurn: PendingTurn | null = null;
   private preserveSentence = false;
@@ -81,6 +107,13 @@ export class InputWindow {
     private secrets?: SecretStore,
     private history?: ConversationStore,
   ) {
+    configureMicrophonePermissions(
+      (contents) =>
+        VOICE_INPUT_ENABLED &&
+        contents === pet.webContents &&
+        config.get().stt.provider !== 'none' &&
+        Boolean(this.microphone?.canCapture),
+    );
     configureOutputPermissions(
       (contents) =>
         config.get().tts.provider !== 'none' &&
@@ -110,10 +143,18 @@ export class InputWindow {
     );
     let connection = config.get().llm;
     let speechConfig = config.get().tts;
+    let captureConfig = JSON.stringify(config.get().stt);
     const removeConfig = config.onChange((section, cfg) => {
       if (section === 'input' || section === 'bubble') this.position();
       if (section === 'bubble') this.lifecycle.settingsChanged();
-      if (section === 'advanced' && !cfg.advanced.developerMode) this.lifecycle.force('auto');
+      if (section === 'advanced' && !cfg.advanced.developerMode) {
+        this.lifecycle.force('auto');
+        if (cfg.stt.provider === 'mock') this.microphone?.abort();
+      }
+      if (section === 'stt' && JSON.stringify(cfg.stt) !== captureConfig) {
+        this.microphone?.abort();
+        captureConfig = JSON.stringify(cfg.stt);
+      }
       if (section === 'tts') {
         if (synthesisScope(cfg.tts) !== synthesisScope(speechConfig)) {
           this.voice?.abort();
@@ -147,10 +188,12 @@ export class InputWindow {
       request: S,
       response: R,
       action: (payload: z.output<S>) => z.input<R> | Promise<z.input<R>>,
+      senderCheck?: (sender: Electron.WebContents) => boolean,
     ) =>
       ipcMain.handle(channel, async (event, payload: unknown) => {
         try {
-          if (!trusted(event)) throw new Error('Untrusted chat sender');
+          if (!trusted(event) || (senderCheck && !senderCheck(event.sender)))
+            throw new Error('Untrusted chat sender');
           return resultSchema(response).parse({
             ok: true,
             value: await action(request.parse(payload)),
@@ -163,6 +206,109 @@ export class InputWindow {
         }
       });
     handle(CHANNELS.chatUiGet, emptySchema, chatUiSchema, () => this.state);
+    handle(CHANNELS.sttStart, sttActionSchema, z.null(), async (p) => {
+      if (config.get().stt.provider === 'none') return null;
+      const mic = await this.ensureMicrophone();
+      if (
+        p.action === 'toggle' &&
+        !mic.isPreview &&
+        ['recording', 'starting'].includes(mic.ui.status)
+      ) {
+        mic.stop();
+        return null;
+      }
+      this.pendingTurn = null;
+      this.voice?.abort();
+      this.chat.abort();
+      await mic.start(false, p.action === 'test-microphone');
+      return null;
+    });
+    handle(CHANNELS.sttStop, emptySchema, z.null(), () => {
+      this.microphone?.stop();
+      return null;
+    });
+    handle(CHANNELS.sttAbort, emptySchema, z.null(), () => {
+      this.microphone?.abort();
+      return null;
+    });
+    handle(
+      CHANNELS.sttPreview,
+      sttPreviewSchema,
+      z.null(),
+      async (p) => {
+        const settings = getSettingsWindow();
+        const epoch = ++this.previewEpoch;
+        if (!p.active) {
+          if (this.microphone?.isPreview) this.microphone.abort();
+          return null;
+        }
+        if (
+          !settings?.isFocused() ||
+          config.get().stt.provider === 'none' ||
+          config.get().stt.provider === 'mock'
+        )
+          return null;
+        const mic = await this.ensureMicrophone();
+        if (
+          epoch !== this.previewEpoch ||
+          this.quitting ||
+          settings.isDestroyed() ||
+          !settings.isFocused() ||
+          config.get().stt.provider === 'none'
+        )
+          return null;
+        if (this.previewHost !== settings) {
+          this.previewHost = settings;
+          const stopPreview = () => {
+            ++this.previewEpoch;
+            if (this.microphone?.isPreview || this.microphone?.isTest) this.microphone.abort();
+          };
+          settings.on('blur', stopPreview);
+          settings.on('closed', stopPreview);
+        }
+        if (mic.ui.status === 'idle') {
+          await mic.start(true);
+        } else if (mic.isPreview) mic.renewPreview();
+        return null;
+      },
+      (sender) => sender === getSettingsWindow()?.webContents,
+    );
+    handle(
+      CHANNELS.sttDevices,
+      emptySchema,
+      sttDevicesSchema,
+      () => this.microphone?.devices ?? [],
+    );
+    handle(CHANNELS.sttTest, emptySchema, sttTestSchema, async () =>
+      (await this.ensureMicrophone()).testConnection(),
+    );
+    handle(CHANNELS.sttReinsert, emptySchema, z.null(), async () => {
+      await this.microphone?.reinsert();
+      return null;
+    });
+    handle(CHANNELS.sttPrivacy, emptySchema, z.null(), async () => {
+      await shell.openExternal('ms-settings:privacy-microphone');
+      return null;
+    });
+    ipcMain.on(CHANNELS.sttAudioFrame, (event, payload: unknown) => {
+      if (!trusted(event) || event.sender !== pet.webContents) return;
+      const parsed = sttFrameSchema.safeParse(payload);
+      if (parsed.success) this.microphone?.frame(parsed.data);
+    });
+    ipcMain.on(CHANNELS.sttFeedback, (event, payload: unknown) => {
+      if (!trusted(event) || event.sender !== pet.webContents) return;
+      const parsed = sttFeedbackSchema.safeParse(payload);
+      if (parsed.success) {
+        this.microphone?.feedback(parsed.data);
+        if (parsed.data.type === 'error' && ['no-device', 'device-lost'].includes(parsed.data.code))
+          config.set('stt', { ...config.get().stt, inputDeviceId: 'default' });
+      }
+    });
+    ipcMain.on(CHANNELS.sttCaret, (event, payload: unknown) => {
+      if (!trusted(event) || event.sender !== this.win?.webContents) return;
+      const parsed = caretSchema.safeParse(payload);
+      if (parsed.success) this.caret = parsed.data;
+    });
     handle(CHANNELS.ttsVoices, emptySchema, voiceListSchema, async () => {
       const cfg = config.get().tts;
       if (cfg.provider === 'none') return [];
@@ -295,6 +441,7 @@ export class InputWindow {
     handle(CHANNELS.llmAbort, abortChatSchema, z.null(), (p) => {
       if (p.requestId && p.requestId !== this.state.reply?.requestId) return null;
       this.pendingTurn = null;
+      this.microphone?.abort();
       this.voice?.abort();
       this.chat.abort(p.requestId);
       this.state = { ...this.state, queuedMessage: false };
@@ -352,6 +499,8 @@ export class InputWindow {
     app.on('before-quit', this.beforeQuit);
     pet.once('closed', () => {
       configureOutputPermissions(() => false);
+      configureMicrophonePermissions(() => false);
+      this.microphone?.abort();
       this.pendingTurn = null;
       this.voice?.abort();
       this.chat.abort();
@@ -365,12 +514,89 @@ export class InputWindow {
     });
   }
   private beforeQuit = () => {
+    this.microphone?.abort();
     this.pendingTurn = null;
     this.voice?.abort();
     this.chat.abort();
     this.lifecycle.dispose();
     this.quitting = true;
   };
+  private async ensureMicrophone(): Promise<SttSession> {
+    if (!VOICE_INPUT_ENABLED)
+      throw new Error('Voice input is deferred to a future release. Typed chat remains available.');
+    if (this.microphone) return this.microphone;
+    this.loadingMicrophone ??= import('../stt/sttSession').then(({ SttSession }) => {
+      this.microphone = new SttSession(
+        () => this.config.get(),
+        (provider) =>
+          Promise.resolve(
+            provider === 'openai-compatible-stt' || provider === 'custom-http'
+              ? this.secrets?.get(`stt.${provider}`)
+              : undefined,
+          ),
+        (packet) => {
+          if (!this.pet.isDestroyed())
+            this.pet.webContents.send(CHANNELS.sttCapture, sttCaptureSchema.parse(packet));
+        },
+        (stt) => {
+          this.state = { ...this.state, stt };
+          this.broadcast();
+        },
+        (phase) => {
+          if (phase === 'listening') this.lifecycle.listen();
+          else if (phase === 'transcribing') {
+            this.lifecycle.transcribing();
+            if (!this.state.reply) {
+              this.sttBubbleId = this.microphone?.ui.sessionId ?? randomUUID();
+              this.state = {
+                ...this.state,
+                reply: {
+                  requestId: this.sttBubbleId,
+                  name: 'Companion',
+                  text: 'Transcribing…',
+                  streaming: false,
+                  userText: '',
+                  attachments: [],
+                },
+              };
+              this.broadcast();
+            }
+          } else {
+            this.lifecycle.cancel(undefined, Boolean(this.state.reply));
+            if (this.sttBubbleId === this.state.reply?.requestId) {
+              this.state = { ...this.state, reply: null };
+              this.sttBubbleId = null;
+              this.broadcast();
+            }
+          }
+        },
+        async (text, cfg) => {
+          const { insertTranscript } = await import('../stt/transcript');
+          this.state = {
+            ...this.state,
+            draft: insertTranscript(
+              this.state.draft,
+              text,
+              this.caret.start,
+              this.caret.end,
+              cfg.insertMode,
+            ),
+          };
+          this.caret = { start: this.state.draft.length, end: this.state.draft.length };
+          await this.open();
+          this.broadcast();
+        },
+        async () => {
+          await this.begin(this.state.draft);
+        },
+        () => {
+          if (!this.pet.isDestroyed()) this.pet.webContents.reload();
+        },
+      );
+      return this.microphone;
+    });
+    return this.loadingMicrophone;
+  }
   private speechKey(provider: import('../../shared/config').Config['tts']['provider']) {
     return Promise.resolve(
       provider === 'openai-compatible-tts' ||
@@ -432,6 +658,7 @@ export class InputWindow {
     });
   }
   private async begin(text: string, regenerate = false) {
+    this.microphone?.abort();
     if (!regenerate && !text.trim() && !this.attachments.views.length)
       throw new ProviderError({
         code: 'INVALID_RESPONSE',

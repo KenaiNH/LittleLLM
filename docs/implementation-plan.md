@@ -6,17 +6,17 @@ Prepared before application code. Sources read in full: AGENTS.md, desktop_compa
 
 File: https://www.figma.com/design/5UfqQ3ZqtBmKZZiaABQWUK
 
-| View | Light | Dark | Supporting states |
-|---|---|---|---|
-| General | 16:3 | 2004:2 | 16:1009 |
-| Sprites | 16:205 | 2004:411 | 16:1035 |
-| Model | 16:359 | 2004:215 | 16:1067 |
-| Persona | 2031:5560 | 2031:5611 | 2031:5670, 2031:5893 and other children of 2031:5662 |
-| Voice | 16:540 | 2004:835 | 16:1102 |
-| Voice Input | 2021:545 | 2021:595 | 2021:645 |
-| Appearance | 16:585 | 2004:576 | 16:1137 |
-| Advanced | 16:824 | 2004:886 | 16:1172 |
-| TextChat | page 2012:2 | not supplied | Bubble 2016:89; desktop example 2016:81 |
+| View        | Light       | Dark         | Supporting states                                    |
+| ----------- | ----------- | ------------ | ---------------------------------------------------- |
+| General     | 16:3        | 2004:2       | 16:1009                                              |
+| Sprites     | 16:205      | 2004:411     | 16:1035                                              |
+| Model       | 16:359      | 2004:215     | 16:1067                                              |
+| Persona     | 2031:5560   | 2031:5611    | 2031:5670, 2031:5893 and other children of 2031:5662 |
+| Voice       | 16:540      | 2004:835     | 16:1102                                              |
+| Voice Input | 2021:545    | 2021:595     | 2021:645                                             |
+| Appearance  | 16:585      | 2004:576     | 16:1137                                              |
+| Advanced    | 16:824      | 2004:886     | 16:1172                                              |
+| TextChat    | page 2012:2 | not supplied | Bubble 2016:89; desktop example 2016:81              |
 
 Relevant components: sidebar/search/navigation/selection indicator, section heading, grouped setting rows, toggles (on/off/disabled), editable combo, numeric/range fields, textarea/counter, file drop zone, preview, action buttons, hotkey recorder, error/verification/restart states, confirmation/import dialogs, mic meter, persona example editor/variable menu/prompt preview. TextChat uses blue dialogue surfaces, inset border, Courier Prime, white shadowed text, continuation triangle and a round mic button. Retrieved design code and metadata are retained under docs/design for traceability, never used as screenshot assets in the app.
 
@@ -41,14 +41,14 @@ Follow main §14 in order. Before phase 1, define every stored enum/label and co
 3. Bundle temporary PNGs (idle blue resting face, thinking amber/question motif, speaking green/open mouth). Render canvas through the same asset pipeline used for imports; no placeholder-specific runtime branches.
 4. Animation engine: static/GIF/APNG, sheets in both orders, naturally sorted sequences, timing, four playback modes, predecode, hidden pause, DPI reload and cache budget. Test math/clocks/disposal; measure CPU separately.
 5. Main-generated union alpha masks, disk cache, pure DPI/scale/flip transform, one-frame click-through debounce. Unit tests at 100/125/150/175%; native behind-window click tests.
-6–7. Input and sanitized scrollable dialogue bubble, Figma visuals, work-area placement, reveal, footer, dwell/hover and accessibility. Validate layout gap before adding unsupported UI.
-8–9. Real OpenAI-compatible provider and tested state transitions; abort/stale-event isolation, minimum thinking, text/audio/dwell gates, optional listening and barge-in. A real local endpoint is needed for phase acceptance.
-10–11. Settings live broadcast, secrets in main, General/Model/Appearance followed by Sprites: validated file/folder/multiselect copy, previews/scrub/play/pause, state resets, sheets auto-detection, safe Sprite Pack preview/confirm/import/export. Imported files survive source deletion and restart. Placeholder art is fully replaceable here.
-12–13. Anthropic/Ollama and file/clipboard image attachments, normalization, thumbnails, provider encoding and capability handling. Revised acceptance uses the recorded file/clipboard Windows checks and transport/validation tests. Region capture and its screenshot-to-vision acceptance are deferred by the user's scope change.
-14–15. Provider-pluggable TTS, sentence pipeline, gapless playback and remaining providers. Mouth animation/lip syncing are low-priority future work by explicit user instruction; existing imports remain compatible. No audio hot path with none. Local Kokoro acceptance testing is skipped by explicit user instruction; see DISCREPANCIES.md entries 28 and 31. Other voice checks remain required.
-16–17. STT core/providers, AudioWorklet/resampling/VAD, transcript insertion, activation/keyboard hook and fallback, echo gating, privacy. Local Whisper/native Windows acceptance required.
-18. Persona prompt assembly, library/packs/consent/greetings and Figma Persona UI.
-19. Tray/hotkeys/fullscreen/window behavior, logs, NSIS package and clean Windows validation; documentation and performance budget.
+   6–7. Input and sanitized scrollable dialogue bubble, Figma visuals, work-area placement, reveal, footer, dwell/hover and accessibility. Validate layout gap before adding unsupported UI.
+   8–9. Real OpenAI-compatible provider and tested state transitions; abort/stale-event isolation, minimum thinking, text/audio/dwell gates, optional listening and barge-in. A real local endpoint is needed for phase acceptance.
+   10–11. Settings live broadcast, secrets in main, General/Model/Appearance followed by Sprites: validated file/folder/multiselect copy, previews/scrub/play/pause, state resets, sheets auto-detection, safe Sprite Pack preview/confirm/import/export. Imported files survive source deletion and restart. Placeholder art is fully replaceable here.
+   12–13. Anthropic/Ollama and file/clipboard image attachments, normalization, thumbnails, provider encoding and capability handling. Revised acceptance uses the recorded file/clipboard Windows checks and transport/validation tests. Region capture and its screenshot-to-vision acceptance are deferred by the user's scope change.
+   14–15. Provider-pluggable TTS, sentence pipeline, gapless playback and remaining providers. Mouth animation/lip syncing are low-priority future work by explicit user instruction; existing imports remain compatible. No audio hot path with none. Local Kokoro acceptance testing is skipped by explicit user instruction; see DISCREPANCIES.md entries 28 and 31. Other voice checks remain required.
+   16–17. STT core/providers, AudioWorklet/resampling/VAD, transcript insertion, activation/keyboard hook and fallback, echo gating, privacy. Further voice-specific tests and local Whisper/native recording acceptance are deferred by explicit user instruction (entry 34); continue implementation with static typecheck/build/lint. Resolve Windows dictation's documented offline/package-identity conflict before changing its backend or installer architecture.
+6. Persona prompt assembly, library/packs/consent/greetings and Figma Persona UI.
+7. Tray/hotkeys/fullscreen/window behavior, logs, NSIS package and clean Windows validation; documentation and performance budget. Auto-update and its Settings controls/acceptance are deferred by explicit user instruction (entry 35); preserve stored update fields for compatibility.
 
 After each phase run relevant unit tests, typecheck, lint and Electron smoke where possible. Update docs/progress.md with tested versus unverified behavior and commit runnable milestones. Do not mark acceptance based on mocks or omit settings to fit a time budget. Placeholder assets do not block any provider, chat, voice or settings work.
 
@@ -71,3 +71,17 @@ ElevenLabs uses the documented `/v1/voices` enumeration and streaming speech end
 Custom HTTP exposes the required URL, GET/POST, key/value headers, optional secret, JSON body template, three Settings response modes, conditional JSON path and format. Safely substitute placeholders without eval, validate templates before saving, encode GET template fields as query parameters, and validate response URLs/paths. Binary streams audio; JSON-base64 reads the selected field, also supporting SSE JSON/base64 events for main-spec compatibility; JSON-URL fetches audio without forwarding request credentials. Bound responses, timeouts and decoded audio; reject redirects. Main remains the only config writer, applying nested provider patches atomically so sibling settings are preserved. Provider synthesis configuration changes cancel playback and invalidate cached clips.
 
 Verify safe substitution (including quotes/newlines), nested patches, all custom response modes, credential isolation, cancellation, limits and ElevenLabs requests. Run lint, unit tests, strict build and Windows Electron Custom HTTP playback/settings acceptance. Advance to STT only after revised phase-15 acceptance.
+
+## Phase 16 implementation detail
+
+Re-inspected Figma Voice Input light/dark and supporting boards (2021:545, 2021:595, 2021:645). Reuse the existing Settings shell/rows, authored Off explanation, provider groups, input-device/meter/status rows and privacy text. Mic activation uses the existing authored input button; recording/cancel/transcribing/countdown controls reuse the dialogue styling, without a new screen. Phase-17 providers/modes remain unavailable until implemented.
+
+Capture is owned exclusively by the pet renderer, with a narrow main-owned session permission. Settings control 215 explicitly requires a temporary level preview while the enabled Voice Input panel is visible/focused: a validated Settings request starts that preview in the pet and relays levels, without buffering/transcribing preview audio. Stop preview on panel blur/close/provider Off; show the authored active-microphone caption. This resolves entry 7 without granting media to Settings. Normal recording starts only on the mic action. Off stops any session, unmounts the panel remainder and imports no recorder/audio worklet. Use AudioWorklet mono resampling to 16 kHz, 20 ms PCM frames, main-side VAD/hangover and bounded memory, with track release before batch transcription. Main validates session IDs/frame sequence/bytes and owns watchdog/cancellation/endpoint keys.
+
+Implement none and OpenAI-compatible multipart STT, one normalized session/status stream, WAV encoding, transcript processing/caret insertion, recent-five in-memory transcripts and the specified hold/send/countdown policies. Echo barge-in reuses chat/audio cancellation. Provider/config changes and Esc discard stale results. Voice Input keys remain encrypted, panel resets are scoped, and denied microphone access has a fixed Windows privacy action. Connection testing is implemented as a user-invoked endpoint action; do not invoke it during development under entry 34.
+
+Run static typecheck/build/lint only for voice implementation under the user's test waiver. Mark microphone, worklet, VAD, transcription quality, endpoint and native acceptance as skipped/unverified. Continue to phase 17 after static checks; resolve entry 33 before changing Windows dictation's backend/packaging architecture.
+
+## Latest scope supersedes the STT phase details above
+
+All phases 16–17 voice-input/dictation features are deferred by explicit user instruction (DISCREPANCIES entry 38). Keep existing schemas and groundwork dormant behind VOICE_INPUT_ENABLED=false; deny microphone capture even for saved enabled providers. No STT/activation tests or further provider work are required for this release. Resume from voice-input-handoff.md. Continue phase 18 Persona followed by phase 19 excluding auto-update.

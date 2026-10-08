@@ -8,9 +8,12 @@ import type { PetViewport } from '../../shared/petLayout';
 import styles from './App.module.css';
 import { useSpriteScene } from './useSpriteScene';
 import { useSpeech } from './useSpeech';
+import { useMicrophone } from './useMicrophone';
+import mic from '../../../assets/figma/2016-81-imgMic.svg';
 export function PetApp() {
   const { config, assets, state, error, initialize, setState } = usePetStore();
   useSpeech(config);
+  useMicrophone(config);
   const [ui, setUi] = useState<ChatUi | null>(null),
     [viewport, setViewport] = useState<PetViewport | null>(null),
     [bubbleSize, setBubbleSize] = useState<{ width: number; height: number } | null>(null);
@@ -74,7 +77,10 @@ export function PetApp() {
     let active = true;
     void window.companion
       .layoutPet(
-        { width: scene.geometry.width, height: scene.geometry.height },
+        {
+          width: Math.max(ui?.stt.microphoneOpen ? 32 : 0, scene.geometry.width),
+          height: Math.max(ui?.stt.microphoneOpen ? 32 : 0, scene.geometry.height),
+        },
         ui?.reply ? bubbleSize : null,
         scene.geometry.anchor,
       )
@@ -89,6 +95,7 @@ export function PetApp() {
     config,
     bubbleSize,
     Boolean(ui?.reply),
+    ui?.stt.microphoneOpen,
     viewport?.workArea.width,
     viewport?.workArea.height,
   ]);
@@ -127,6 +134,17 @@ export function PetApp() {
             onFadeEnd={finish}
             fpsCap={config.advanced.fpsCap === 'display' ? 240 : Number(config.advanced.fpsCap)}
           />
+          {ui?.stt.microphoneOpen && (
+            <button
+              data-interactive
+              className={styles.microphone}
+              aria-label="Microphone active — cancel recording"
+              title="Microphone active — click to cancel"
+              onClick={() => void window.companion.abortStt()}
+            >
+              <img src={mic} alt="" />
+            </button>
+          )}
         </div>
       )}
       {import.meta.env.DEV && (

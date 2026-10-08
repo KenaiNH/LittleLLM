@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Config } from '../../shared/config';
 import type { Attachment, ImageCapability } from '../../shared/attachments';
+import { sttUiSchema, type SttUi } from '../../shared/stt';
+import { VOICE_INPUT_ENABLED } from '../../shared/featureScope';
 import mic from '../../../assets/figma/2016-81-imgMic.svg';
 import continuation from '../../../assets/figma/2016-81-imgDialogueContinuation.svg';
 import styles from './Input.module.css';
@@ -10,6 +12,8 @@ export function InputApp() {
     [attachments, setAttachments] = useState<Attachment[]>([]),
     [capability, setCapability] = useState<ImageCapability | null>(null),
     [error, setError] = useState<string | null>(null);
+  const [stt, setStt] = useState<SttUi>(() => sttUiSchema.parse({}));
+  const [now, setNow] = useState(Date.now());
   const ref = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
     let active = true;
@@ -20,13 +24,16 @@ export function InputApp() {
       if (active && result.ok) {
         setText(result.value.draft);
         setAttachments(result.value.attachments);
+        setStt(result.value.stt);
       }
     });
     const removeConfig = window.companion.onConfig(setConfig),
       removeUi = window.companion.onChatUi((ui) => {
         setText(ui.draft);
         setAttachments(ui.attachments);
-        if (ui.inputOpen) requestAnimationFrame(() => ref.current?.focus());
+        setStt(ui.stt);
+        if (ui.inputOpen && document.hasFocus() && document.activeElement === document.body)
+          requestAnimationFrame(() => ref.current?.focus());
       });
     return () => {
       active = false;
@@ -34,6 +41,17 @@ export function InputApp() {
       removeUi();
     };
   }, []);
+  useEffect(() => {
+    if (stt.status !== 'countdown') return;
+    setNow(Date.now());
+    const timer = setInterval(() => setNow(Date.now()), 100);
+    return () => clearInterval(timer);
+  }, [stt.status, stt.deadline]);
+  const recording = ['starting', 'recording'].includes(stt.status);
+  const voiceAction = async () => {
+    const result = await window.companion.startStt();
+    setError(result.ok ? null : result.error.userMessage);
+  };
   useEffect(() => {
     let active = true;
     void window.companion.getAttachmentCapability().then((result) => {
@@ -88,6 +106,29 @@ export function InputApp() {
       <main className={styles.chatbox} data-testid="input">
         <div className={styles.inner}>
           <div className={styles.name}>You</div>
+          {VOICE_INPUT_ENABLED && config?.stt.provider !== 'none' && (
+            <div className={styles.voiceStatus} role="status">
+              {recording
+                ? 'Recording…'
+                : stt.status === 'transcribing'
+                  ? 'Transcribing…'
+                  : stt.status === 'countdown'
+                    ? `Sending in ${Math.max(0, ((stt.deadline ?? now) - now) / 1000).toFixed(1)}s`
+                    : stt.notice}
+              {recording && <button onClick={() => void window.companion.stopStt()}>Stop</button>}
+              {['starting', 'recording', 'transcribing', 'countdown'].includes(stt.status) && (
+                <button onClick={() => void window.companion.abortStt()}>Cancel</button>
+              )}
+              {stt.status === 'idle' && (
+                <button
+                  title="Insert the most recent voice transcript"
+                  onClick={() => void window.companion.reinsertTranscript()}
+                >
+                  Last transcript
+                </button>
+              )}
+            </div>
+          )}
           <button
             className={styles.attach}
             aria-label="Attach images"
@@ -141,7 +182,14 @@ export function InputApp() {
             onChange={(event) => {
               setText(event.target.value);
               window.companion.saveDraft(event.target.value);
+              window.companion.saveCaret(event.target.selectionStart, event.target.selectionEnd);
             }}
+            onSelect={(event) =>
+              window.companion.saveCaret(
+                event.currentTarget.selectionStart,
+                event.currentTarget.selectionEnd,
+              )
+            }
             onKeyDown={(event) => {
               if (event.key === 'Escape') {
                 event.preventDefault();
@@ -159,12 +207,14 @@ export function InputApp() {
               }
             }}
           />
-          {config?.stt.provider !== 'none' && config?.stt.showMicButton && (
+          {VOICE_INPUT_ENABLED && config?.stt.provider !== 'none' && config?.stt.showMicButton && (
             <button
               className={styles.mic}
-              aria-label="Voice input"
-              disabled
-              title="Voice input is not available yet"
+              aria-label={recording ? 'Stop voice input' : 'Voice input'}
+              aria-pressed={recording}
+              disabled={stt.status === 'transcribing'}
+              title={recording ? 'Stop recording' : 'Start recording'}
+              onClick={() => void voiceAction()}
             >
               <span>
                 <img src={mic} alt="" />

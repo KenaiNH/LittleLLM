@@ -334,6 +334,7 @@ export function registerHandlers(
       Appearance: ['bubble', 'input'],
       Sprites: ['sprite'],
       Voice: ['tts'],
+      'Voice Input': ['stt'],
     };
     const selected = sections[p.panel];
     if (!selected) throw new Error('Panel reset is not implemented yet');
@@ -359,6 +360,10 @@ export function registerHandlers(
       secrets.clear('tts.openai-compatible-tts');
       secrets.clear('tts.elevenlabs');
       secrets.clear('tts.custom-http');
+    }
+    if (p.panel === 'Voice Input') {
+      secrets.clear('stt.openai-compatible-stt');
+      secrets.clear('stt.custom-http');
     }
     for (const section of selected) {
       if (section === 'sprite') await spriteManager.resetAll();

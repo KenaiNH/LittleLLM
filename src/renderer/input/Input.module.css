@@ -131,6 +131,28 @@
   background: rgba(255, 255, 255, 0.1);
   display: grid;
   place-items: center;
+  cursor: pointer;
+}
+.mic[aria-pressed='true'] {
+  background: rgba(255, 255, 255, 0.3);
+}
+.voiceStatus {
+  position: absolute;
+  left: 100px;
+  top: 27px;
+  right: 125px;
+  font-size: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.voiceStatus button {
+  color: inherit;
+  font: inherit;
+  text-shadow: inherit;
+  background: transparent;
+  border: 1px solid #ccd9ff;
+  cursor: pointer;
 }
 .mic span {
   width: 20px;

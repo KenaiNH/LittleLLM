@@ -2,6 +2,10 @@ import { BrowserWindow } from 'electron';
 import { fileURLToPath } from 'node:url';
 export const preloadPath = fileURLToPath(new URL('../preload/index.cjs', import.meta.url));
 let allowOutput: (contents: Electron.WebContents | null) => boolean = () => false;
+let allowMicrophone: (contents: Electron.WebContents | null) => boolean = () => false;
+export function configureMicrophonePermissions(rule: typeof allowMicrophone) {
+  allowMicrophone = rule;
+}
 export function configureOutputPermissions(
   rule: (contents: Electron.WebContents | null) => boolean,
 ) {
@@ -12,19 +16,23 @@ export function secureWindow(win: BrowserWindow): void {
   win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   win.webContents.session.setPermissionRequestHandler((contents, permission, callback, details) =>
     callback(
-      permission === 'speaker-selection' &&
-        details.isMainFrame &&
+      details.isMainFrame &&
         details.requestingUrl === contents.mainFrame.url &&
-        allowOutput(contents),
+        ((permission === 'speaker-selection' && allowOutput(contents)) ||
+          (permission === 'media' &&
+            'mediaTypes' in details &&
+            details.mediaTypes?.length === 1 &&
+            details.mediaTypes[0] === 'audio' &&
+            allowMicrophone(contents))),
     ),
   );
   win.webContents.session.setPermissionCheckHandler(
     (contents, permission, _origin, details) =>
-      permission === 'speaker-selection' &&
       Boolean(contents) &&
       details.isMainFrame &&
       details.requestingUrl === contents?.mainFrame.url &&
-      allowOutput(contents),
+      ((permission === 'speaker-selection' && allowOutput(contents)) ||
+        (permission === 'media' && details.mediaType === 'audio' && allowMicrophone(contents))),
   );
 }
 export async function loadRenderer(win: BrowserWindow, view: string): Promise<void> {

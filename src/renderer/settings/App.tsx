@@ -11,20 +11,31 @@ import { Hotkeys, hotkeyMatches, HOTKEY_ACTIONS } from './Hotkeys';
 import { AppearancePreview } from './AppearancePreview';
 import { SpritesPanel } from './SpritesPanel';
 import { VoicePanel } from './VoicePanel';
+import { VoiceInputPanel } from './VoiceInputPanel';
 import searchIcon from '../../../assets/figma/2004-411-imgSearch.svg';
 import chevron from '../../../assets/figma/16-205-imgChevronDown.svg';
 import toggleOn from '../../../assets/figma/2004-411-imgToggleOn.svg';
 import toggleOff from '../../../assets/figma/16-205-imgToggleOff.svg';
 import styles from './Settings.module.css';
-const implemented = new Set<Panel>(['General', 'Sprites', 'Model', 'Voice', 'Appearance']);
+const implemented = new Set<Panel>([
+  'General',
+  'Sprites',
+  'Model',
+  'Voice',
+  'Voice Input',
+  'Appearance',
+]);
 const extras: Partial<Record<Panel, string[]>> = {
   Voice: ['API key authentication password', 'Test Voice', 'Test Connection'],
+  'Voice Input': [
+    'API key password permission Input level Test Microphone Test Connection Privacy',
+    'Re-insert last transcript',
+  ],
   Sprites: SPRITE_SEARCH_LABELS,
   General: [
     'Hotkeys shortcut keyboard',
     ...HOTKEY_ACTIONS.map(([, label]) => label + ' shortcut keyboard'),
     'Stop speaking / cancel generation',
-    'Check for Updates Now',
   ],
   Model: [
     'API key authentication password',
@@ -177,12 +188,6 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
   const groups = [...new Set(rows.map((d) => d.group))];
   if (panel === 'General' && hotkeyMatches(query))
     groups.splice(Math.min(3, groups.length), 0, 'Hotkeys');
-  if (
-    panel === 'General' &&
-    matchesSearch('Check for Updates Now', query) &&
-    !groups.includes('Updates')
-  )
-    groups.push('Updates');
   if (panel === 'Model' && extras.Model?.some((label) => matchesSearch(label, query))) {
     if (
       (matchesSearch('API key authentication password', query) ||
@@ -205,6 +210,7 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
         SETTINGS.some((d) => d.panel === panel && `${d.section}.${d.key}` === key) ||
         (panel === 'Model' && key.startsWith('secret.llm.')) ||
         (panel === 'Voice' && key.startsWith('secret.tts.')) ||
+        (panel === 'Voice Input' && key.startsWith('secret.stt.')) ||
         (panel === 'General' && key.startsWith('hotkeys.')) ||
         (panel === 'Sprites' && key.startsWith('sprite.'));
       useSettingsStore.setState((state) => ({
@@ -342,8 +348,9 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
           {groups.length === 0 && <p>No matching settings.</p>}
           {panel === 'Sprites' && <SpritesPanel config={config} query={query} />}
           {panel === 'Voice' && <VoicePanel config={config} query={query} />}
+          {panel === 'Voice Input' && <VoiceInputPanel config={config} query={query} />}
           {groups
-            .filter(() => panel !== 'Sprites' && panel !== 'Voice')
+            .filter(() => !['Sprites', 'Voice', 'Voice Input'].includes(panel))
             .map((group) => (
               <section key={group} className={styles.section}>
                 <h2>{group}</h2>
@@ -384,20 +391,6 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
                   {panel === 'General' && group === 'Hotkeys' && (
                     <Hotkeys config={config} query={query} />
                   )}
-                  {panel === 'General' &&
-                    group === 'Updates' &&
-                    matchesSearch('Check for Updates Now', query) && (
-                      <div className={styles.row}>
-                        <button
-                          className={styles.button}
-                          disabled
-                          title="No update feed is configured"
-                        >
-                          Check for Updates Now
-                        </button>
-                        <div className={styles.hint}>No update feed is configured.</div>
-                      </div>
-                    )}
                   {panel === 'Model' && group === 'Conversation Memory' && (
                     <>
                       {environment?.historyWarning && (

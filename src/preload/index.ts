@@ -39,6 +39,16 @@ import {
   resetPanelResultSchema,
 } from '../shared/settings';
 import { z } from 'zod';
+import {
+  sttActionSchema,
+  sttPreviewSchema,
+  sttTestSchema,
+  sttDevicesSchema,
+  sttFrameSchema,
+  sttFeedbackSchema,
+  sttCaptureSchema,
+  caretSchema,
+} from '../shared/stt';
 import { ttsPacketSchema, ttsFeedbackSchema, ttsTestSchema, voiceListSchema } from '../shared/tts';
 import {
   attachmentFileSchema,
@@ -53,6 +63,36 @@ import {
   spritePatchSchema,
 } from '../shared/spriteImport';
 const api: CompanionAPI = {
+  startStt: async (action = 'toggle') =>
+    resultSchema(z.null()).parse(
+      await ipcRenderer.invoke(CHANNELS.sttStart, sttActionSchema.parse({ action })),
+    ),
+  stopStt: async () => resultSchema(z.null()).parse(await ipcRenderer.invoke(CHANNELS.sttStop, {})),
+  abortStt: async () =>
+    resultSchema(z.null()).parse(await ipcRenderer.invoke(CHANNELS.sttAbort, {})),
+  previewMicrophone: async (active) =>
+    resultSchema(z.null()).parse(
+      await ipcRenderer.invoke(CHANNELS.sttPreview, sttPreviewSchema.parse({ active })),
+    ),
+  testSttConnection: async () =>
+    resultSchema(sttTestSchema).parse(await ipcRenderer.invoke(CHANNELS.sttTest, {})),
+  getInputDevices: async () =>
+    resultSchema(sttDevicesSchema).parse(await ipcRenderer.invoke(CHANNELS.sttDevices, {})),
+  reinsertTranscript: async () =>
+    resultSchema(z.null()).parse(await ipcRenderer.invoke(CHANNELS.sttReinsert, {})),
+  openMicrophoneSettings: async () =>
+    resultSchema(z.null()).parse(await ipcRenderer.invoke(CHANNELS.sttPrivacy, {})),
+  saveCaret: (start, end) => ipcRenderer.send(CHANNELS.sttCaret, caretSchema.parse({ start, end })),
+  sendSttFrame: (frame) => ipcRenderer.send(CHANNELS.sttAudioFrame, sttFrameSchema.parse(frame)),
+  sttFeedback: (event) => ipcRenderer.send(CHANNELS.sttFeedback, sttFeedbackSchema.parse(event)),
+  onSttCapture: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => {
+      const parsed = sttCaptureSchema.safeParse(value);
+      if (parsed.success) callback(parsed.data);
+    };
+    ipcRenderer.on(CHANNELS.sttCapture, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.sttCapture, listener);
+  },
   listVoices: async () =>
     resultSchema(voiceListSchema).parse(
       await ipcRenderer.invoke(CHANNELS.ttsVoices, emptySchema.parse({})),
