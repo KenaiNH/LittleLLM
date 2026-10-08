@@ -6,8 +6,17 @@ export const sizeSchema = z
 export const pointSchema = z.object({ x: z.number().finite(), y: z.number().finite() }).strict();
 export const rectSchema = pointSchema.merge(sizeSchema);
 export const petLayoutRequestSchema = z
-  .object({ sprite: sizeSchema, bubble: sizeSchema.nullable() })
-  .strict();
+  .object({ sprite: sizeSchema, bubble: sizeSchema.nullable(), anchor: pointSchema.optional() })
+  .strict()
+  .refine(
+    (value) =>
+      !value.anchor ||
+      (value.anchor.x >= 0 &&
+        value.anchor.x <= value.sprite.width &&
+        value.anchor.y >= 0 &&
+        value.anchor.y <= value.sprite.height),
+    'Anchor is outside the sprite',
+  );
 export const petViewportSchema = z
   .object({
     window: rectSchema,

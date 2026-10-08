@@ -40,6 +40,8 @@ export const CHANNELS = {
   windowVisibility: 'window:visibility',
   windowDpi: 'window:dpi',
   stateChanged: 'state:changed',
+  stateGet: 'state:get',
+  stateOverride: 'state:override',
   toastShow: 'toast:show',
   shellOpenExternal: 'shell:open-external',
   shellOpenPath: 'shell:open-path',

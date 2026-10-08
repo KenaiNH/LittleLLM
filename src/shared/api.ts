@@ -4,8 +4,13 @@ import type { SpriteAssets, SpriteMasks } from './sprites';
 import type { ChatUi } from './chatUi';
 import type { PetViewport } from './petLayout';
 import type { ChatEvent } from './llm';
+import type { CompanionState } from './state';
+import type { SpriteState } from './enums';
 export type Result<T> = { ok: true; value: T } | { ok: false; error: AppError };
 export interface CompanionAPI {
+  getState(): Promise<Result<CompanionState>>;
+  onState(callback: (value: CompanionState) => void): () => void;
+  overrideState(state: SpriteState | 'auto'): Promise<Result<null>>;
   getConfig(): Promise<Result<Config>>;
   setConfig(section: ConfigSection, value: unknown): Promise<Result<Config>>;
   resetConfig(section: ConfigSection): Promise<Result<Config>>;
@@ -17,6 +22,7 @@ export interface CompanionAPI {
   layoutPet(
     sprite: { width: number; height: number },
     bubble: { width: number; height: number } | null,
+    anchor?: { x: number; y: number },
   ): Promise<Result<PetViewport>>;
   onPetViewport(callback: (value: PetViewport) => void): () => void;
   openExternal(url: string): Promise<Result<null>>;

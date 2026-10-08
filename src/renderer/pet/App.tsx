@@ -6,12 +6,30 @@ import type { ChatUi } from '../../shared/chatUi';
 import { Bubble } from './Bubble';
 import type { PetViewport } from '../../shared/petLayout';
 import styles from './App.module.css';
+import { useSpriteScene } from './useSpriteScene';
 export function PetApp() {
   const { config, assets, state, error, initialize, setState } = usePetStore();
   const [ui, setUi] = useState<ChatUi | null>(null),
     [viewport, setViewport] = useState<PetViewport | null>(null),
     [bubbleSize, setBubbleSize] = useState<{ width: number; height: number } | null>(null);
-  useSpriteInteraction(config, state);
+  const { scene, finish } = useSpriteScene(
+    assets,
+    config?.sprite,
+    state,
+    viewport?.dpi ?? window.devicePixelRatio,
+  );
+  useSpriteInteraction(config, scene);
+  useEffect(() => {
+    let active = true;
+    void window.companion.getState().then((result) => {
+      if (active && result.ok) setState(result.value.state);
+    });
+    const remove = window.companion.onState((value) => setState(value.state));
+    return () => {
+      active = false;
+      remove();
+    };
+  }, [setState]);
   useEffect(() => {
     void initialize();
     return window.companion.onConfig(() => {
@@ -49,25 +67,14 @@ export function PetApp() {
       ),
     [],
   );
-  const selected =
-      state === 'listening'
-        ? config?.sprite.listeningBehavior === 'use-thinking'
-          ? 'thinking'
-          : config?.sprite.listeningBehavior === 'custom'
-            ? 'listening'
-            : 'idle'
-        : state,
-    asset = assets?.[selected] ?? assets?.idle,
-    scale = config
-      ? config.sprite.scale / (config.sprite.scaleMode === 'fixed' ? (viewport?.dpi ?? 1) : 1)
-      : 1;
   useEffect(() => {
-    if (!asset || !config || !viewport) return;
+    if (!scene || !config || !viewport) return;
     let active = true;
     void window.companion
       .layoutPet(
-        { width: asset.width * scale, height: asset.height * scale },
+        { width: scene.geometry.width, height: scene.geometry.height },
         ui?.reply ? bubbleSize : null,
+        scene.geometry.anchor,
       )
       .then((result) => {
         if (active && result.ok) setViewport(result.value);
@@ -76,15 +83,13 @@ export function PetApp() {
       active = false;
     };
   }, [
-    asset,
+    scene,
     config,
-    scale,
     bubbleSize,
     Boolean(ui?.reply),
     viewport?.workArea.width,
     viewport?.workArea.height,
   ]);
-  const completed = useCallback(() => setState('idle'), [setState]);
   return (
     <div
       className={styles.pet}
@@ -108,16 +113,31 @@ export function PetApp() {
           />
         </div>
       )}
-      {config && assets && viewport && (
+      {config && assets && viewport && scene && (
         <div className={styles.layer} style={{ left: viewport.sprite.x, top: viewport.sprite.y }}>
           <Sprite
             assets={assets}
-            config={config.sprite}
+            scene={scene}
             state={state}
-            onComplete={completed}
+            onFadeEnd={finish}
             fpsCap={config.advanced.fpsCap === 'display' ? 240 : Number(config.advanced.fpsCap)}
           />
         </div>
+      )}
+      {import.meta.env.DEV && (
+        <select
+          aria-label="Preview sprite state"
+          data-interactive
+          style={{ position: 'absolute', top: 0, left: 0 }}
+          defaultValue="auto"
+          onChange={(event) =>
+            void window.companion.overrideState(event.target.value as typeof state | 'auto')
+          }
+        >
+          {['auto', 'idle', 'thinking', 'speaking', 'listening'].map((value) => (
+            <option key={value}>{value}</option>
+          ))}
+        </select>
       )}
     </div>
   );

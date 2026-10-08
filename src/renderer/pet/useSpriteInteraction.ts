@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import type { Config } from '../../shared/config';
 import type { SpriteState } from '../../shared/enums';
 import { alphaHit, sourcePixel, type AlphaMask } from '../../shared/hitTest';
-export function useSpriteInteraction(config: Config | null, state: SpriteState) {
+import type { SpriteScene } from './useSpriteScene';
+export function useSpriteInteraction(config: Config | null, scene: SpriteScene | null) {
   useEffect(() => {
     if (!config) return;
     const controller = new AbortController();
@@ -39,15 +40,6 @@ export function useSpriteInteraction(config: Config | null, state: SpriteState) 
       const canvas = document.querySelector('canvas[data-testid="sprite"]');
       const bounds = canvas?.getBoundingClientRect();
       if (!bounds) return;
-      const selected =
-        state === 'listening'
-          ? config.sprite.listeningBehavior === 'use-thinking'
-            ? 'thinking'
-            : config.sprite.listeningBehavior === 'custom'
-              ? 'listening'
-              : 'idle'
-          : state;
-      const mask = masks[selected] ?? masks.idle;
       const interactive =
         event.target instanceof Element
           ? event.target.closest('button,input,textarea,select,[data-interactive]')
@@ -62,22 +54,29 @@ export function useSpriteInteraction(config: Config | null, state: SpriteState) 
         Boolean(interactive) ||
         (inside &&
           (config.advanced.clickThrough === 'bounding-box' ||
-            !mask ||
-            alphaHit(
-              mask,
-              sourcePixel({
-                cursorDip: { x: event.screenX, y: event.screenY },
-                windowDip: { x: window.screenX, y: window.screenY },
-                canvasCss: { x: bounds.x, y: bounds.y },
-                scale: config.sprite.scale,
-                dpi: window.devicePixelRatio,
-                scaleMode: config.sprite.scaleMode,
-                flip: config.sprite.flipHorizontal,
-                width: mask.width,
-                height: mask.height,
-              }),
-              config.advanced.alphaThreshold,
-            )));
+            !scene ||
+            scene.layers.some((layer) => {
+              const mask = masks[layer.selected] ?? masks.idle;
+              if (!mask) return true;
+              return alphaHit(
+                mask,
+                sourcePixel({
+                  cursorDip: { x: event.screenX, y: event.screenY },
+                  windowDip: { x: window.screenX, y: window.screenY },
+                  canvasCss: {
+                    x: bounds.x + scene.geometry.anchor.x - layer.geometry.anchor.x,
+                    y: bounds.y + scene.geometry.anchor.y - layer.geometry.anchor.y,
+                  },
+                  scale: layer.geometry.width / mask.width,
+                  dpi: window.devicePixelRatio,
+                  scaleMode: 'dpi-aware',
+                  flip: layer.flip,
+                  width: mask.width,
+                  height: mask.height,
+                }),
+                config.advanced.alphaThreshold,
+              );
+            })));
       ignore = !hit;
       if (!frame) {
         let samples = 0;
@@ -160,5 +159,5 @@ export function useSpriteInteraction(config: Config | null, state: SpriteState) 
       document.removeEventListener('keydown', key);
       window.companion.setIgnoreMouse(false);
     };
-  }, [config, state]);
+  }, [config, scene]);
 }

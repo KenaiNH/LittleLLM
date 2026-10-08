@@ -27,16 +27,31 @@ test('transparent pixels deliver native button presses to the window behind', as
         height: 200,
         frame: false,
         alwaysOnTop: true,
+        show: false,
         webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true },
       });
       await behind.loadURL(
         'data:text/html,<body style="margin:0;background:white;width:100vw;height:100vh"><script>window.clicks=0;document.addEventListener("mousedown",()=>window.clicks++);</script>',
       );
       behind.show();
+      behind.focus();
       pet.showInactive();
       pet.setAlwaysOnTop(true, 'screen-saver');
+      pet.moveTop();
       const factor = screen.getDisplayMatching(pet.getBounds()).scaleFactor;
-      return { x: Math.round(200 * factor), y: Math.round(200 * factor), factor };
+      const handle = (win: Electron.BrowserWindow) => {
+        const buffer = win.getNativeWindowHandle();
+        return buffer.length === 8
+          ? buffer.readBigUInt64LE().toString()
+          : String(buffer.readUInt32LE());
+      };
+      return {
+        x: Math.round(200 * factor),
+        y: Math.round(200 * factor),
+        factor,
+        pet: handle(pet),
+        behind: handle(behind),
+      };
     });
     await page.evaluate(() => {
       document
@@ -47,8 +62,8 @@ test('transparent pixels deliver native button presses to the window behind', as
             (document.body.dataset.clicks = String(Number(document.body.dataset.clicks ?? 0) + 1)),
         );
     });
-    const pointer = async (x: number, y: number, click = false) =>
-      run(
+    const pointer = async (x: number, y: number, click = false, target?: string) => {
+      await run(
         'powershell.exe',
         [
           '-NoProfile',
@@ -61,9 +76,11 @@ test('transparent pixels deliver native button presses to the window behind', as
           '-Y',
           String(y),
           ...(click ? ['-Click'] : []),
+          ...(target ? ['-ExpectedWindow', target] : []),
         ],
         { windowsHide: true },
       );
+    };
     const behindClicks = () =>
       app.evaluate(async ({ BrowserWindow }) => {
         const win = BrowserWindow.getAllWindows().find((w) =>
@@ -72,17 +89,22 @@ test('transparent pixels deliver native button presses to the window behind', as
         if (!win) throw new Error('Missing backdrop');
         return win.webContents.executeJavaScript('window.clicks') as Promise<number>;
       });
-    await pointer(Math.round(350 * positions.factor), Math.round(350 * positions.factor), true);
+    await pointer(
+      Math.round(350 * positions.factor),
+      Math.round(350 * positions.factor),
+      true,
+      positions.behind,
+    );
     await expect.poll(behindClicks).toBe(1);
     await pointer(positions.x + 2, positions.y + 2);
     await page.waitForTimeout(150);
-    await pointer(positions.x + 2, positions.y + 2, true);
+    await pointer(positions.x + 2, positions.y + 2, true, positions.behind);
     await expect.poll(behindClicks).toBe(2);
     const x = positions.x + Math.round(64 * positions.factor),
       y = positions.y + Math.round(65 * positions.factor);
     await pointer(x, y);
     await page.waitForTimeout(150);
-    await pointer(x, y, true);
+    await pointer(x, y, true, positions.pet);
     await expect.poll(() => page.evaluate(() => document.body.dataset.clicks)).toBe('1');
     expect(await behindClicks()).toBe(2);
   } finally {

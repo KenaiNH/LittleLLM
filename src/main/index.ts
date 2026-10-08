@@ -58,9 +58,15 @@ if (!app.requestSingleInstanceLock()) {
       }
     });
     registerHandlers(config, openSettings, sprites);
-    await createPetWindow(config, openSettings, (pet) => {
-      new InputWindow(config, pet);
-    });
+    await createPetWindow(
+      config,
+      openSettings,
+      (pet) => {
+        new InputWindow(config, pet);
+      },
+      async () =>
+        (await sprites.assets(config.get().sprite, config.get().advanced.spriteCacheMb)).idle,
+    );
     if (config.backupPath && !testData)
       await dialog.showMessageBox({
         type: 'warning',

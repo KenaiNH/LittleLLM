@@ -15,18 +15,37 @@ import { emptySchema, resultSchema } from '../ipc/schemas';
 import { normalizeError } from '../../shared/errors';
 import { wheelSchema } from '../ipc/schemas';
 import { forwardWheel } from '../platform/win32/wheel';
+import { frameGeometry, anchoredOrigin, type SpriteGeometry } from '../../shared/spriteGeometry';
 export async function createPetWindow(
   config: ConfigStore,
   settings: (panel: string) => void,
   created?: (win: BrowserWindow) => void,
+  idleDimensions?: () => Promise<{ width: number; height: number }>,
 ): Promise<BrowserWindow> {
   const cfg = config.get().window;
-  const size = { width: 128, height: 128 };
+  let idleSize = { width: 128, height: 128 };
+  try {
+    if (idleDimensions) idleSize = await idleDimensions();
+  } catch {
+    /* The renderer reports invalid artwork; keep a recoverable window. */
+  }
   const displays = screen.getAllDisplays();
   const display =
     cfg.displayTarget === 'cursor'
       ? screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
       : (displays.find((d) => String(d.id) === cfg.displayTarget) ?? screen.getPrimaryDisplay());
+  const idleGeometry = (dpi: number) => {
+    const sprite = config.get().sprite;
+    return frameGeometry(
+      idleSize.width,
+      idleSize.height,
+      sprite.scale / (sprite.scaleMode === 'fixed' ? dpi : 1),
+      sprite.idle.anchor,
+      sprite.flipHorizontal,
+    );
+  };
+  let geometry: SpriteGeometry = idleGeometry(display.scaleFactor);
+  const size = { width: Math.round(geometry.width), height: Math.round(geometry.height) };
   const saved = cfg.restorePosition ? cfg.positions[String(display.id)] : undefined;
   const position = clampPosition(
     saved ?? defaultPosition(size, display.workArea, cfg.defaultAnchor, cfg.edgeMarginPx),
@@ -51,6 +70,9 @@ export async function createPetWindow(
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      // The visible companion normally stays unfocused. Its explicit visibility
+      // gate pauses rAF when hidden; Chromium must not throttle visible animation.
+      backgroundThrottling: false,
     },
   });
   secureWindow(win);
@@ -114,11 +136,19 @@ export async function createPetWindow(
         current = screen.getDisplayMatching(bounds),
         cfg = config.get(),
         limits = bubbleLimits(cfg, current.workArea, current.scaleFactor);
+      const nextGeometry: SpriteGeometry = {
+        ...request.sprite,
+        anchor: request.anchor ?? { x: request.sprite.width / 2, y: request.sprite.height },
+      };
       const sprite = {
-        x: bounds.x + viewport.sprite.x + viewport.sprite.width - request.sprite.width,
-        y: bounds.y + viewport.sprite.y + viewport.sprite.height - request.sprite.height,
+        ...anchoredOrigin(
+          { x: bounds.x + viewport.sprite.x, y: bounds.y + viewport.sprite.y },
+          geometry,
+          nextGeometry,
+        ),
         ...request.sprite,
       };
+      geometry = nextGeometry;
       viewport = {
         ...arrangePet(
           sprite,
@@ -126,13 +156,17 @@ export async function createPetWindow(
           current.workArea,
           cfg.bubble.bubblePlacement,
           cfg.bubble.gapFromSpritePx,
-          cfg.sprite.flipHorizontal ? 1 - cfg.sprite.idle.anchor.x : cfg.sprite.idle.anchor.x,
+          geometry.anchor.x / geometry.width,
           70 * limits.scale,
         ),
         dpi: current.scaleFactor,
         dark: nativeTheme.shouldUseDarkColors,
       };
-      anchorOffset = { x: viewport.sprite.x, y: viewport.sprite.y };
+      const idle = idleGeometry(current.scaleFactor);
+      anchorOffset = {
+        x: viewport.sprite.x + geometry.anchor.x - idle.anchor.x,
+        y: viewport.sprite.y + geometry.anchor.y - idle.anchor.y,
+      };
       win.setBounds(viewport.window);
       return resultSchema(petViewportSchema).parse({ ok: true, value: viewport });
     } catch (error) {
@@ -160,6 +194,24 @@ export async function createPetWindow(
   nativeTheme.on('updated', emitViewport);
   let timer: ReturnType<typeof setTimeout> | undefined;
   let anchorOffset = { x: 0, y: 0 };
+  let artworkGeneration = 0;
+  const removeConfig = config.onChange((section) => {
+    if (section !== 'sprite' || !idleDimensions) return;
+    const epoch = ++artworkGeneration;
+    void idleDimensions()
+      .then((value) => {
+        if (epoch !== artworkGeneration || win.isDestroyed()) return;
+        idleSize = value;
+        const idle = idleGeometry(screen.getDisplayMatching(win.getBounds()).scaleFactor);
+        anchorOffset = {
+          x: viewport.sprite.x + geometry.anchor.x - idle.anchor.x,
+          y: viewport.sprite.y + geometry.anchor.y - idle.anchor.y,
+        };
+      })
+      .catch(() => {
+        /* Existing geometry stays recoverable until valid artwork is restored. */
+      });
+  });
   win.on('move', () => {
     clearTimeout(timer);
     timer = setTimeout(() => {
@@ -234,6 +286,7 @@ export async function createPetWindow(
     ]).popup({ window: win }),
   );
   win.once('closed', () => {
+    removeConfig();
     clearTimeout(timer);
     screen.removeListener('display-metrics-changed', reassert);
     screen.removeListener('display-removed', reassert);

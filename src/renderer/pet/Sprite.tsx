@@ -1,21 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import type { SpriteAssets } from '../../shared/sprites';
-import type { SpriteConfig } from '../../shared/config';
 import type { SpriteState } from '../../shared/enums';
 import { AnimationClock } from '../../shared/animation';
 import { decodeSpriteAssets, closeSpriteAssets, type BitmapSet } from './spriteBitmaps';
+import type { SpriteScene } from './useSpriteScene';
 import styles from './Sprite.module.css';
+
 export function Sprite({
   assets,
-  config,
+  scene,
   state,
-  onComplete,
+  onFadeEnd,
   fpsCap = 60,
 }: {
   assets: SpriteAssets;
-  config: SpriteConfig;
+  scene: SpriteScene;
   state: SpriteState;
-  onComplete?: () => void;
+  onFadeEnd: (id: number) => void;
   fpsCap?: number;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -29,18 +30,12 @@ export function Sprite({
   const [error, setError] = useState<string | null>(null);
   const bitmaps =
     decodedSet?.assets === assets && decodedSet.dpi === dpi ? decodedSet.bitmaps : null;
-  const clockRef = useRef<{ key: string; clock: AnimationClock } | null>(null);
-  const selected =
-    state === 'listening'
-      ? config.listeningBehavior === 'use-thinking'
-        ? 'thinking'
-        : config.listeningBehavior === 'custom' && assets.listening
-          ? 'listening'
-          : 'idle'
-      : state;
-  const asset = assets[selected] ?? assets.idle;
-  const spec = config[selected] ?? config.idle;
-  const scale = config.scale / (config.scaleMode === 'fixed' ? dpi : 1);
+  const run = useRef<{
+    id: number;
+    clock: AnimationClock;
+    previous: HTMLCanvasElement | null;
+    elapsed: number;
+  } | null>(null);
   useEffect(() => {
     const controller = new AbortController();
     let decoded: BitmapSet | undefined;
@@ -71,60 +66,106 @@ export function Sprite({
     };
   }, []);
   useEffect(() => {
-    const canvas = ref.current,
-      frames = bitmaps?.[selected];
-    if (!canvas || !frames?.length) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    canvas.width = Math.round(asset.width * scale * dpi);
-    canvas.height = Math.round(asset.height * scale * dpi);
-    ctx.imageSmoothingEnabled =
-      config.pixelated === 'off' ||
-      (config.pixelated === 'auto' && Math.max(asset.width, asset.height) > 128);
-    const key = JSON.stringify([selected, spec.playbackMode, asset.frames]);
-    if (clockRef.current?.key !== key)
-      clockRef.current = {
-        key,
+    const canvas = ref.current;
+    if (!canvas) return;
+    // Snapshot the last composite before resizing. Rapid transitions continue
+    // from what was visible rather than jumping to the old target image.
+    if (run.current?.id !== scene.id) {
+      let previous: HTMLCanvasElement | null = null;
+      if (scene.previous && canvas.width && canvas.height && run.current) {
+        previous = document.createElement('canvas');
+        previous.width = canvas.width;
+        previous.height = canvas.height;
+        previous.getContext('2d')?.drawImage(canvas, 0, 0);
+      }
+      run.current = {
+        id: scene.id,
+        previous,
+        elapsed: previous ? 0 : scene.duration,
         clock: new AnimationClock(
-          asset.frames.map((f) => f.delayMs),
-          spec.playbackMode,
+          scene.target.asset.frames.map((f) => f.delayMs),
+          // Binding C23 preserves all four modes. Default idle loops; configured
+          // non-looping animation holds its final frame while its state is active.
+          scene.target.spec.playbackMode,
         ),
       };
-    const clock = clockRef.current.clock;
+    }
+    const animation = run.current,
+      frames = bitmaps?.[scene.target.selected];
+    if (!animation || !frames?.length) return;
+    canvas.width = Math.max(1, Math.round(scene.geometry.width * dpi));
+    canvas.height = Math.max(1, Math.round(scene.geometry.height * dpi));
+    const ctx = canvas.getContext('2d'),
+      composite = document.createElement('canvas');
+    composite.width = canvas.width;
+    composite.height = canvas.height;
+    const offscreen = composite.getContext('2d');
+    if (!ctx || !offscreen) return;
     let handle = 0,
-      lastDraw = -1,
-      lastPaint = -Infinity;
+      lastFrame = -1,
+      lastProgress = -1,
+      lastPaint = -Infinity,
+      previousTime: number | null = null;
     const paint = (now: number) => {
       if (now - lastPaint >= 1000 / fpsCap) {
         lastPaint = now;
-        const tick = clock.tick(now);
-        const bitmap = frames[tick.frame];
-        if (bitmap && tick.frame !== lastDraw) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.save();
-          ctx.globalAlpha = config.opacity;
-          if (config.flipHorizontal) {
-            ctx.translate(canvas.width, 0);
-            ctx.scale(-1, 1);
-          }
-          ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-          ctx.restore();
-          lastDraw = tick.frame;
+        if (visible && previousTime !== null) animation.elapsed += Math.max(0, now - previousTime);
+        previousTime = now;
+        const tick = animation.clock.tick(now),
+          bitmap = frames[tick.frame];
+        const progress = scene.previous ? Math.min(1, animation.elapsed / scene.duration) : 1;
+        if (bitmap && (tick.frame !== lastFrame || progress !== lastProgress)) {
+          offscreen.clearRect(0, 0, composite.width, composite.height);
+          offscreen.globalCompositeOperation = 'source-over';
+          offscreen.globalAlpha = 1 - progress;
+          if (animation.previous && scene.previous)
+            offscreen.drawImage(
+              animation.previous,
+              (scene.geometry.anchor.x - scene.previous.anchor.x) * dpi,
+              (scene.geometry.anchor.y - scene.previous.anchor.y) * dpi,
+              scene.previous.width * dpi,
+              scene.previous.height * dpi,
+            );
+          // Add weighted premultiplied RGBA offscreen. Source-over would darken
+          // transparent edges and reduce opaque alpha at the midpoint.
+          offscreen.globalCompositeOperation = 'lighter';
+          offscreen.globalAlpha = progress * scene.target.opacity;
+          offscreen.imageSmoothingEnabled = !scene.target.pixelated;
+          const g = scene.target.geometry,
+            x = (scene.geometry.anchor.x - g.anchor.x) * dpi,
+            y = (scene.geometry.anchor.y - g.anchor.y) * dpi;
+          offscreen.save();
+          if (scene.target.flip) {
+            offscreen.translate(x + g.width * dpi, y);
+            offscreen.scale(-1, 1);
+          } else offscreen.translate(x, y);
+          offscreen.drawImage(bitmap, 0, 0, g.width * dpi, g.height * dpi);
+          offscreen.restore();
+          ctx.globalCompositeOperation = 'copy';
+          ctx.drawImage(composite, 0, 0);
+          lastFrame = tick.frame;
+          lastProgress = progress;
           canvas.dataset.frame = String(tick.frame);
+          canvas.dataset.fade = String(progress);
         }
-        if (tick.returnToIdle) {
-          onComplete?.();
-          return;
+        if (scene.previous && progress === 1) {
+          animation.previous = null;
+          onFadeEnd(scene.id);
         }
       }
-      if (visible) handle = requestAnimationFrame(paint);
+      if (
+        visible &&
+        ((frames.length > 1 && !animation.clock.finished) ||
+          (scene.previous && animation.elapsed < scene.duration))
+      )
+        handle = requestAnimationFrame(paint);
     };
     paint(performance.now());
     return () => {
       cancelAnimationFrame(handle);
-      clock.pause();
+      animation.clock.pause();
     };
-  }, [asset, bitmaps, config, dpi, fpsCap, onComplete, scale, selected, spec, visible]);
+  }, [bitmaps, dpi, fpsCap, onFadeEnd, scene, state, visible]);
   return (
     <>
       <canvas
@@ -135,13 +176,9 @@ export function Sprite({
         aria-label={state + ' companion sprite'}
         className={styles.sprite}
         style={{
-          width: asset.width * scale,
-          height: asset.height * scale,
-          imageRendering:
-            config.pixelated === 'on' ||
-            (config.pixelated === 'auto' && Math.max(asset.width, asset.height) <= 128)
-              ? 'pixelated'
-              : 'auto',
+          width: scene.geometry.width,
+          height: scene.geometry.height,
+          imageRendering: scene.target.pixelated ? 'pixelated' : 'auto',
         }}
       />
       {error && <span role="alert">{error}</span>}

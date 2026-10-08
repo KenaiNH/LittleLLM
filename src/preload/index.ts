@@ -22,7 +22,24 @@ import { petViewportSchema, petLayoutRequestSchema } from '../shared/petLayout';
 import { externalUrlSchema } from '../main/ipc/schemas';
 import { wheelSchema } from '../main/ipc/schemas';
 import { abortChatSchema, requestIdSchema, chatEventSchema } from '../shared/llm';
+import { companionStateSchema, overrideStateSchema } from '../shared/state';
 const api: CompanionAPI = {
+  getState: async () =>
+    resultSchema(companionStateSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.stateGet, emptySchema.parse({})),
+    ),
+  overrideState: async (state) =>
+    voidResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.stateOverride, overrideStateSchema.parse({ state })),
+    ),
+  onState: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => {
+      const parsed = companionStateSchema.safeParse(value);
+      if (parsed.success) callback(parsed.data);
+    };
+    ipcRenderer.on(CHANNELS.stateChanged, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.stateChanged, listener);
+  },
   chat: async (text) =>
     resultSchema(requestIdSchema).parse(
       await ipcRenderer.invoke(CHANNELS.llmChat, submitSchema.parse({ text })),
@@ -55,11 +72,11 @@ const api: CompanionAPI = {
     resultSchema(petViewportSchema).parse(
       await ipcRenderer.invoke(CHANNELS.windowViewport, emptySchema.parse({})),
     ),
-  layoutPet: async (sprite, bubble) =>
+  layoutPet: async (sprite, bubble, anchor) =>
     resultSchema(petViewportSchema).parse(
       await ipcRenderer.invoke(
         CHANNELS.windowLayout,
-        petLayoutRequestSchema.parse({ sprite, bubble }),
+        petLayoutRequestSchema.parse({ sprite, bubble, anchor }),
       ),
     ),
   onPetViewport: (callback) => {

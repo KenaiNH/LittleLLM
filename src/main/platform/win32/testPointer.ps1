@@ -1,9 +1,24 @@
 # Native pointer driver for Windows integration tests; never loaded by the app.
-param([int]$X, [int]$Y, [switch]$Click, [int]$WheelDelta = 0)
+param([int]$X, [int]$Y, [switch]$Click, [int]$WheelDelta = 0, [long]$ExpectedWindow = 0)
 Add-Type -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
 public static class TestPointer {
+  [StructLayout(LayoutKind.Sequential)] public struct Point { public int x,y; }
+  [DllImport("user32.dll")] public static extern bool GetCursorPos(out Point p);
+  [DllImport("user32.dll")] public static extern IntPtr WindowFromPoint(Point p);
+  [DllImport("user32.dll")] public static extern IntPtr GetAncestor(IntPtr h, uint flags);
+  public static void VerifyWindow(long expected) {
+    if (expected == 0) return;
+    Point p; GetCursorPos(out p);
+    var actual=GetAncestor(WindowFromPoint(p),2).ToInt64();
+    if(actual != expected) throw new InvalidOperationException("Native pointer target: expected "+expected+", actual "+actual+".");
+  }
+  public static void VerifyPosition(int x, int y) {
+    Point p; GetCursorPos(out p);
+    if (Math.Abs(p.x-x)>1 || Math.Abs(p.y-y)>1)
+      throw new InvalidOperationException("Native pointer input was interrupted by another mouse movement.");
+  }
   [DllImport("user32.dll")] public static extern bool SetProcessDPIAware();
   [DllImport("user32.dll")] public static extern int GetSystemMetrics(int index);
   [StructLayout(LayoutKind.Sequential)] public struct MouseInput { public int x; public int y; public uint data; public uint flags; public uint time; public UIntPtr extra; }
@@ -31,6 +46,12 @@ public static class TestPointer {
 [TestPointer]::Move($X, $Y)
 if ($Click) {
   Start-Sleep -Milliseconds 100
+  [TestPointer]::VerifyPosition($X, $Y)
+  [TestPointer]::VerifyWindow($ExpectedWindow)
   [TestPointer]::Click()
 }
-if ($WheelDelta -ne 0) { Start-Sleep -Milliseconds 100; [TestPointer]::Wheel($WheelDelta) }
+if ($WheelDelta -ne 0) {
+  Start-Sleep -Milliseconds 100
+  [TestPointer]::VerifyPosition($X, $Y)
+  [TestPointer]::Wheel($WheelDelta)
+}

@@ -6,7 +6,8 @@ import { emptySchema, resultSchema } from '../ipc/schemas';
 import { chatUiSchema, draftSchema, submitSchema, type ChatUi } from '../../shared/chatUi';
 import { normalizeError } from '../../shared/errors';
 import { preloadPath, secureWindow, loadRenderer } from './security';
-import { DwellTimer } from '../services/dwellTimer';
+import { StateController } from '../services/stateController';
+import { companionStateSchema, overrideStateSchema } from '../../shared/state';
 import { booleanSchema } from '../ipc/schemas';
 import { ChatService } from '../llm/chatService';
 import {
@@ -23,21 +24,32 @@ export class InputWindow {
   private win: BrowserWindow | null = null;
   private ready: Promise<void> | null = null;
   private quitting = false;
-  private hovering = false;
-  private lifetime = new DwellTimer(() => {
+  private lifecycle: StateController;
+  private hideBubble = () => {
     this.state = { ...this.state, reply: null, error: null };
     this.broadcast();
-  });
+  };
   constructor(
     private config: ConfigStore,
     private pet: BrowserWindow,
   ) {
+    this.lifecycle = new StateController(
+      () => config.get(),
+      (state) => {
+        for (const win of [this.pet, this.win])
+          if (win && !win.isDestroyed())
+            win.webContents.send(CHANNELS.stateChanged, companionStateSchema.parse(state));
+      },
+      this.hideBubble,
+    );
     this.chat = new ChatService(
       () => config.get(),
       (event) => this.delta(event),
     );
     let connection = config.get().llm;
     const removeConfig = config.onChange((section, cfg) => {
+      if (section === 'bubble') this.lifecycle.settingsChanged();
+      if (section === 'advanced' && !cfg.advanced.developerMode) this.lifecycle.force('auto');
       if (section === 'llm') {
         if (
           cfg.llm.provider !== connection.provider ||
@@ -69,6 +81,13 @@ export class InputWindow {
         }
       });
     handle(CHANNELS.chatUiGet, emptySchema, chatUiSchema, () => this.state);
+    handle(CHANNELS.stateGet, emptySchema, companionStateSchema, () => this.lifecycle.snapshot);
+    handle(CHANNELS.stateOverride, overrideStateSchema, z.null(), (p) => {
+      if (!import.meta.env.DEV && !this.config.get().advanced.developerMode)
+        throw new Error('State override requires Developer Mode');
+      this.lifecycle.force(p.state);
+      return null;
+    });
     handle(CHANNELS.inputToggle, emptySchema, z.null(), async () => {
       if (this.state.inputOpen) this.close();
       else await this.open();
@@ -85,19 +104,20 @@ export class InputWindow {
     handle(CHANNELS.llmChat, submitSchema, requestIdSchema, (p) => this.begin(p.text));
     handle(CHANNELS.llmAbort, abortChatSchema, z.null(), (p) => {
       this.chat.abort(p.requestId);
+      this.lifecycle.cancel(p.requestId, Boolean(this.state.reply));
       return null;
     });
     handle(CHANNELS.llmRegenerate, emptySchema, requestIdSchema, () => this.begin('', true));
     handle(CHANNELS.llmClear, emptySchema, z.null(), () => {
       this.chat.clear();
-      this.lifetime.stop();
+      this.lifecycle.cancel();
       this.state = { ...this.state, reply: null, error: null };
       this.broadcast();
       return null;
     });
     handle(CHANNELS.bubbleDismiss, emptySchema, z.null(), () => {
       this.chat.abort();
-      this.lifetime.stop();
+      this.lifecycle.cancel();
       this.state = { ...this.state, reply: null, error: null };
       this.broadcast();
       return null;
@@ -106,8 +126,7 @@ export class InputWindow {
       if (!trusted(event) || event.sender !== pet.webContents) return;
       const parsed = booleanSchema.safeParse(payload);
       if (parsed.success) {
-        this.hovering = parsed.data;
-        this.lifetime.pause(this.hovering && this.config.get().bubble.keepOpenOnHover);
+        this.lifecycle.hover(parsed.data);
       }
     });
     ipcMain.on(CHANNELS.inputDraft, (event, payload: unknown) => {
@@ -124,7 +143,7 @@ export class InputWindow {
       this.chat.abort();
       removeConfig();
       if (this.queued) clearTimeout(this.queued);
-      this.lifetime.stop();
+      this.lifecycle.dispose();
       screen.removeListener('display-metrics-changed', this.position);
       screen.removeListener('display-removed', this.position);
       app.removeListener('before-quit', this.beforeQuit);
@@ -133,11 +152,12 @@ export class InputWindow {
   }
   private beforeQuit = () => {
     this.chat.abort();
+    this.lifecycle.dispose();
     this.quitting = true;
   };
   private begin(text: string, regenerate = false) {
     const requestId = regenerate ? this.chat.regenerate() : this.chat.start(text);
-    this.lifetime.stop();
+    this.lifecycle.begin(requestId);
     this.state = {
       ...this.state,
       draft: '',
@@ -155,6 +175,7 @@ export class InputWindow {
     const reply = this.state.reply;
     if (!reply || reply.requestId !== event.requestId) return;
     if (event.delta.type === 'text') {
+      if (event.delta.text) this.lifecycle.output(event.requestId);
       this.state = { ...this.state, reply: { ...reply, text: reply.text + event.delta.text } };
       if (!this.queued) this.queued = setTimeout(() => this.broadcast(), 32);
     } else {
@@ -165,8 +186,9 @@ export class InputWindow {
         reply: aborted && !reply.text ? null : { ...reply, streaming: false },
         error,
       };
-      this.lifetime.pause(this.hovering && this.config.get().bubble.keepOpenOnHover);
-      this.lifetime.start(this.config.get().bubble.dwellMs);
+      if (aborted) this.lifecycle.cancel(event.requestId, Boolean(this.state.reply));
+      else if (error) this.lifecycle.fail(event.requestId);
+      else this.lifecycle.complete(event.requestId);
       this.broadcast();
     }
   }
