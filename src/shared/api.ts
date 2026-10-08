@@ -9,6 +9,8 @@ export interface CompanionAPI {
   onConfig(callback:(value:Config)=>void):()=>void;
   getSpriteAssets():Promise<Result<SpriteAssets>>;
   resizePet(width:number,height:number):void;
+  onVisibility(callback:(visible:boolean)=>void):()=>void;
+  onDpi(callback:(scaleFactor:number)=>void):()=>void;
   openSettings(panel?:'General'|'Sprites'|'Model'|'Persona'|'Voice'|'Voice Input'|'Appearance'|'Advanced'):Promise<Result<null>>;
 }
 declare global {interface Window {companion:CompanionAPI;}}

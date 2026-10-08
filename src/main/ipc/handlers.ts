@@ -15,7 +15,7 @@ export function registerHandlers(config:ConfigStore,settings:(panel:string)=>voi
   };
   const broadcast=()=>{const value=config.get();for(const win of BrowserWindow.getAllWindows())win.webContents.send(CHANNELS.configChanged,value);return value;};
   handle(CHANNELS.configGet,emptySchema,configResultSchema.options[0].shape.value,()=>config.get());
-  handle(CHANNELS.spriteAssets,emptySchema,spriteAssetsSchema,()=>sprites.assets(config.get().sprite));
+  handle(CHANNELS.spriteAssets,emptySchema,spriteAssetsSchema,()=>sprites.assets(config.get().sprite,config.get().advanced.spriteCacheMb));
   handle(CHANNELS.configSet,configSetSchema,configResultSchema.options[0].shape.value,p=>{config.set(p.section,p.value);return broadcast();});
   handle(CHANNELS.configReset,configResetSchema,configResultSchema.options[0].shape.value,p=>{config.reset(p.section);return broadcast();});
   handle(CHANNELS.windowSettings,settingsRequestSchema,voidResultSchema.options[0].shape.value,p=>{settings(p.panel);return null;});
