@@ -45,6 +45,13 @@ export class ConfigStore {
   reset(section: ConfigSection): Config {
     return this.set(section, {});
   }
+  setSections(sections: Partial<Record<ConfigSection, unknown>>): Config {
+    const next = configSchema.parse({ ...this.get(), ...sections });
+    this.store.store = next;
+    for (const section of Object.keys(sections) as ConfigSection[])
+      for (const listener of this.listeners) listener(section, next);
+    return next;
+  }
   onChange(listener: (section: ConfigSection, config: Config) => void) {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);

@@ -3,18 +3,20 @@ import type { CSSProperties } from 'react';
 import type { ModelInfo } from '../../shared/llm';
 import type { SecretStatus, SecretId } from '../../shared/settings';
 import { useSettingsStore, flushSettings } from './store';
-import { PANELS, SETTINGS, matchesSearch, type Panel } from './definitions';
+import { PANELS, SETTINGS, SPRITE_SEARCH_LABELS, matchesSearch, type Panel } from './definitions';
 import { SettingRow } from './SettingRow';
 import { SecretInput, flushSecrets } from './SecretInput';
 import { Hotkeys, hotkeyMatches, HOTKEY_ACTIONS } from './Hotkeys';
 import { AppearancePreview } from './AppearancePreview';
+import { SpritesPanel } from './SpritesPanel';
 import searchIcon from '../../../assets/figma/2004-411-imgSearch.svg';
 import chevron from '../../../assets/figma/16-205-imgChevronDown.svg';
 import toggleOn from '../../../assets/figma/2004-411-imgToggleOn.svg';
 import toggleOff from '../../../assets/figma/16-205-imgToggleOff.svg';
 import styles from './Settings.module.css';
-const implemented = new Set<Panel>(['General', 'Model', 'Appearance']);
+const implemented = new Set<Panel>(['General', 'Sprites', 'Model', 'Appearance']);
 const extras: Partial<Record<Panel, string[]>> = {
+  Sprites: SPRITE_SEARCH_LABELS,
   General: [
     'Hotkeys shortcut keyboard',
     ...HOTKEY_ACTIONS.map(([, label]) => label + ' shortcut keyboard'),
@@ -189,7 +191,8 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
       const belongs = (key: string) =>
         SETTINGS.some((d) => d.panel === panel && `${d.section}.${d.key}` === key) ||
         (panel === 'Model' && key.startsWith('secret.llm.')) ||
-        (panel === 'General' && key.startsWith('hotkeys.'));
+        (panel === 'General' && key.startsWith('hotkeys.')) ||
+        (panel === 'Sprites' && key.startsWith('sprite.'));
       useSettingsStore.setState((state) => ({
         invalid: Object.fromEntries(Object.entries(state.invalid).filter(([key]) => !belongs(key))),
         drafts: Object.fromEntries(Object.entries(state.drafts).filter(([key]) => !belongs(key))),
@@ -278,7 +281,9 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
                 (name === 'Model' &&
                   Object.keys(invalid).some((key) => key.startsWith('secret.llm.'))) ||
                 (name === 'General' &&
-                  Object.keys(invalid).some((key) => key.startsWith('hotkeys.')))) && (
+                  Object.keys(invalid).some((key) => key.startsWith('hotkeys.'))) ||
+                (name === 'Sprites' &&
+                  Object.keys(invalid).some((key) => key.startsWith('sprite.')))) && (
                 <span className={styles.dot} data-error="true" aria-label="Invalid setting" />
               )}
             </button>
@@ -315,78 +320,81 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
             </p>
           )}
           {groups.length === 0 && <p>No matching settings.</p>}
-          {groups.map((group) => (
-            <section key={group} className={styles.section}>
-              <h2>{group}</h2>
-              <div className={styles.group}>
-                {panel === 'Model' && group === 'Provider' ? (
-                  <>
-                    {providerRows.filter((d) => d.id === 60 || d.id === 61).map(renderRow)}
-                    {keyRow}
-                    {connectionRow}
-                    {providerRows.filter((d) => d.id !== 60 && d.id !== 61).map(renderRow)}
-                    {query &&
-                      !providerRows.some((d) => d.kind === 'model') &&
-                      matchesSearch('Refresh models', query) && (
+          {panel === 'Sprites' && <SpritesPanel config={config} query={query} />}
+          {groups
+            .filter(() => panel !== 'Sprites')
+            .map((group) => (
+              <section key={group} className={styles.section}>
+                <h2>{group}</h2>
+                <div className={styles.group}>
+                  {panel === 'Model' && group === 'Provider' ? (
+                    <>
+                      {providerRows.filter((d) => d.id === 60 || d.id === 61).map(renderRow)}
+                      {keyRow}
+                      {connectionRow}
+                      {providerRows.filter((d) => d.id !== 60 && d.id !== 61).map(renderRow)}
+                      {query &&
+                        !providerRows.some((d) => d.kind === 'model') &&
+                        matchesSearch('Refresh models', query) && (
+                          <div className={styles.row}>
+                            <button
+                              className={styles.button}
+                              aria-label="Refresh models"
+                              disabled={testing.current}
+                              onClick={() => void testConnection(true)}
+                            >
+                              Refresh models
+                            </button>
+                          </div>
+                        )}
+                    </>
+                  ) : (
+                    rows.filter((d) => d.group === group).map(renderRow)
+                  )}
+                  {panel === 'General' && group === 'Hotkeys' && (
+                    <Hotkeys config={config} query={query} />
+                  )}
+                  {panel === 'General' &&
+                    group === 'Updates' &&
+                    matchesSearch('Check for Updates Now', query) && (
+                      <div className={styles.row}>
+                        <button
+                          className={styles.button}
+                          disabled
+                          title="No update feed is configured"
+                        >
+                          Check for Updates Now
+                        </button>
+                        <div className={styles.hint}>No update feed is configured.</div>
+                      </div>
+                    )}
+                  {panel === 'Model' && group === 'Conversation Memory' && (
+                    <>
+                      {environment?.historyWarning && (
+                        <p role="alert" className={styles.error}>
+                          {environment.historyWarning}
+                        </p>
+                      )}
+                      {matchesSearch('Clear Conversation History', query) && (
                         <div className={styles.row}>
                           <button
-                            className={styles.button}
-                            aria-label="Refresh models"
-                            disabled={testing.current}
-                            onClick={() => void testConnection(true)}
+                            className={`${styles.button} ${styles.destructive}`}
+                            onClick={() =>
+                              void window.companion.confirmClearHistory().then((result) => {
+                                if (result.ok && result.value)
+                                  void window.companion.clearConversation();
+                              })
+                            }
                           >
-                            Refresh models
+                            Clear Conversation History
                           </button>
                         </div>
                       )}
-                  </>
-                ) : (
-                  rows.filter((d) => d.group === group).map(renderRow)
-                )}
-                {panel === 'General' && group === 'Hotkeys' && (
-                  <Hotkeys config={config} query={query} />
-                )}
-                {panel === 'General' &&
-                  group === 'Updates' &&
-                  matchesSearch('Check for Updates Now', query) && (
-                    <div className={styles.row}>
-                      <button
-                        className={styles.button}
-                        disabled
-                        title="No update feed is configured"
-                      >
-                        Check for Updates Now
-                      </button>
-                      <div className={styles.hint}>No update feed is configured.</div>
-                    </div>
+                    </>
                   )}
-                {panel === 'Model' && group === 'Conversation Memory' && (
-                  <>
-                    {environment?.historyWarning && (
-                      <p role="alert" className={styles.error}>
-                        {environment.historyWarning}
-                      </p>
-                    )}
-                    {matchesSearch('Clear Conversation History', query) && (
-                      <div className={styles.row}>
-                        <button
-                          className={`${styles.button} ${styles.destructive}`}
-                          onClick={() =>
-                            void window.companion.confirmClearHistory().then((result) => {
-                              if (result.ok && result.value)
-                                void window.companion.clearConversation();
-                            })
-                          }
-                        >
-                          Clear Conversation History
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </section>
-          ))}
+                </div>
+              </section>
+            ))}
           {panel === 'Appearance' && !query && <AppearancePreview config={config} />}
           <button className={`${styles.textButton} ${styles.reset}`} onClick={() => void reset()}>
             Reset this panel to defaults

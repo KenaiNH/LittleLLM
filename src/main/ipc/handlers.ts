@@ -36,6 +36,15 @@ import { join } from 'node:path';
 import { getSettingsWindow } from '../windows/settingsWindow';
 import type { ConfigSection } from '../../shared/config';
 import type { ConversationStore } from '../services/conversationStore';
+import { SpriteManager } from '../services/spriteManager';
+import {
+  spriteImportRequestSchema,
+  spriteResetRequestSchema,
+  spritePatchSchema,
+} from '../../shared/spriteImport';
+import { boundedFile } from '../services/spriteFiles';
+import { readSpritePack, writeSpritePack, PACK_FILE_LIMIT } from '../services/spritePacks';
+import { writeFile } from 'node:fs/promises';
 export function registerHandlers(
   config: ConfigStore,
   settings: (panel: string) => void,
@@ -44,11 +53,13 @@ export function registerHandlers(
   history: ConversationStore,
 ): void {
   const masks = new AlphaMaskCache(app.getPath('userData'), sprites);
+  const spriteManager = new SpriteManager(config, sprites);
   const handle = <S extends z.ZodTypeAny, R extends z.ZodTypeAny>(
     channel: string,
     request: S,
     response: R,
     handler: (payload: z.output<S>) => z.input<R> | Promise<z.input<R>>,
+    settingsOnly = false,
   ) => {
     ipcMain.handle(channel, async (event, payload: unknown) => {
       try {
@@ -57,6 +68,8 @@ export function registerHandlers(
           event.senderFrame !== event.sender.mainFrame
         )
           throw new Error('Untrusted IPC sender');
+        if (settingsOnly && event.sender !== getSettingsWindow()?.webContents)
+          throw new Error('This action requires Settings');
         return resultSchema(response).parse({
           ok: true,
           value: await handler(request.parse(payload)),
@@ -76,6 +89,137 @@ export function registerHandlers(
       win.webContents.send(CHANNELS.configChanged, value);
     return value;
   };
+  const settingsOwner = () => {
+    const window = getSettingsWindow();
+    if (!window) throw new Error('Settings is closed');
+    return window;
+  };
+  handle(
+    CHANNELS.spriteImport,
+    spriteImportRequestSchema,
+    configResultSchema.options[0].shape.value,
+    async (p) => {
+      let paths = p.paths;
+      if (!paths) {
+        let folder = false;
+        if (p.mode === 'frames') {
+          const choice = await dialog.showMessageBox(settingsOwner(), {
+            type: 'question',
+            message: 'Choose image sequence',
+            buttons: ['Cancel', 'Open folder', 'Select images'],
+            cancelId: 0,
+            defaultId: 1,
+            noLink: true,
+          });
+          if (choice.response === 0) return config.get();
+          folder = choice.response === 1;
+        }
+        const chosen = await dialog.showOpenDialog(settingsOwner(), {
+          title: `Import ${p.state} sprite`,
+          properties: folder
+            ? ['openDirectory']
+            : p.mode === 'frames'
+              ? ['openFile', 'multiSelections']
+              : ['openFile'],
+          filters: folder
+            ? []
+            : [{ name: 'Sprite images', extensions: ['png', 'apng', 'gif', 'webp'] }],
+        });
+        if (chosen.canceled) return config.get();
+        paths = chosen.filePaths;
+      }
+      await spriteManager.import(p.state, p.mode, paths);
+      return broadcast();
+    },
+    true,
+  );
+  handle(
+    CHANNELS.spritePatch,
+    spritePatchSchema,
+    configResultSchema.options[0].shape.value,
+    async (p) => {
+      await spriteManager.patchState(p.state, p.value);
+      return broadcast();
+    },
+    true,
+  );
+  handle(
+    CHANNELS.spriteReset,
+    spriteResetRequestSchema,
+    configResultSchema.options[0].shape.value,
+    async (p) => {
+      await spriteManager.reset(p.state);
+      return broadcast();
+    },
+    true,
+  );
+  handle(
+    CHANNELS.shellOpenPath,
+    z.object({ kind: z.literal('sprites') }).strict(),
+    z.null(),
+    async () => {
+      const error = await shell.openPath(sprites.root);
+      if (error) throw new Error('The sprites folder could not be opened');
+      return null;
+    },
+    true,
+  );
+  handle(
+    CHANNELS.packImport,
+    emptySchema,
+    configResultSchema.options[0].shape.value,
+    async () => {
+      const chosen = await dialog.showOpenDialog(settingsOwner(), {
+        title: 'Import Sprite Pack',
+        properties: ['openFile'],
+        filters: [{ name: 'Sprite Pack', extensions: ['zip'] }],
+      });
+      if (chosen.canceled || !chosen.filePaths[0]) return config.get();
+      const pack = readSpritePack(await boundedFile(chosen.filePaths[0], PACK_FILE_LIMIT));
+      const detail =
+        ['idle', 'thinking', 'speaking']
+          .map((state) => {
+            const asset = pack.manifest.sprite[state as 'idle' | 'thinking' | 'speaking'];
+            return `${state}: ${asset.mode}, ${asset.frameCount ?? 'automatic'} frames — ${asset.source}`;
+          })
+          .join('\n') +
+        (pack.manifest.sprite.mouth.source ? '\nOptional mouth frames included.' : '') +
+        (pack.manifest.persona
+          ? `\nPersona “${pack.manifest.persona.name}” included. It will be kept in the library without activation until Persona support is available, unless the policy is Ignore.`
+          : '');
+      const answer = await dialog.showMessageBox(settingsOwner(), {
+        type: 'question',
+        title: 'Sprite Pack preview',
+        message: `Import “${pack.manifest.name}”?`,
+        detail,
+        buttons: ['Cancel', 'Import'],
+        cancelId: 0,
+        defaultId: 0,
+        noLink: true,
+      });
+      if (answer.response !== 1) return config.get();
+      await spriteManager.importPack(pack);
+      return broadcast();
+    },
+    true,
+  );
+  handle(
+    CHANNELS.packExport,
+    emptySchema,
+    z.boolean(),
+    async () => {
+      const chosen = await dialog.showSaveDialog(settingsOwner(), {
+        title: 'Export Sprite Pack',
+        defaultPath: 'Sprite Pack.zip',
+        filters: [{ name: 'Sprite Pack', extensions: ['zip'] }],
+      });
+      if (chosen.canceled || !chosen.filePath) return false;
+      const pack = await spriteManager.exportPack();
+      await writeFile(chosen.filePath, writeSpritePack(pack.manifest, pack.files));
+      return true;
+    },
+    true,
+  );
   handle(CHANNELS.configGet, emptySchema, configResultSchema.options[0].shape.value, () =>
     config.get(),
   );
@@ -136,12 +280,10 @@ export function registerHandlers(
   });
   const environment = async () =>
     settingsEnvironmentSchema.parse({
-      displays: screen
-        .getAllDisplays()
-        .map((display, index) => ({
-          id: String(display.id),
-          label: `Display ${index + 1} — ${Math.round(display.size.width * display.scaleFactor)}×${Math.round(display.size.height * display.scaleFactor)} @ ${Math.round(display.scaleFactor * 100)}%`,
-        })),
+      displays: screen.getAllDisplays().map((display, index) => ({
+        id: String(display.id),
+        label: `Display ${index + 1} — ${Math.round(display.size.width * display.scaleFactor)}×${Math.round(display.size.height * display.scaleFactor)} @ ${Math.round(display.scaleFactor * 100)}%`,
+      })),
       fonts: SETTINGS_FONTS,
       version: app.getVersion(),
       electron: process.versions.electron ?? '',
@@ -189,6 +331,7 @@ export function registerHandlers(
       General: ['window', 'hotkeys', 'update'],
       Model: ['llm'],
       Appearance: ['bubble', 'input'],
+      Sprites: ['sprite'],
     };
     const selected = sections[p.panel];
     if (!selected) throw new Error('Panel reset is not implemented yet');
@@ -210,7 +353,10 @@ export function registerHandlers(
       secrets.clear('llm.openai-compatible');
       secrets.clear('llm.anthropic');
     }
-    for (const section of selected) config.reset(section);
+    for (const section of selected) {
+      if (section === 'sprite') await spriteManager.resetAll();
+      else config.reset(section);
+    }
     return { config: broadcast(), reset: true };
   });
   handle(CHANNELS.spriteAssets, emptySchema, spriteAssetsSchema, () =>
@@ -227,8 +373,9 @@ export function registerHandlers(
     CHANNELS.configPatch,
     configPatchSchema,
     configResultSchema.options[0].shape.value,
-    (p) => {
-      config.set(p.section, { ...config.get()[p.section], ...p.value });
+    async (p) => {
+      if (p.section === 'sprite') await spriteManager.patch(p.value);
+      else config.set(p.section, { ...config.get()[p.section], ...p.value });
       return broadcast();
     },
   );

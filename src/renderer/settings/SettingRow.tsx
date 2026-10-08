@@ -13,6 +13,7 @@ export function SettingRow({
   models = [],
   refreshModels,
   testing = false,
+  fallbackValue,
 }: {
   definition: Setting;
   config: Config;
@@ -20,9 +21,14 @@ export function SettingRow({
   models?: string[];
   refreshModels?: () => void;
   testing?: boolean;
+  fallbackValue?: unknown;
 }) {
   const { patch, invalid, drafts, draft, markInvalid, environment } = useSettingsStore();
-  const value = (config[d.section] as Record<string, unknown>)[d.key];
+  let value: unknown = config[d.section];
+  for (const key of d.key.split('.'))
+    value =
+      value && typeof value === 'object' ? (value as Record<string, unknown>)[key] : undefined;
+  value ??= fallbackValue;
   const key = `${d.section}.${d.key}`,
     multiplier = d.multiplier ?? 1;
   const displayed = typeof value === 'number' ? Number((value / multiplier).toFixed(4)) : value;
@@ -59,7 +65,7 @@ export function SettingRow({
         return false;
       }
     }
-    if (typeof value === 'number') {
+    if (typeof value === 'number' || d.kind === 'number' || d.kind === 'range') {
       if (raw === '' || !Number.isFinite(Number(raw))) {
         markInvalid(key, 'Enter a number.');
         return false;
@@ -86,7 +92,15 @@ export function SettingRow({
       if (next === 'openai-compatible' && config.llm.provider === 'anthropic')
         changes.baseUrl = 'https://api.openai.com/v1';
     }
-    const error = await patch(d.section, changes);
+    const [target, ...path] = d.key.split('.');
+    const error =
+      d.section === 'sprite' && path.length && target
+        ? await useSettingsStore
+            .getState()
+            .patchState(target as import('../../shared/spriteImport').SpriteTarget, {
+              [path.join('.')]: next,
+            })
+        : await patch(d.section, changes);
     if (epoch !== editEpoch.current) return false;
     markInvalid(key, error);
     if (!error) {
@@ -161,6 +175,7 @@ export function SettingRow({
             key={id}
             value={id}
             disabled={
+              (d.key === 'mouth.driver' && id === 'amplitude' && config.tts.provider === 'none') ||
               (key === 'bubble.backdropBlur' && id === 'acrylic') ||
               (key === 'llm.provider' && (id === 'anthropic' || id === 'ollama'))
             }

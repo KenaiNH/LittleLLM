@@ -8,8 +8,21 @@ import type { CompanionState } from './state';
 import type { SpriteState } from './enums';
 import type { SecretId, SecretStatus, SettingsEnvironment } from './settings';
 import type { ModelInfo, ConnectionTest } from './llm';
+import type { SpriteTarget } from './spriteImport';
+import type { SpriteStateConfig } from './config';
 export type Result<T> = { ok: true; value: T } | { ok: false; error: AppError };
 export interface CompanionAPI {
+  browseSprite(state: SpriteTarget, mode: SpriteStateConfig['mode']): Promise<Result<Config>>;
+  importDroppedSprite(
+    state: SpriteTarget,
+    mode: SpriteStateConfig['mode'],
+    files: File[],
+  ): Promise<Result<Config>>;
+  patchSpriteState(state: SpriteTarget, value: Record<string, unknown>): Promise<Result<Config>>;
+  resetSprite(state: SpriteTarget): Promise<Result<Config>>;
+  importSpritePack(): Promise<Result<Config>>;
+  exportSpritePack(): Promise<Result<boolean>>;
+  openSpritesFolder(): Promise<Result<null>>;
   getSettingsEnvironment(): Promise<Result<SettingsEnvironment>>;
   onSettingsEnvironment(callback: (value: SettingsEnvironment) => void): () => void;
   onSettingsPanel(

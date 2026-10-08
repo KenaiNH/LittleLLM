@@ -1,5 +1,12 @@
 import { create } from 'zustand';
-import { configSections, type Config, type ConfigSection } from '../../shared/config';
+import {
+  configSections,
+  spriteStateSchema,
+  mouthSchema,
+  type Config,
+  type ConfigSection,
+} from '../../shared/config';
+import { applySpriteFields, type SpriteTarget } from '../../shared/spriteImport';
 import type { SettingsEnvironment } from '../../shared/settings';
 type SettingsStore = {
   config: Config | null;
@@ -10,6 +17,7 @@ type SettingsStore = {
   initialize: () => Promise<void>;
   receive: (config: Config) => void;
   patch: (section: ConfigSection, changes: Record<string, unknown>) => Promise<string | null>;
+  patchState: (state: SpriteTarget, changes: Record<string, unknown>) => Promise<string | null>;
   markInvalid: (key: string, message: string | null) => void;
   draft: (key: string, value: string | null) => void;
 };
@@ -66,6 +74,25 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
         else message = result.error.userMessage;
       } catch {
         message = 'The change could not be saved.';
+      }
+    });
+    await queue;
+    return message;
+  },
+  patchState: async (state, changes) => {
+    if (!latest) return 'Settings have not loaded yet.';
+    const valid = (state === 'mouth' ? mouthSchema : spriteStateSchema).safeParse(
+      applySpriteFields(latest.sprite[state] ?? {}, changes),
+    );
+    if (!valid.success) return valid.error.issues[0]?.message ?? 'Enter a valid value.';
+    let message: string | null = null;
+    queue = queue.then(async () => {
+      try {
+        const result = await window.companion.patchSpriteState(state, changes);
+        if (result.ok) get().receive(result.value);
+        else message = result.error.userMessage;
+      } catch {
+        message = 'The sprite setting could not be saved.';
       }
     });
     await queue;

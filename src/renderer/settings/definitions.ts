@@ -66,6 +66,82 @@ const input = (
 const notMock = (cfg: Config) => cfg.llm.provider !== 'mock';
 const speech = (cfg: Config) => cfg.tts.provider !== 'none';
 export const SETTINGS: Setting[] = [
+  field('sprite', 'scale', {
+    id: 37,
+    panel: 'Sprites',
+    group: 'Global Sprite Settings',
+    label: 'Sprite scale',
+    kind: 'range',
+    min: 25,
+    max: 400,
+    step: 5,
+    multiplier: 0.01,
+    suffix: '%',
+  }),
+  field('sprite', 'scaleMode', {
+    id: 38,
+    panel: 'Sprites',
+    group: 'Global Sprite Settings',
+    label: 'Scale mode',
+    kind: 'select',
+    options: OPTIONS.scaleMode,
+  }),
+  field('sprite', 'flipHorizontal', {
+    id: 39,
+    panel: 'Sprites',
+    group: 'Global Sprite Settings',
+    label: 'Flip horizontally',
+    kind: 'toggle',
+  }),
+  field('sprite', 'pixelated', {
+    id: 40,
+    panel: 'Sprites',
+    group: 'Global Sprite Settings',
+    label: 'Image smoothing',
+    kind: 'select',
+    options: OPTIONS.pixelated,
+  }),
+  field('sprite', 'opacity', {
+    id: 41,
+    panel: 'Sprites',
+    group: 'Global Sprite Settings',
+    label: 'Sprite opacity',
+    kind: 'range',
+    min: 20,
+    max: 100,
+    multiplier: 0.01,
+    suffix: '%',
+  }),
+  field('sprite', 'transition', {
+    id: 42,
+    panel: 'Sprites',
+    group: 'Global Sprite Settings',
+    label: 'State transition',
+    kind: 'select',
+    options: OPTIONS.transition,
+  }),
+  field('sprite', 'crossfadeMs', {
+    id: 43,
+    panel: 'Sprites',
+    group: 'Global Sprite Settings',
+    label: 'Crossfade duration',
+    kind: 'range',
+    min: 40,
+    max: 500,
+    suffix: 'ms',
+    visible: (cfg) => cfg.sprite.transition === 'crossfade',
+  }),
+  field('sprite', 'minThinkingMs', {
+    id: 44,
+    panel: 'Sprites',
+    group: 'Global Sprite Settings',
+    label: 'Minimum thinking duration',
+    kind: 'range',
+    min: 0,
+    max: 2000,
+    suffix: 'ms',
+    hint: 'Prevents a visible flicker when the model replies almost instantly.',
+  }),
   general('launchAtLogin', {
     id: 1,
     group: 'Startup',
@@ -660,6 +736,22 @@ export const SETTINGS: Setting[] = [
     label: 'Remember draft text',
     kind: 'toggle',
   }),
+];
+export const spriteSetting = (
+  target: string,
+  key: string,
+  definition: Omit<Setting, 'section' | 'key' | 'panel' | 'group'>,
+): Setting => ({
+  ...definition,
+  panel: 'Sprites',
+  group: target,
+  section: 'sprite',
+  key: target + '.' + key,
+});
+export const SPRITE_SEARCH_LABELS = [
+  'Idle Thinking Speaking source type file folder browse frame width height count columns frame order playback speed fps playback mode timing anchor point custom anchor preview scrubber reset default sprite',
+  'Mouth frames lip sync driven by audio amplitude text streaming rate fixed loop file folder frame count quietest loudest offset sensitivity smoothing silence threshold Test Mouth Sync',
+  'Import Sprite Pack Export Sprite Pack Open Sprites Folder',
 ];
 export function matchesSearch(label: string, query: string) {
   const haystack = label.toLocaleLowerCase();

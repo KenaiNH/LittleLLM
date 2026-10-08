@@ -31,6 +31,7 @@ export const CHANNELS = {
   sttAudioFrame: 'stt:audio-frame',
   sttResult: 'stt:result',
   spriteImport: 'sprite:import',
+  spritePatch: 'sprite:patch',
   spriteValidate: 'sprite:validate',
   spriteMask: 'sprite:mask',
   spriteAssets: 'sprite:assets',

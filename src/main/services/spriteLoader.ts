@@ -7,19 +7,32 @@ import { REQUIRED_SPRITE_STATES } from '../../shared/enums';
 import { relativePathSchema, type SpriteConfig } from '../../shared/config';
 import { spriteAssetsSchema, type SpriteAssets } from '../../shared/sprites';
 import { decodeImage } from './imageDecoder';
+import { mouthAsState } from '../../shared/spriteImport';
 const natural = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
 export const naturalSort = (files: string[]) =>
   files.sort((a, b) => natural.compare(a, b) || a.localeCompare(b));
 export class SpriteLoader {
   readonly root: string;
   private pending = new Map<string, Promise<SpriteAssets>>();
-  constructor(userData: string) {
+  constructor(private userData: string) {
     this.root = join(userData, 'sprites');
   }
+  async stateRoot(state: string): Promise<string> {
+    if (!['idle', 'thinking', 'speaking', 'listening', 'mouth'].includes(state))
+      throw new Error('Invalid sprite state');
+    const base = await realpath(this.userData),
+      managed = await realpath(this.root);
+    if (!managed.startsWith(base + sep)) throw new Error('Sprite folder leaves userData');
+    await mkdir(join(managed, state), { recursive: true });
+    const root = await realpath(join(managed, state));
+    if (!root.startsWith(managed + sep))
+      throw new Error('Sprite state folder leaves managed storage');
+    return root;
+  }
   async initialize(): Promise<void> {
+    await mkdir(this.root, { recursive: true });
     for (const state of REQUIRED_SPRITE_STATES) {
-      const dir = join(this.root, state);
-      await mkdir(dir, { recursive: true });
+      const dir = await this.stateRoot(state);
       const source = join(dir, 'default.png');
       try {
         await realpath(source);
@@ -31,11 +44,19 @@ export class SpriteLoader {
       }
     }
   }
+  async directory(state: string, name: 'imports' | 'decoded'): Promise<string> {
+    const root = await this.stateRoot(state),
+      target = join(root, name);
+    await mkdir(target, { recursive: true });
+    const path = await realpath(target);
+    if (!path.startsWith(root + sep)) throw new Error('Sprite directory leaves managed storage');
+    return path;
+  }
   async resolveAsset(state: string, source: string): Promise<string> {
     if (!['idle', 'thinking', 'speaking', 'listening', 'mouth'].includes(state))
       throw new Error('Invalid state');
     relativePathSchema.parse(source);
-    const root = await realpath(join(this.root, state));
+    const root = await this.stateRoot(state);
     const path = await realpath(join(root, source));
     if (!path.startsWith(root + sep)) throw new Error('Asset leaves managed sprite folder');
     return path;
@@ -58,9 +79,10 @@ export class SpriteLoader {
     const states = [
       ...REQUIRED_SPRITE_STATES,
       ...(cfg.listeningBehavior === 'custom' && cfg.listening ? (['listening'] as const) : []),
+      ...(cfg.mouth.source ? (['mouth'] as const) : []),
     ];
     for (const state of states) {
-      const spec = cfg[state];
+      const spec = state === 'mouth' ? mouthAsState(cfg.mouth) : cfg[state];
       if (!spec) continue;
       const path = await this.resolveAsset(state, spec.source);
       const paths =
@@ -76,7 +98,7 @@ export class SpriteLoader {
       const hash = createHash('sha256').update(JSON.stringify(spec));
       for (const bytes of content) hash.update(bytes);
       const id = hash.digest('hex').slice(0, 24);
-      const dir = join(this.root, state, 'decoded', id);
+      const dir = join(await this.directory(state, 'decoded'), id);
       await mkdir(dir, { recursive: true });
       const frames: { url: string; delayMs: number }[] = [];
       let width = 0,
@@ -95,7 +117,7 @@ export class SpriteLoader {
           width = frame.width;
           height = frame.height;
           const relative = `decoded/${id}/${frames.length}.png`;
-          const file = join(this.root, state, relative);
+          const file = join(dir, `${frames.length}.png`);
           try {
             await realpath(file);
           } catch {

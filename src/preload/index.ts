@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer, webUtils } from 'electron';
 import { configSchema } from '../shared/config';
 import { CHANNELS } from '../main/ipc/channels';
 import {
@@ -40,7 +40,46 @@ import {
 } from '../shared/settings';
 import { z } from 'zod';
 import { companionStateSchema, overrideStateSchema } from '../shared/state';
+import {
+  spriteImportRequestSchema,
+  spriteResetRequestSchema,
+  spritePatchSchema,
+} from '../shared/spriteImport';
 const api: CompanionAPI = {
+  browseSprite: async (state, mode) =>
+    configResultSchema.parse(
+      await ipcRenderer.invoke(
+        CHANNELS.spriteImport,
+        spriteImportRequestSchema.parse({ state, mode }),
+      ),
+    ),
+  importDroppedSprite: async (state, mode, files) =>
+    configResultSchema.parse(
+      await ipcRenderer.invoke(
+        CHANNELS.spriteImport,
+        spriteImportRequestSchema.parse({
+          state,
+          mode,
+          paths: files.map((file) => webUtils.getPathForFile(file)),
+        }),
+      ),
+    ),
+  patchSpriteState: async (state, value) =>
+    configResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.spritePatch, spritePatchSchema.parse({ state, value })),
+    ),
+  resetSprite: async (state) =>
+    configResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.spriteReset, spriteResetRequestSchema.parse({ state })),
+    ),
+  importSpritePack: async () =>
+    configResultSchema.parse(await ipcRenderer.invoke(CHANNELS.packImport, emptySchema.parse({}))),
+  exportSpritePack: async () =>
+    resultSchema(z.boolean()).parse(
+      await ipcRenderer.invoke(CHANNELS.packExport, emptySchema.parse({})),
+    ),
+  openSpritesFolder: async () =>
+    voidResultSchema.parse(await ipcRenderer.invoke(CHANNELS.shellOpenPath, { kind: 'sprites' })),
   patchConfig: async (section, value) =>
     configResultSchema.parse(
       await ipcRenderer.invoke(CHANNELS.configPatch, configPatchSchema.parse({ section, value })),
