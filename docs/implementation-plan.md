@@ -30,7 +30,7 @@ TextChat bubble 2016:89 provides the anchored bubble visual. User clarified: the
 
 Not visually specified in retrieved TextChat: editable input, attachment thumbnails/removal, streaming stop/regenerate/copy footer, suspended-scroll affordance, recording/cancel/transcribing states, region selection overlay, actual sprite placement and animations. Required functionality will be mapped to existing components; new screen designs require approval. No design writes or redesigns are authorized.
 
-Region selector proposal (approval requested, implementation pending): an activation-only transparent window covering each display, a dim black fill at 35%, a 2 px selection outline in Figma's #e4e9ff, and an existing blue dialogue surface containing Courier Prime text “Drag to capture · Esc to cancel.” Dragging selects within one display; Esc closes all selectors without attaching or sending anything. Capture/crop/normalization happen in main; selection coordinates use validated IPC. No screenshot is persisted or sent until the user submits the attached image. The overlay closes before returning focus to the existing input bar. A new selector screen needs the user's approval under the original instruction; other attachment sources can be completed independently.
+Scope update, October 8, 2026: the user explicitly deferred region screenshots and the selector to low-priority future features. No selector approval is pending. Current image input consists of file and clipboard attachments; the screenshot-specific acceptance criterion and shortcut are excluded from the current release. Real vision-model quality verification remains unperformed and must not be claimed, but it no longer blocks the ordered voice phases under this scope change.
 
 ## Ordered build and verification
 
@@ -44,7 +44,7 @@ Follow main §14 in order. Before phase 1, define every stored enum/label and co
 6–7. Input and sanitized scrollable dialogue bubble, Figma visuals, work-area placement, reveal, footer, dwell/hover and accessibility. Validate layout gap before adding unsupported UI.
 8–9. Real OpenAI-compatible provider and tested state transitions; abort/stale-event isolation, minimum thinking, text/audio/dwell gates, optional listening and barge-in. A real local endpoint is needed for phase acceptance.
 10–11. Settings live broadcast, secrets in main, General/Model/Appearance followed by Sprites: validated file/folder/multiselect copy, previews/scrub/play/pause, state resets, sheets auto-detection, safe Sprite Pack preview/confirm/import/export. Imported files survive source deletion and restart. Placeholder art is fully replaceable here.
-12–13. Anthropic/Ollama and multimodal sources/capability handling.
+12–13. Anthropic/Ollama and file/clipboard image attachments, normalization, thumbnails, provider encoding and capability handling. Revised acceptance uses the recorded file/clipboard Windows checks and transport/validation tests. Region capture and its screenshot-to-vision acceptance are deferred by the user's scope change.
 14–15. Provider-pluggable TTS, sentence pipeline, gapless playback/RMS, mouth drivers/compositing and remaining providers. No audio hot path with none. Local Kokoro acceptance required.
 16–17. STT core/providers, AudioWorklet/resampling/VAD, transcript insertion, activation/keyboard hook and fallback, echo gating, privacy. Local Whisper/native Windows acceptance required.
 18. Persona prompt assembly, library/packs/consent/greetings and Figma Persona UI.

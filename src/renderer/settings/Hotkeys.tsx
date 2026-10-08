@@ -6,7 +6,6 @@ import styles from './Settings.module.css';
 export const HOTKEY_ACTIONS = [
   ['focus', 'Open input box / focus companion', 15],
   ['visibility', 'Show / hide sprite', 16],
-  ['region', 'Capture screen region and attach', 17],
   ['clipboard', 'Send clipboard contents to companion', 18],
   ['clickThrough', 'Toggle click-through', 19],
   ['voice', 'Voice input (push-to-talk / toggle)', 184],
