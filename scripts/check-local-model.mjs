@@ -3,7 +3,9 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, join, resolve, sep } from 'node:path';
 
-const [baseUrl, model] = process.argv.slice(2);
+const [baseUrl, model, provider = 'openai-compatible'] = process.argv.slice(2);
+if (!['openai-compatible', 'ollama'].includes(provider))
+  throw new Error('Choose a local OpenAI-compatible or native Ollama provider.');
 if (!baseUrl || !model) {
   console.error('Usage: npm.cmd run smoke:local -- http://localhost:1234/v1 <loaded-model-id>');
   process.exit(2);
@@ -25,12 +27,12 @@ try {
   const pet = await app.firstWindow();
   await pet.getByTestId('sprite').waitFor();
   const result = await pet.evaluate(
-    async ({ baseUrl, model }) => {
+    async ({ baseUrl, model, provider }) => {
       const config = await window.companion.getConfig();
       if (!config.ok) throw new Error(config.error.userMessage);
       await window.companion.setConfig('llm', {
         ...config.value.llm,
-        provider: 'openai-compatible',
+        provider,
         baseUrl,
         model,
         stream: true,
@@ -98,7 +100,7 @@ try {
           );
       });
     },
-    { baseUrl: url.href, model },
+    { baseUrl: url.href, model, provider },
   );
   if (
     !result ||
@@ -117,6 +119,7 @@ try {
       passed: true,
       baseUrl: url.href,
       model,
+      provider,
       ...result,
     }),
   );

@@ -176,8 +176,7 @@ export function SettingRow({
             value={id}
             disabled={
               (d.key === 'mouth.driver' && id === 'amplitude' && config.tts.provider === 'none') ||
-              (key === 'bubble.backdropBlur' && id === 'acrylic') ||
-              (key === 'llm.provider' && (id === 'anthropic' || id === 'ollama'))
+              (key === 'bubble.backdropBlur' && id === 'acrylic')
             }
           >
             {label}
@@ -338,6 +337,11 @@ export function SettingRow({
         </div>
       )}
       {d.hint && <div className={styles.hint}>{d.hint}</div>}
+      {key === 'llm.topP' && config.llm.provider === 'anthropic' && (
+        <div className={styles.hint}>
+          Anthropic uses Top P when it differs from 1; otherwise it uses Temperature.
+        </div>
+      )}
       {key === 'llm.systemPrompt' && config.persona.enabled && (
         <div className={styles.hint}>
           A persona is active and will be added to this prompt.{' '}

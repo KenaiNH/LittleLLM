@@ -1,0 +1,1 @@
+{"acceptance":"real-local-model-streaming","passed":true,"baseUrl":"http://127.0.0.1:56198/","model":"smollm2:135m-instruct-q4_K_M","provider":"ollama","text":"\"Welcome to my desk. I'll be here for you.\"","chunks":13,"firstTokenMs":1056.8000000715256,"elapsedMs":1176,"connectionTest":{"passed":true,"latencyMs":1329.218,"modelsFound":1}}
