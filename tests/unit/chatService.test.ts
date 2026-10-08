@@ -4,6 +4,47 @@ import { ChatService } from '../../src/main/llm/chatService';
 import { configSchema } from '../../src/shared/config';
 import type { ChatEvent } from '../../src/shared/llm';
 import type { ChatMessage, LLMProvider } from '../../src/main/llm/types';
+it('keeps a replacement started synchronously by an abort listener cancellable', async () => {
+  const cfg = configSchema.parse({}),
+    events: ChatEvent[] = [];
+  let first = '',
+    replacement = '';
+  const provider: LLMProvider = {
+    id: 'fixture',
+    supportsImages: false,
+    async *chat(_messages, { signal }) {
+      yield { type: 'text', text: 'partial' };
+      await delay(60000, undefined, { signal });
+      yield { type: 'done' };
+    },
+  };
+  const service = new ChatService(
+    () => cfg,
+    (event) => {
+      events.push(event);
+      if (event.requestId === first && event.delta.type === 'error' && !replacement)
+        replacement = service.start('replacement');
+    },
+    undefined,
+    () => provider,
+  );
+  first = service.start('first');
+  await vi.waitFor(() =>
+    expect(events.some((event) => event.requestId === first && event.delta.type === 'text')).toBe(
+      true,
+    ),
+  );
+  service.abort(first);
+  await vi.waitFor(() =>
+    expect(
+      events.some((event) => event.requestId === replacement && event.delta.type === 'text'),
+    ).toBe(true),
+  );
+  service.abort(replacement);
+  expect(
+    events.filter((event) => event.requestId === replacement && event.delta.type === 'error'),
+  ).toHaveLength(1);
+});
 it('gives superseded and cancelled requests exactly one terminal event', async () => {
   const events: ChatEvent[] = [],
     cfg = configSchema.parse({}),

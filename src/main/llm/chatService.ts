@@ -29,7 +29,12 @@ export class ChatService {
   persistenceChanged() {
     if (this.getConfig().llm.persistence === 'permanent') this.history?.save(this.exchanges);
   }
-  start(text: string, regenerate = false, images: ChatImage[] = [], id: string = randomUUID()): string {
+  start(
+    text: string,
+    regenerate = false,
+    images: ChatImage[] = [],
+    id: string = randomUUID(),
+  ): string {
     this.abort();
     const cfg = this.getConfig();
     if (regenerate) {
@@ -54,12 +59,13 @@ export class ChatService {
   abort(id?: string) {
     const active = this.active;
     if (!active || (id && id !== active.id)) return;
+    // A terminal-event listener may synchronously start a queued replacement turn.
+    this.active = null;
     active.controller.abort();
     this.send(active, {
       type: 'error',
       error: { code: 'ABORTED', userMessage: 'Cancelled', retryable: false },
     });
-    this.active = null;
   }
   clear() {
     this.abort();

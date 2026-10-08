@@ -18,7 +18,7 @@ import toggleOff from '../../../assets/figma/16-205-imgToggleOff.svg';
 import styles from './Settings.module.css';
 const implemented = new Set<Panel>(['General', 'Sprites', 'Model', 'Voice', 'Appearance']);
 const extras: Partial<Record<Panel, string[]>> = {
-  Voice:['API key authentication password','Test Voice','Test Connection'],
+  Voice: ['API key authentication password', 'Test Voice', 'Test Connection'],
   Sprites: SPRITE_SEARCH_LABELS,
   General: [
     'Hotkeys shortcut keyboard',
@@ -298,7 +298,8 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
               {(SETTINGS.some((d) => d.panel === name && invalid[`${d.section}.${d.key}`]) ||
                 (name === 'Model' &&
                   Object.keys(invalid).some((key) => key.startsWith('secret.llm.'))) ||
-                (name === 'Voice' && Object.keys(invalid).some(key=>key.startsWith('secret.tts.'))) ||
+                (name === 'Voice' &&
+                  Object.keys(invalid).some((key) => key.startsWith('secret.tts.'))) ||
                 (name === 'General' &&
                   Object.keys(invalid).some((key) => key.startsWith('hotkeys.'))) ||
                 (name === 'Sprites' &&

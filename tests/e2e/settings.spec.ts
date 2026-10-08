@@ -63,7 +63,7 @@ test('Settings live apply, validation, encrypted keys, explicit verification and
     await settings.getByLabel('Search settings').fill('region');
     await expect(
       settings.getByText('Capture screen region and attach', { exact: true }),
-    ).toBeVisible();
+    ).toHaveCount(0);
     await settings.getByLabel('Search settings').fill('');
     await settings.getByRole('button', { name: 'Appearance', exact: true }).click();
     await expect(

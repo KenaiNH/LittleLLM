@@ -95,8 +95,12 @@ export function SettingRow({
         changes.baseUrl = 'https://api.openai.com/v1';
     }
     if (key === 'tts.provider') {
-      if (next === 'windows-sapi') { changes.voice = ''; if (config.tts.onFailure === 'sapi') changes.onFailure = 'text-only'; }
-      if (next === 'openai-compatible-tts' && config.tts.provider === 'windows-sapi') changes.voice = 'alloy';
+      if (next === 'windows-sapi') {
+        changes.voice = '';
+        if (config.tts.onFailure === 'sapi') changes.onFailure = 'text-only';
+      }
+      if (next === 'openai-compatible-tts' && config.tts.provider === 'windows-sapi')
+        changes.voice = 'alloy';
     }
     const [target, ...path] = d.key.split('.');
     const error =
@@ -125,7 +129,8 @@ export function SettingRow({
     else timer.current = setTimeout(() => void save(raw), 400);
   };
   let options = [...(choices ?? d.options ?? [])];
-  if (key === 'tts.onFailure' && config.tts.provider === 'windows-sapi') options = options.filter(([id]) => id !== 'sapi');
+  if (key === 'tts.onFailure' && config.tts.provider === 'windows-sapi')
+    options = options.filter(([id]) => id !== 'sapi');
   if (key === 'window.displayTarget') {
     options.push(
       ...(environment?.displays.map((display) => [display.id, display.label] as const) ?? []),
@@ -183,8 +188,8 @@ export function SettingRow({
             value={id}
             disabled={
               (d.key === 'mouth.driver' && id === 'amplitude' && config.tts.provider === 'none') ||
-              (key === 'bubble.backdropBlur' && id === 'acrylic')
-              || d.unavailableOptions?.includes(id)
+              (key === 'bubble.backdropBlur' && id === 'acrylic') ||
+              d.unavailableOptions?.includes(id)
             }
           >
             {label}
@@ -330,7 +335,9 @@ export function SettingRow({
       <div
         className={styles.control}
         data-invalid={Boolean(invalid[key])}
-        data-unverified={(key === 'llm.baseUrl' || key === 'tts.baseUrl') && (!verified || dirty.current)}
+        data-unverified={
+          (key === 'llm.baseUrl' || key === 'tts.baseUrl') && (!verified || dirty.current)
+        }
       >
         {control}
       </div>

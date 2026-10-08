@@ -43,20 +43,41 @@ try {
   } finally { $memory.Dispose(); $inputStream.Dispose(); $stream.Dispose() }
 } finally { $synth.Dispose() }
 `;
-export const windowsVoiceSchema = z.array(z.object({ id: z.string().max(200), name: z.string().max(200) }).strict()).max(1000);
+export const windowsVoiceSchema = z
+  .array(z.object({ id: z.string().max(200), name: z.string().max(200) }).strict())
+  .max(1000);
 export function windowsSpeech(
-  request: { action: 'voices' } | { action: 'speak'; text: string; voice: string; speed: number; pitch: number },
+  request:
+    | { action: 'voices' }
+    | { action: 'speak'; text: string; voice: string; speed: number; pitch: number },
   signal: AbortSignal,
 ): Promise<string> {
   signal.throwIfAborted();
-  if (process.platform !== 'win32') return Promise.reject(new Error('Windows speech requires Windows.'));
+  if (process.platform !== 'win32')
+    return Promise.reject(new Error('Windows speech requires Windows.'));
   return new Promise((resolve, reject) => {
-    const child = spawn('powershell.exe', ['-NoLogo', '-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')], {
-      windowsHide: true, stdio: ['pipe', 'pipe', 'pipe'],
-    });
+    const child = spawn(
+      'powershell.exe',
+      [
+        '-NoLogo',
+        '-NoProfile',
+        '-NonInteractive',
+        '-EncodedCommand',
+        Buffer.from(script, 'utf16le').toString('base64'),
+      ],
+      {
+        windowsHide: true,
+        stdio: ['pipe', 'pipe', 'pipe'],
+      },
+    );
     const parts: Buffer[] = [];
-    let bytes = 0, failed = false;
-    const fail = (error: Error) => { failed = true; child.kill(); reject(error); };
+    let bytes = 0,
+      failed = false;
+    const fail = (error: Error) => {
+      failed = true;
+      child.kill();
+      reject(error);
+    };
     const abort = () => fail(new DOMException('Cancelled', 'AbortError'));
     const timer = setTimeout(() => fail(new Error('Windows speech timed out.')), 60000);
     signal.addEventListener('abort', abort, { once: true });
@@ -70,10 +91,18 @@ export function windowsSpeech(
     child.stdin.on('error', () => undefined);
     child.on('error', fail);
     child.once('close', (code) => {
-      clearTimeout(timer); signal.removeEventListener('abort', abort);
+      clearTimeout(timer);
+      signal.removeEventListener('abort', abort);
       if (!failed) {
-        if (code === 0) resolve(Buffer.concat(parts).toString('utf8').replace(/^\uFEFF/, '').trim());
-        else reject(new Error('Windows could not synthesize speech. Check installed Windows voices.'));
+        if (code === 0)
+          resolve(
+            Buffer.concat(parts)
+              .toString('utf8')
+              .replace(/^\uFEFF/, '')
+              .trim(),
+          );
+        else
+          reject(new Error('Windows could not synthesize speech. Check installed Windows voices.'));
       }
     });
     child.stdin.end(JSON.stringify(request), 'utf8');

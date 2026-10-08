@@ -1,7 +1,10 @@
 import type { Config } from '../../shared/config';
 import type { TTSProvider } from './types';
 import { NoneTTSProvider } from './providers/none';
-export async function createTTSProvider(config: Config['tts'], key: () => Promise<string | undefined>): Promise<TTSProvider> {
+export async function createTTSProvider(
+  config: Config['tts'],
+  key: () => Promise<string | undefined>,
+): Promise<TTSProvider> {
   if (config.provider === 'none') return new NoneTTSProvider();
   if (config.provider === 'windows-sapi') {
     const { WindowsSapiProvider } = await import('./providers/windowsSapi');

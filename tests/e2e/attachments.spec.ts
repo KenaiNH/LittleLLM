@@ -67,11 +67,18 @@ test('real file and clipboard imports use managed thumbnails and encode images t
         reencodeFormat: 'png',
       });
       await window.companion.setConfig('bubble', { ...cfg.value.bubble, textReveal: 'instant' });
+      await window.companion.setConfig('input', { ...cfg.value.input, keepOpenAfterSend: true });
       await window.companion.toggleInput();
     }, `http://127.0.0.1:${address.port}`);
     const input = (await app.windows()).find((page) => page.url().includes('view=input'));
     if (!input) throw new Error('No input');
     await input.getByRole('button', { name: 'Attach images', exact: true }).waitFor();
+    const emptyHeight = await app.evaluate(
+      ({ BrowserWindow }) =>
+        BrowserWindow.getAllWindows()
+          .find((win) => win.webContents.getURL().includes('view=input'))
+          ?.getBounds().height,
+    );
     await input.getByTestId('attachment-files').setInputFiles(source);
     await expect(input.getByRole('listitem')).toHaveCount(1);
     await expect(input.getByRole('img', { name: 'user-image.png' })).toHaveAttribute(
@@ -123,6 +130,28 @@ test('real file and clipboard imports use managed thumbnails and encode images t
       await expect(pet.getByTestId('bubble-content')).toContainText('Image received');
       await expect(pet.getByTestId('bubble')).toHaveAttribute('data-streaming', 'false');
       await expect(pet.getByRole('img', { name: 'user-image.png' })).toHaveCount(1);
+      if (provider === 'openai-compatible') {
+        await expect(input.getByRole('listitem')).toHaveCount(0);
+        await expect
+          .poll(() =>
+            app.evaluate(
+              ({ BrowserWindow }) =>
+                BrowserWindow.getAllWindows()
+                  .find((win) => win.webContents.getURL().includes('view=input'))
+                  ?.getBounds().height,
+            ),
+          )
+          .toBe(emptyHeight);
+        await pet.evaluate(async () => {
+          const cfg = await window.companion.getConfig();
+          if (cfg.ok)
+            await window.companion.setConfig('input', {
+              ...cfg.value.input,
+              keepOpenAfterSend: false,
+            });
+          await window.companion.toggleInput();
+        });
+      }
       const request = requests
         .filter(
           (item) =>

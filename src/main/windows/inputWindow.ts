@@ -4,14 +4,26 @@ import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import type { SpeechService } from '../tts/speechService';
 import type { ChatImage, Attachment } from '../../shared/attachments';
-import { ttsPacketSchema, ttsFeedbackSchema, ttsTestSchema, voiceListSchema } from '../../shared/tts';
-type PendingTurn = { id: string; text: string; regenerate: boolean; images: ChatImage[]; views: Attachment[]; userText: string };
+import {
+  ttsPacketSchema,
+  ttsFeedbackSchema,
+  ttsTestSchema,
+  voiceListSchema,
+} from '../../shared/tts';
+type PendingTurn = {
+  id: string;
+  text: string;
+  regenerate: boolean;
+  images: ChatImage[];
+  views: Attachment[];
+  userText: string;
+};
 import type { ConfigStore } from '../services/configStore';
 import { CHANNELS } from '../ipc/channels';
 import { emptySchema, resultSchema } from '../ipc/schemas';
 import { chatUiSchema, draftSchema, submitSchema, type ChatUi } from '../../shared/chatUi';
 import { normalizeError } from '../../shared/errors';
-import { preloadPath, secureWindow, loadRenderer } from './security';
+import { preloadPath, secureWindow, loadRenderer, configureOutputPermissions } from './security';
 import { StateController } from '../services/stateController';
 import { companionStateSchema, overrideStateSchema } from '../../shared/state';
 import type { SecretStore } from '../services/secretStore';
@@ -68,6 +80,11 @@ export class InputWindow {
     private secrets?: SecretStore,
     private history?: ConversationStore,
   ) {
+    configureOutputPermissions(
+      (contents) =>
+        config.get().tts.provider !== 'none' &&
+        (contents === pet.webContents || contents === getSettingsWindow()?.webContents),
+    );
     this.attachments = new AttachmentStore(() => config.get());
     this.lifecycle = new StateController(
       () => config.get(),
@@ -97,9 +114,18 @@ export class InputWindow {
       if (section === 'bubble') this.lifecycle.settingsChanged();
       if (section === 'advanced' && !cfg.advanced.developerMode) this.lifecycle.force('auto');
       if (section === 'tts') {
-        if (['provider','voice','baseUrl','model','pitch','format'].some(key => cfg.tts[key as keyof typeof cfg.tts] !== speechConfig[key as keyof typeof cfg.tts])) {
+        if (
+          ['provider', 'voice', 'baseUrl', 'model', 'pitch', 'format'].some(
+            (key) =>
+              cfg.tts[key as keyof typeof cfg.tts] !== speechConfig[key as keyof typeof cfg.tts],
+          )
+        ) {
           this.voice?.abort();
-          try { this.voice?.cache.clear(); } catch { /* Cache failure must not block configuration. */ }
+          try {
+            this.voice?.cache.clear();
+          } catch {
+            /* Cache failure must not block configuration. */
+          }
         }
         speechConfig = cfg.tts;
         this.flushPending();
@@ -146,15 +172,34 @@ export class InputWindow {
       if (cfg.provider === 'none') return [];
       const { createTTSProvider } = await import('../tts/registry');
       const provider = await createTTSProvider(cfg, () => this.speechKey(cfg.provider));
-      try { return await provider.listVoices(); } finally { provider.dispose(); }
+      try {
+        return await provider.listVoices();
+      } finally {
+        provider.dispose();
+      }
     });
     handle(CHANNELS.ttsTest, emptySchema, ttsTestSchema, async () => {
       const cfg = structuredClone(config.get().tts);
       const voice = await this.ensureVoice();
-      if (!voice) throw new ProviderError({code:'INVALID_RESPONSE',userMessage:'Choose an enabled speech provider first.',retryable:false});
-      const id = randomUUID(), credentialRevision = cfg.provider === 'openai-compatible-tts' ? secrets?.status('tts.openai-compatible-tts').revision ?? '' : '';
+      if (!voice)
+        throw new ProviderError({
+          code: 'INVALID_RESPONSE',
+          userMessage: 'Choose an enabled speech provider first.',
+          retryable: false,
+        });
+      const id = randomUUID(),
+        credentialRevision =
+          cfg.provider === 'openai-compatible-tts'
+            ? (secrets?.status('tts.openai-compatible-tts').revision ?? '')
+            : '';
       const firstAudioMs = await voice.preview(id, cfg, "Hello. I'm your desktop companion.");
-      return {requestId:id, provider:cfg.provider, baseUrl:cfg.baseUrl, credentialRevision, firstAudioMs};
+      return {
+        requestId: id,
+        provider: cfg.provider,
+        baseUrl: cfg.baseUrl,
+        credentialRevision,
+        firstAudioMs,
+      };
     });
     ipcMain.on(CHANNELS.ttsFeedback, (event, payload: unknown) => {
       if (!trusted(event) || event.sender !== pet.webContents) return;
@@ -254,25 +299,39 @@ export class InputWindow {
       this.pendingTurn = null;
       this.voice?.abort();
       this.chat.abort(p.requestId);
-      this.state = { ...this.state, queuedMessage:false };
+      this.state = { ...this.state, queuedMessage: false };
       this.lifecycle.cancel(p.requestId, Boolean(this.state.reply));
       this.broadcast();
       return null;
     });
     handle(CHANNELS.llmRegenerate, emptySchema, requestIdSchema, () => this.begin('', true));
     handle(CHANNELS.llmClear, emptySchema, z.null(), () => {
-      this.pendingTurn = null; this.voice?.abort();
+      this.pendingTurn = null;
+      this.voice?.abort();
       this.chat.clear();
       this.lifecycle.cancel();
-      this.state = { ...this.state, reply: null, error: null, queuedMessage:false, speechNotice:null };
+      this.state = {
+        ...this.state,
+        reply: null,
+        error: null,
+        queuedMessage: false,
+        speechNotice: null,
+      };
       this.broadcast();
       return null;
     });
     handle(CHANNELS.bubbleDismiss, emptySchema, z.null(), () => {
-      this.pendingTurn = null; this.voice?.abort();
+      this.pendingTurn = null;
+      this.voice?.abort();
       this.chat.abort();
       this.lifecycle.cancel();
-      this.state = { ...this.state, reply: null, error: null, queuedMessage:false, speechNotice:null };
+      this.state = {
+        ...this.state,
+        reply: null,
+        error: null,
+        queuedMessage: false,
+        speechNotice: null,
+      };
       this.broadcast();
       return null;
     });
@@ -294,7 +353,9 @@ export class InputWindow {
     pet.on('hide', () => this.close());
     app.on('before-quit', this.beforeQuit);
     pet.once('closed', () => {
-      this.pendingTurn = null; this.voice?.abort();
+      configureOutputPermissions(() => false);
+      this.pendingTurn = null;
+      this.voice?.abort();
       this.chat.abort();
       removeConfig();
       if (this.queued) clearTimeout(this.queued);
@@ -306,35 +367,70 @@ export class InputWindow {
     });
   }
   private beforeQuit = () => {
-    this.pendingTurn = null; this.voice?.abort();
+    this.pendingTurn = null;
+    this.voice?.abort();
     this.chat.abort();
     this.lifecycle.dispose();
     this.quitting = true;
   };
   private speechKey(provider: import('../../shared/config').Config['tts']['provider']) {
-    return Promise.resolve(provider === 'openai-compatible-tts' || provider === 'elevenlabs' || provider === 'custom-http' ? this.secrets?.get(`tts.${provider}`) : undefined);
+    return Promise.resolve(
+      provider === 'openai-compatible-tts' ||
+        provider === 'elevenlabs' ||
+        provider === 'custom-http'
+        ? this.secrets?.get(`tts.${provider}`)
+        : undefined,
+    );
   }
   private async ensureVoice() {
     if (this.config.get().tts.provider === 'none' || this.quitting) return null;
     if (this.voice) return this.voice;
-    this.loadingVoice ??= import('../tts/speechService').then(({SpeechService}) => {
-      const voice = new SpeechService(join(app.getPath('userData'),'cache','tts'), event => {
-        if (!this.pet.isDestroyed()) this.pet.webContents.send(CHANNELS.ttsAudio, ttsPacketSchema.parse(event));
-      }, (id, drained) => {
-        this.lifecycle.audio(id, drained);
-        this.state = { ...this.state, speaking:!drained }; this.broadcast();
-      }, (_id, text) => { this.state = { ...this.state, speechNotice:text }; this.broadcast(); }, () => this.flushPending(), provider => this.speechKey(provider));
-      this.voice = voice; return voice;
-    }).finally(() => { this.loadingVoice = null; });
+    this.loadingVoice ??= import('../tts/speechService')
+      .then(({ SpeechService }) => {
+        const voice = new SpeechService(
+          join(app.getPath('userData'), 'cache', 'tts'),
+          (event) => {
+            if (!this.pet.isDestroyed())
+              this.pet.webContents.send(CHANNELS.ttsAudio, ttsPacketSchema.parse(event));
+          },
+          (id, drained) => {
+            this.lifecycle.audio(id, drained);
+            this.state = { ...this.state, speaking: !drained };
+            this.broadcast();
+          },
+          (_id, text) => {
+            this.state = { ...this.state, speechNotice: text };
+            this.broadcast();
+          },
+          () => this.flushPending(),
+          (provider) => this.speechKey(provider),
+        );
+        this.voice = voice;
+        return voice;
+      })
+      .finally(() => {
+        this.loadingVoice = null;
+      });
     const voice = await this.loadingVoice;
     if (this.quitting || this.config.get().tts.provider === 'none') return null;
     return voice;
   }
   private flushPending() {
-    if (!this.pendingTurn || this.state.reply?.streaming || this.voice?.hasSpeech || this.quitting) return;
-    const turn = this.pendingTurn; this.pendingTurn = null;
+    if (!this.pendingTurn || this.state.reply?.streaming || this.voice?.hasSpeech || this.quitting)
+      return;
+    const turn = this.pendingTurn;
+    this.pendingTurn = null;
     void this.startTurn(turn).catch(() => {
-      this.state = { ...this.state, queuedMessage:false, error:{code:'UNKNOWN',userMessage:'The queued message could not be started.',retryable:false} }; this.broadcast();
+      this.state = {
+        ...this.state,
+        queuedMessage: false,
+        error: {
+          code: 'UNKNOWN',
+          userMessage: 'The queued message could not be started.',
+          retryable: false,
+        },
+      };
+      this.broadcast();
     });
   }
   private async begin(text: string, regenerate = false) {
@@ -352,27 +448,38 @@ export class InputWindow {
         userMessage: 'Remove attachments above the configured limit before sending.',
         retryable: false,
       });
-    const turn: PendingTurn = { id:randomUUID(), text, regenerate, images:regenerate ? [] : this.attachments.images, views, userText:regenerate ? previous?.userText ?? '' : text };
+    const turn: PendingTurn = {
+      id: randomUUID(),
+      text,
+      regenerate,
+      images: regenerate ? [] : this.attachments.images,
+      views,
+      userText: regenerate ? (previous?.userText ?? '') : text,
+    };
     if (!regenerate) this.attachments.clear();
-    this.state = { ...this.state, draft:'', attachments:[] };
+    this.state = { ...this.state, draft: '', attachments: [] };
+    this.position();
     const policy = this.config.get().tts.onNewMessage;
     if (this.voice?.hasSpeech && policy !== 'stop') {
-      this.pendingTurn = turn; this.state = { ...this.state, queuedMessage:true };
+      this.pendingTurn = turn;
+      this.state = { ...this.state, queuedMessage: true };
       if (policy === 'finish-sentence') {
-        this.voice.finishSentence(); this.preserveSentence = true;
-        this.chat.abort(); this.preserveSentence = false;
+        this.voice.finishSentence();
+        this.preserveSentence = true;
+        this.chat.abort();
+        this.preserveSentence = false;
       }
-      if (!this.config.get().input.keepOpenAfterSend) this.close(); else this.broadcast();
-      this.flushPending(); return turn.id;
+      if (!this.config.get().input.keepOpenAfterSend) this.close();
+      else this.broadcast();
+      this.flushPending();
+      return turn.id;
     }
     this.pendingTurn = null;
     return this.startTurn(turn);
   }
   private async startTurn(turn: PendingTurn) {
-    const voice = await this.ensureVoice();
     const requestId = this.chat.start(turn.text, turn.regenerate, turn.images, turn.id);
     this.lifecycle.begin(requestId);
-    if (voice) voice.begin(requestId, this.config.get().tts);
     this.state = {
       ...this.state,
       draft: '',
@@ -386,12 +493,35 @@ export class InputWindow {
         attachments: turn.views,
       },
       error: null,
-      speechNotice:null,
-      speaking:false,
-      queuedMessage:false,
+      speechNotice: null,
+      speaking: false,
+      queuedMessage: false,
     };
     if (!this.config.get().input.keepOpenAfterSend) this.close();
     else this.broadcast();
+    // Optional audio initialization cannot delay or prevent text generation.
+    if (this.config.get().tts.provider !== 'none') {
+      const speechConfig = structuredClone(this.config.get().tts);
+      void this.ensureVoice()
+        .then((voice) => {
+          const reply = this.state.reply;
+          if (
+            !voice ||
+            !reply ||
+            reply.requestId !== requestId ||
+            this.quitting ||
+            this.config.get().tts.provider !== speechConfig.provider
+          )
+            return;
+          voice.begin(requestId, speechConfig);
+          if (reply.text || !reply.streaming) voice.push(requestId, reply.text, !reply.streaming);
+        })
+        .catch(() => {
+          if (this.state.reply?.requestId !== requestId) return;
+          this.state = { ...this.state, speechNotice: 'Speech unavailable — continuing as text.' };
+          this.broadcast();
+        });
+    }
     return requestId;
   }
   private delta(event: ChatEvent) {

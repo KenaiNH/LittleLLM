@@ -355,7 +355,9 @@ export function registerHandlers(
       secrets.clear('llm.anthropic');
     }
     if (p.panel === 'Voice') {
-      secrets.clear('tts.openai-compatible-tts'); secrets.clear('tts.elevenlabs'); secrets.clear('tts.custom-http');
+      secrets.clear('tts.openai-compatible-tts');
+      secrets.clear('tts.elevenlabs');
+      secrets.clear('tts.custom-http');
     }
     for (const section of selected) {
       if (section === 'sprite') await spriteManager.resetAll();

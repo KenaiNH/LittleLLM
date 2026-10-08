@@ -92,7 +92,9 @@ export function SecretInput({
             status?.has
               ? '••••••••' + status.last4
               : local
-                ? 'Optional for local endpoints'
+                ? id.startsWith('llm.')
+                  ? 'Usually not required for local models'
+                  : 'Optional for local endpoints'
                 : 'Enter API key'
           }
           onChange={(event) => {
