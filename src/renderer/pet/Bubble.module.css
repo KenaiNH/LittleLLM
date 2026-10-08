@@ -1,0 +1,230 @@
+.bubble {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: calc(12px * var(--bubble-scale));
+  min-height: 0;
+  text-shadow: 1.5px 2px #182642;
+}
+.surface,
+.inset,
+.customSurface {
+  position: absolute;
+  pointer-events: none;
+}
+.decoration {
+  position: absolute;
+  pointer-events: none;
+}
+.surface {
+  inset: 0;
+  border-style: solid;
+  border-width: 1px 1px calc(22px * var(--bubble-scale));
+  border-image-width: 1px 1px calc(22px * var(--bubble-scale)) 1px;
+  border-image-repeat: stretch;
+}
+.inset {
+  inset: calc(5px * var(--bubble-scale)) calc(5px * var(--bubble-scale))
+    calc(11px * var(--bubble-scale));
+  border: 1px solid transparent;
+  border-image-slice: 1 1 22 1;
+  border-image-width: 1px 1px calc(22px * var(--bubble-scale)) 1px;
+  border-image-repeat: stretch;
+}
+.customSurface {
+  inset: 0 0 calc(22px * var(--bubble-scale));
+  border-radius: inherit;
+  background: color-mix(
+    in srgb,
+    var(--bubble-background) calc(var(--bubble-opacity) * 100%),
+    transparent
+  );
+  border: calc(var(--bubble-border) * 1px) solid var(--bubble-accent);
+}
+.customSurface::after {
+  content: '';
+  display: var(--bubble-tail);
+  position: absolute;
+  bottom: calc(-18px * var(--bubble-scale));
+  left: calc(58px * var(--bubble-scale));
+  width: calc(24px * var(--bubble-scale));
+  height: calc(18px * var(--bubble-scale));
+  background: var(--bubble-background);
+  opacity: var(--bubble-opacity);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.name {
+  position: relative;
+  margin: 0;
+  flex-shrink: 0;
+  overflow-wrap: anywhere;
+}
+.content {
+  position: relative;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overflow-wrap: anywhere;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  flex: 0 1 auto;
+}
+.bubble[data-scrollbar='always'] .content,
+.bubble[data-scrollbar='auto'][data-scrolling='true'] .content {
+  scrollbar-color: var(--bubble-accent) transparent;
+}
+.bubble[data-scrollbar='never'] .content {
+  scrollbar-width: none;
+}
+.content p {
+  margin: 0 0 0.6em;
+}
+.content p:last-child {
+  margin-bottom: 0;
+}
+.content h1,
+.content h2,
+.content h3 {
+  font-size: 1.15em;
+  margin: 0.5em 0;
+}
+.content ul,
+.content ol {
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+.content blockquote {
+  border-left: 2px solid var(--bubble-accent);
+  padding-left: 0.6em;
+  margin: 0.5em 0;
+}
+.content a {
+  color: var(--bubble-accent);
+  text-decoration: underline;
+}
+.content img {
+  max-width: 100%;
+  height: auto;
+}
+.content code {
+  font-family: Consolas, monospace;
+  font-size: 0.85em;
+  background: #0002;
+}
+.content pre {
+  position: relative;
+  overflow-x: auto;
+  white-space: pre;
+  background: #0003;
+  padding: 1.2em 0.6em 0.6em;
+  border-radius: 4px;
+  text-shadow: none;
+}
+.content pre code {
+  white-space: pre;
+  background: none;
+}
+.content pre button {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  font-size: 10px;
+}
+.plain {
+  white-space: pre-wrap;
+}
+.footer {
+  position: absolute;
+  bottom: calc(25px * var(--bubble-scale));
+  left: calc(30px * var(--bubble-scale));
+  right: calc(45px * var(--bubble-scale));
+  display: flex;
+  gap: 0.6em;
+  flex-wrap: wrap;
+  font-size: calc(11px * var(--bubble-scale));
+}
+.footer button,
+.content pre button {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  text-shadow: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.continuation {
+  position: absolute;
+  right: calc(26px * var(--bubble-scale));
+  bottom: calc(45px * var(--bubble-scale));
+  width: calc(14px * var(--bubble-scale));
+  height: calc(10px * var(--bubble-scale));
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.continuation img {
+  display: block;
+  width: 110.71%;
+  height: 120%;
+}
+.unavailable {
+  position: relative;
+  font-size: 12px;
+}
+.bubble[data-code-theme='github-light'] pre {
+  color: #24292f;
+  background: #f6f8fa;
+}
+.bubble[data-code-theme='github-dark'] pre {
+  color: #c9d1d9;
+  background: #0d1117;
+}
+.bubble[data-code-theme='monokai'] pre {
+  color: #f8f8f2;
+  background: #272822;
+}
+.bubble[data-code-theme='solarized-dark'] pre {
+  color: #839496;
+  background: #002b36;
+}
+.bubble {
+  --code-keyword: #0550ae;
+  --code-string: #0a3069;
+  --code-number: #953800;
+  --code-comment: #57606a;
+}
+.bubble[data-code-theme='github-dark'] {
+  --code-keyword: #ff7b72;
+  --code-string: #a5d6ff;
+  --code-number: #79c0ff;
+  --code-comment: #8b949e;
+}
+.bubble[data-code-theme='monokai'] {
+  --code-keyword: #f92672;
+  --code-string: #e6db74;
+  --code-number: #ae81ff;
+  --code-comment: #95958d;
+}
+.bubble[data-code-theme='solarized-dark'] {
+  --code-keyword: #859900;
+  --code-string: #2aa198;
+  --code-number: #d33682;
+  --code-comment: #586e75;
+}
+.content :global(.hljs-keyword),
+.content :global(.hljs-literal) {
+  color: var(--code-keyword);
+}
+.content :global(.hljs-string),
+.content :global(.hljs-attr) {
+  color: var(--code-string);
+}
+.content :global(.hljs-number),
+.content :global(.hljs-built_in) {
+  color: var(--code-number);
+}
+.content :global(.hljs-comment) {
+  color: var(--code-comment);
+}

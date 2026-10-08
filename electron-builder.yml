@@ -9,6 +9,7 @@ files:
 asarUnpack:
   - node_modules/sharp/**
   - node_modules/@img/**
+  - node_modules/koffi/**
 win:
   target:
     - target: nsis

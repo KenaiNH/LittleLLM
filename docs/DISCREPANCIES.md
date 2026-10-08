@@ -11,3 +11,5 @@
 9. Main §9.2 disables image attach for known text-only models; Settings image subsection warns and sends anyway. Architecture/runtime authority is main: gate attachments for positively known unsupported capability; show amber uncertainty for unprobed models.
 10. Main mentions step 19 as Persona in changelog, but §14 orders Persona at 18 and packaging at 19; follow the operative numbered build sequence.
 11. User expressly selected the full-width bottom chatbox for responses. Ship input width `wide`, interpreted as the display work-area width; retain the required compact and match-bubble choices. This overrides Settings' match-bubble default under the user's visual precedence instruction.
+12. Main §4/phase 7 mentions bubble scale 3; Settings control 118 and binding conflict resolutions cap it at 2.5. The persisted schema and acceptance checks use 0.5/1/2.5.
+13. Strong Acrylic is not implemented. Main §18.1 expressly permits this; keep the required option visible but unavailable with an explanation in the Appearance panel. The runtime surfaces an explanatory message for imported configurations requesting it. Do not label translucent fill as native Acrylic.

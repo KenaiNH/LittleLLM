@@ -1,5 +1,5 @@
 # Native pointer driver for Windows integration tests; never loaded by the app.
-param([int]$X, [int]$Y, [switch]$Click)
+param([int]$X, [int]$Y, [switch]$Click, [int]$WheelDelta = 0)
 Add-Type -TypeDefinition @'
 using System;
 using System.Runtime.InteropServices;
@@ -21,6 +21,10 @@ public static class TestPointer {
     System.Threading.Thread.Sleep(100); input[0].mouse.flags=4;
     if (SendInput(1, input, Marshal.SizeOf(typeof(Input))) != 1) throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
   }
+  public static void Wheel(int delta) {
+    var input=new Input[1]; input[0].mouse.flags=0x800; input[0].mouse.data=unchecked((uint)delta);
+    if(SendInput(1,input,Marshal.SizeOf(typeof(Input))) != 1) throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+  }
 }
 '@
 [void][TestPointer]::SetProcessDPIAware()
@@ -29,3 +33,4 @@ if ($Click) {
   Start-Sleep -Milliseconds 100
   [TestPointer]::Click()
 }
+if ($WheelDelta -ne 0) { Start-Sleep -Milliseconds 100; [TestPointer]::Wheel($WheelDelta) }

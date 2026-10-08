@@ -1,28 +1,132 @@
-import { contextBridge,ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 import { configSchema } from '../shared/config';
 import { CHANNELS } from '../main/ipc/channels';
-import { emptySchema,configSetSchema,configResetSchema,configResultSchema,settingsRequestSchema,voidResultSchema,resultSchema,resizeSchema,visibilitySchema,dpiSchema,booleanSchema,moveSchema } from '../main/ipc/schemas';
-import { spriteAssetsSchema,spriteMasksSchema } from '../shared/sprites';
+import {
+  emptySchema,
+  configSetSchema,
+  configResetSchema,
+  configResultSchema,
+  settingsRequestSchema,
+  voidResultSchema,
+  resultSchema,
+  resizeSchema,
+  visibilitySchema,
+  dpiSchema,
+  booleanSchema,
+  moveSchema,
+} from '../main/ipc/schemas';
+import { spriteAssetsSchema, spriteMasksSchema } from '../shared/sprites';
 import type { CompanionAPI } from '../shared/api';
-import { chatUiSchema,draftSchema,submitSchema } from '../shared/chatUi';
-const api:CompanionAPI={
-  getConfig:async()=>configResultSchema.parse(await ipcRenderer.invoke(CHANNELS.configGet,emptySchema.parse({}))),
-  getChatUi:async()=>resultSchema(chatUiSchema).parse(await ipcRenderer.invoke(CHANNELS.chatUiGet,emptySchema.parse({}))),
-  onChatUi:callback=>{const listener=(_event:Electron.IpcRendererEvent,value:unknown)=>{const parsed=chatUiSchema.safeParse(value);if(parsed.success)callback(parsed.data);};ipcRenderer.on(CHANNELS.chatUiChanged,listener);return()=>ipcRenderer.removeListener(CHANNELS.chatUiChanged,listener);},
-  toggleInput:async()=>voidResultSchema.parse(await ipcRenderer.invoke(CHANNELS.inputToggle,emptySchema.parse({}))),
-  closeInput:async()=>voidResultSchema.parse(await ipcRenderer.invoke(CHANNELS.inputClose,emptySchema.parse({}))),
-  saveDraft:text=>ipcRenderer.send(CHANNELS.inputDraft,draftSchema.parse({text})),
-  submitInput:async text=>voidResultSchema.parse(await ipcRenderer.invoke(CHANNELS.inputSubmit,submitSchema.parse({text}))),
-  getSpriteAssets:async()=>resultSchema(spriteAssetsSchema).parse(await ipcRenderer.invoke(CHANNELS.spriteAssets,emptySchema.parse({}))),
-  getSpriteMasks:async()=>resultSchema(spriteMasksSchema).parse(await ipcRenderer.invoke(CHANNELS.spriteMask,emptySchema.parse({}))),
-  setIgnoreMouse:ignore=>ipcRenderer.send(CHANNELS.windowIgnoreMouse,booleanSchema.parse(ignore)),
-  movePet:(x,y)=>ipcRenderer.send(CHANNELS.windowMove,moveSchema.parse({x,y})),
-  resizePet:(width,height,anchor)=>ipcRenderer.send(CHANNELS.windowResize,resizeSchema.parse({width,height,anchor})),
-  onVisibility:callback=>{const listener=(_event:Electron.IpcRendererEvent,value:unknown)=>{const parsed=visibilitySchema.safeParse(value);if(parsed.success)callback(parsed.data.visible);};ipcRenderer.on(CHANNELS.windowVisibility,listener);return()=>ipcRenderer.removeListener(CHANNELS.windowVisibility,listener);},
-  onDpi:callback=>{const listener=(_event:Electron.IpcRendererEvent,value:unknown)=>{const parsed=dpiSchema.safeParse(value);if(parsed.success)callback(parsed.data.scaleFactor);};ipcRenderer.on(CHANNELS.windowDpi,listener);return()=>ipcRenderer.removeListener(CHANNELS.windowDpi,listener);},
-  setConfig:async(section,value)=>configResultSchema.parse(await ipcRenderer.invoke(CHANNELS.configSet,configSetSchema.parse({section,value}))),
-  resetConfig:async(section)=>configResultSchema.parse(await ipcRenderer.invoke(CHANNELS.configReset,configResetSchema.parse({section}))),
-  onConfig:callback=>{const listener=(_event:Electron.IpcRendererEvent,value:unknown)=>{const parsed=configSchema.safeParse(value);if(parsed.success)callback(parsed.data);};ipcRenderer.on(CHANNELS.configChanged,listener);return()=>ipcRenderer.removeListener(CHANNELS.configChanged,listener);},
-  openSettings:async(panel='General')=>voidResultSchema.parse(await ipcRenderer.invoke(CHANNELS.windowSettings,settingsRequestSchema.parse({panel}))),
+import { chatUiSchema, draftSchema, submitSchema } from '../shared/chatUi';
+import { petViewportSchema, petLayoutRequestSchema } from '../shared/petLayout';
+import { externalUrlSchema } from '../main/ipc/schemas';
+import { wheelSchema } from '../main/ipc/schemas';
+const api: CompanionAPI = {
+  getConfig: async () =>
+    configResultSchema.parse(await ipcRenderer.invoke(CHANNELS.configGet, emptySchema.parse({}))),
+  getChatUi: async () =>
+    resultSchema(chatUiSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.chatUiGet, emptySchema.parse({})),
+    ),
+  getPetViewport: async () =>
+    resultSchema(petViewportSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.windowViewport, emptySchema.parse({})),
+    ),
+  layoutPet: async (sprite, bubble) =>
+    resultSchema(petViewportSchema).parse(
+      await ipcRenderer.invoke(
+        CHANNELS.windowLayout,
+        petLayoutRequestSchema.parse({ sprite, bubble }),
+      ),
+    ),
+  onPetViewport: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => {
+      const parsed = petViewportSchema.safeParse(value);
+      if (parsed.success) callback(parsed.data);
+    };
+    ipcRenderer.on(CHANNELS.windowViewportChanged, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.windowViewportChanged, listener);
+  },
+  openExternal: async (url) =>
+    voidResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.shellOpenExternal, externalUrlSchema.parse({ url })),
+    ),
+  copyText: async (text) =>
+    voidResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.clipboardCopy, draftSchema.parse({ text })),
+    ),
+  forwardWheel: async (value) =>
+    voidResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.windowForwardWheel, wheelSchema.parse(value)),
+    ),
+  dismissBubble: async () =>
+    voidResultSchema.parse(await ipcRenderer.invoke(CHANNELS.bubbleDismiss, emptySchema.parse({}))),
+  hoverBubble: (hovering) => ipcRenderer.send(CHANNELS.bubbleHover, booleanSchema.parse(hovering)),
+  onChatUi: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => {
+      const parsed = chatUiSchema.safeParse(value);
+      if (parsed.success) callback(parsed.data);
+    };
+    ipcRenderer.on(CHANNELS.chatUiChanged, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.chatUiChanged, listener);
+  },
+  toggleInput: async () =>
+    voidResultSchema.parse(await ipcRenderer.invoke(CHANNELS.inputToggle, emptySchema.parse({}))),
+  closeInput: async () =>
+    voidResultSchema.parse(await ipcRenderer.invoke(CHANNELS.inputClose, emptySchema.parse({}))),
+  saveDraft: (text) => ipcRenderer.send(CHANNELS.inputDraft, draftSchema.parse({ text })),
+  submitInput: async (text) =>
+    voidResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.inputSubmit, submitSchema.parse({ text })),
+    ),
+  getSpriteAssets: async () =>
+    resultSchema(spriteAssetsSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.spriteAssets, emptySchema.parse({})),
+    ),
+  getSpriteMasks: async () =>
+    resultSchema(spriteMasksSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.spriteMask, emptySchema.parse({})),
+    ),
+  setIgnoreMouse: (ignore) =>
+    ipcRenderer.send(CHANNELS.windowIgnoreMouse, booleanSchema.parse(ignore)),
+  movePet: (x, y) => ipcRenderer.send(CHANNELS.windowMove, moveSchema.parse({ x, y })),
+  resizePet: (width, height, anchor) =>
+    ipcRenderer.send(CHANNELS.windowResize, resizeSchema.parse({ width, height, anchor })),
+  onVisibility: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => {
+      const parsed = visibilitySchema.safeParse(value);
+      if (parsed.success) callback(parsed.data.visible);
+    };
+    ipcRenderer.on(CHANNELS.windowVisibility, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.windowVisibility, listener);
+  },
+  onDpi: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => {
+      const parsed = dpiSchema.safeParse(value);
+      if (parsed.success) callback(parsed.data.scaleFactor);
+    };
+    ipcRenderer.on(CHANNELS.windowDpi, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.windowDpi, listener);
+  },
+  setConfig: async (section, value) =>
+    configResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.configSet, configSetSchema.parse({ section, value })),
+    ),
+  resetConfig: async (section) =>
+    configResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.configReset, configResetSchema.parse({ section })),
+    ),
+  onConfig: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => {
+      const parsed = configSchema.safeParse(value);
+      if (parsed.success) callback(parsed.data);
+    };
+    ipcRenderer.on(CHANNELS.configChanged, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.configChanged, listener);
+  },
+  openSettings: async (panel = 'General') =>
+    voidResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.windowSettings, settingsRequestSchema.parse({ panel })),
+    ),
 };
-contextBridge.exposeInMainWorld('companion',api);
+contextBridge.exposeInMainWorld('companion', api);
