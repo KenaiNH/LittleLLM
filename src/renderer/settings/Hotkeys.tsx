@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Config } from '../../shared/config';
+import { VOICE_INPUT_ENABLED } from '../../shared/featureScope';
 import { matchesSearch } from './definitions';
 import { useSettingsStore } from './store';
 import styles from './Settings.module.css';
@@ -13,9 +14,13 @@ export const HOTKEY_ACTIONS = [
   ['muteMic', 'Mute microphone', 186],
   ['nextPersona', 'Cycle to the next persona', 268],
 ] as const;
+const activeHotkeys = () =>
+  HOTKEY_ACTIONS.filter(
+    ([key]) => VOICE_INPUT_ENABLED || !['voice', 'voiceSend', 'muteMic'].includes(key),
+  );
 export const hotkeyMatches = (query: string) =>
-  [...HOTKEY_ACTIONS.map(([, label]) => label), 'Stop speaking / cancel generation'].some((label) =>
-    matchesSearch(label + ' hotkeys shortcut keyboard', query),
+  [...activeHotkeys().map(([, label]) => label), 'Stop speaking / cancel generation'].some(
+    (label) => matchesSearch(label + ' hotkeys shortcut keyboard', query),
   );
 const chord = (event: KeyboardEvent) => {
   const names: Record<string, string> = {
@@ -53,7 +58,7 @@ export function Hotkeys({ config, query }: { config: Config; query: string }) {
       }
       if (['Control', 'Alt', 'Shift', 'Meta'].includes(event.key)) return;
       const value = chord(event),
-        conflict = HOTKEY_ACTIONS.find(
+        conflict = activeHotkeys().find(
           ([key]) => key !== recording && config.hotkeys[key].toLowerCase() === value.toLowerCase(),
         );
       const fail = (message: string) => {
@@ -86,7 +91,7 @@ export function Hotkeys({ config, query }: { config: Config; query: string }) {
     document.addEventListener('keydown', record, true);
     return () => document.removeEventListener('keydown', record, true);
   }, [recording, config.hotkeys, patch]);
-  const rows = HOTKEY_ACTIONS.filter(
+  const rows = activeHotkeys().filter(
     ([key, label]) =>
       (!['voice', 'voiceSend', 'muteMic'].includes(key) || config.stt.provider !== 'none') &&
       (key !== 'nextPersona' || (config.persona.enabled && config.persona.library.length >= 2)) &&
@@ -128,7 +133,7 @@ export function Hotkeys({ config, query }: { config: Config; query: string }) {
             <tr
               data-control="20"
               style={{ opacity: 0.55 }}
-              title="Always available while the companion is generating or speaking, and while the microphone is open."
+              title="Always available while the companion is generating or speaking."
             >
               <td>Stop speaking / cancel generation</td>
               <td>Esc</td>

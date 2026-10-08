@@ -12,6 +12,7 @@ import { AppearancePreview } from './AppearancePreview';
 import { SpritesPanel } from './SpritesPanel';
 import { VoicePanel } from './VoicePanel';
 import { VoiceInputPanel } from './VoiceInputPanel';
+import { VOICE_INPUT_ENABLED } from '../../shared/featureScope';
 import searchIcon from '../../../assets/figma/2004-411-imgSearch.svg';
 import chevron from '../../../assets/figma/16-205-imgChevronDown.svg';
 import toggleOn from '../../../assets/figma/2004-411-imgToggleOn.svg';
@@ -34,7 +35,9 @@ const extras: Partial<Record<Panel, string[]>> = {
   Sprites: SPRITE_SEARCH_LABELS,
   General: [
     'Hotkeys shortcut keyboard',
-    ...HOTKEY_ACTIONS.map(([, label]) => label + ' shortcut keyboard'),
+    ...HOTKEY_ACTIONS.filter(
+      ([key]) => VOICE_INPUT_ENABLED || !['voice', 'voiceSend', 'muteMic'].includes(key),
+    ).map(([, label]) => label + ' shortcut keyboard'),
     'Stop speaking / cancel generation',
   ],
   Model: [

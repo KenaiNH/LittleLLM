@@ -1,6 +1,6 @@
 ﻿# Windows dictation — deferred handoff
 
-Status: outside the current release by explicit user instruction on October 8, 2026. This means the **Windows built-in dictation provider** and its transcription-failure fallback. OpenAI-compatible Whisper, local executable STT, Custom HTTP STT and general microphone/activation systems remain in scope. Do not reopen this task unless the user resumes it.
+Status: outside the current release by explicit user instruction on October 8, 2026. The subsequent entry 38 defers **all voice input/dictation**, including Whisper, Custom HTTP and activation modes. Read [voice-input-handoff.md](voice-input-handoff.md) first. This file retains the Windows-specific architecture conflict for later; do not reopen this task unless the user resumes it.
 
 ## Read before resuming
 
@@ -35,4 +35,4 @@ Primary reference: [Microsoft speech recognition documentation](https://learn.mi
 
 ## Current next step
 
-Continue the current release with the other STT providers, Persona and native packaging/polish. Auto-update, region screenshots, mouth animation/lip syncing and Windows built-in dictation are explicitly deferred. When the user resumes Windows dictation, start by proposing an approved offline backend or a revised online/package-identity requirement; do not assume a previous implementation decision exists.
+Continue the current release with Persona and native packaging/polish. Auto-update, region screenshots, mouth animation/lip syncing and **all voice input/dictation** are deferred. When the user resumes Windows dictation, start by proposing an approved offline backend or a revised online/package-identity requirement; do not assume a previous implementation decision exists.
