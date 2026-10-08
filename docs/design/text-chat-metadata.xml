@@ -1,0 +1,12 @@
+<canvas id="2012:2" name="TextChat" x="0" y="0" width="0" height="0">
+  <frame id="2016:89" name="Text bubble" x="1800" y="488" width="560" height="232">
+    <vector id="2016:90" name="Bubble surface" x="0" y="0" width="560" height="232" />
+    <vector id="2016:91" name="Inner border" x="5" y="5" width="550" height="216" />
+    <text id="2016:92" name="Speaker name" x="30" y="24" width="500" height="31" />
+    <text id="2016:93" name="Dialogue" x="30" y="67" width="500" height="31" />
+    <frame id="2016:94" name="Dialogue continuation" x="520" y="177" width="14" height="10">
+      <vector id="2016:95" name="Continue dialogue" x="0" y="0" width="14" height="10" />
+    </frame>
+  </frame>
+  <frame id="2016:81" name="Desktop Example" x="440" y="0" width="1280" height="720" />
+</canvas>

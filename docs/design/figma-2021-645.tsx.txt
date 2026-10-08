@@ -1,0 +1,864 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/01965f8a-cac6-449c-bce8-0e0c7c16735d";
+const imgStatusDot = `${assetPathPrefix}/a436b.svg`;
+const imgStatusDot1 = `${assetPathPrefix}/7d138.svg`;
+const imgStatusDot2 = `${assetPathPrefix}/9b09e.svg`;
+const imgStatusDot3 = `${assetPathPrefix}/b25df.svg`;
+const imgDisabledToggle = `${assetPathPrefix}/fa76f.svg`;
+const imgToggleLockedOff = `${assetPathPrefix}/5de0b.svg`;
+
+export default function VoiceInputSupportingSettingsStatesLight() {
+  return (
+    <div className="bg-[#f0f1f3] border border-[#f0f1f3] border-solid content-stretch flex flex-col gap-[24px] items-start overflow-clip p-[24px] relative rounded-[8px] size-full" data-node-id="2021:645" data-name="Voice Input — supporting settings states (light)">
+      <div className="[word-break:break-word] content-stretch flex flex-col gap-[6px] items-start not-italic overflow-clip relative shrink-0 w-full" data-node-id="2021:646" data-name="State collection heading">
+        <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[#202124] text-[30px] w-full" data-node-id="2021:647">
+          Voice Input / Settings states
+        </p>
+        <p className="font-['Inter:Regular'] font-normal leading-[1.4] relative shrink-0 text-[#62666c] text-[13px] w-full" data-node-id="2021:648">
+          Reference states for the same Settings window · not additional app screens
+        </p>
+      </div>
+      <div className="bg-[#f7f7f7] border border-[#f7f7f7] border-solid content-stretch flex flex-col gap-[20px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 w-full" data-node-id="2021:649" data-name="Conditional states and choices">
+        <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[18px] w-full" data-node-id="2021:650">{`Conditional controls & alternate states`}</p>
+        <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.4] not-italic relative shrink-0 text-[#62666c] text-[12px] w-full" data-node-id="2021:651">
+          Compact control snapshots show exact labels, values, widgets and visibility rules. v2 · controls 187–232, voice hotkeys 184–186 and related Advanced states.
+        </p>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:652" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:653">
+            Off (typing only) · default
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:654">
+            <p className="leading-[1.65] mb-0">{`187 · Speech-to-text provider  ·  Off (typing only)`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Voice input is disabled. The microphone will never be accessed. The companion accepts typed input only.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">The entire remainder of the panel unmounts. No greyed-out controls, microphone meter, permission row, privacy block or permission request. No mic button on the sprite input bar; never call getUserMedia. General hotkey rows 184–186 are hidden entirely.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:655" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:656">
+            Windows built-in dictation
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:657">
+            <p className="leading-[1.65] mb-0">{`187 · Speech-to-text provider  ·  Windows built-in dictation`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`188 · Recognition language  ·  [System default]`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown · enumerated from installed Windows speech packs</p>
+            <p className="leading-[1.65] mb-0">English (United States) is an example, not a discovered language.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`189 · Show live partial results  ·  On`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Uses the speech recognition built into Windows. No download, no internet, no API key. Accuracy is lower than Whisper. Additional languages require installing a speech pack in Windows Settings.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Show words as I speak (224) remains enabled. Fall back to Windows dictation is hidden in If transcription fails (231).</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:658" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:659">
+            OpenAI-compatible endpoint (Whisper)
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:660">
+            <p className="leading-[1.65] mb-0">{`187 · Speech-to-text provider  ·  OpenAI-compatible endpoint (Whisper)`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">190 · Base URL</p>
+            <p className="leading-[1.65] mb-0">{`https://api.openai.com/v1 · Text · Not yet verified`}</p>
+            <p className="leading-[1.65] mb-0">{`A local Whisper container typically runs at http://localhost:9000/v1. faster-whisper-server and LocalAI also use this shape.`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">191 · API key</p>
+            <p className="leading-[1.65] mb-0">(empty) · Password, masked, Show toggle · Not yet verified</p>
+            <p className="leading-[1.65] mb-0">Optional for local endpoints</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`192 · Model  ·  whisper-1`}</p>
+            <p className="leading-[1.65] mb-0">Editable combo</p>
+            <p className="leading-[1.65] mb-0">Examples, not a fetched list: whisper-1, Systran/faster-whisper-large-v3, base.en</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">193 · Test Connection</p>
+            <p className="leading-[1.65] mb-0">Button · Idle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Test states in source order:</p>
+            <p className="leading-[1.65] mb-0">Idle</p>
+            <p className="leading-[1.65] mb-0">Testing…</p>
+            <p className="leading-[1.65] mb-0">Connected — responded in 340 ms</p>
+            <p className="leading-[1.65] mb-0">{`Failed: <reason>`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">{`340 ms is the specification's illustrative response, not measured latency. Connection success and failure are static reference states; no endpoint was tested.`}</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:661" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:662">
+            Loopback endpoint · optional API key
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:663">
+            <p className="leading-[1.65] mb-0">{`190 · Base URL  ·  http://localhost:9000/v1`}</p>
+            <p className="leading-[1.65] mb-0">Text · local-container example · Not yet verified</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`191 · API key  ·  (empty)`}</p>
+            <p className="leading-[1.65] mb-0">Password, masked, Show toggle</p>
+            <p className="leading-[1.65] mb-0">Placeholder: Usually not required for local models</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Optional for local endpoints. An empty key must not block a local endpoint. No connection, language, device or model discovery is implied.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Current provider sends audio to: localhost</p>
+            <p className="leading-[1.65]">Resolved-hostname example for the illustrated URL.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:664" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:665">
+            Local Whisper executable
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:666">
+            <p className="leading-[1.65] mb-0">{`187 · Speech-to-text provider  ·  Local Whisper executable`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`194 · Executable path  ·  (empty)`}</p>
+            <p className="leading-[1.65] mb-0">Text + Browse…</p>
+            <p className="leading-[1.65] mb-0">Path to whisper-cli.exe, main.exe, or faster-whisper.exe.</p>
+            <p className="leading-[1.65] mb-0">Validated on blur: must exist and be executable.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`195 · Model file path  ·  (empty)`}</p>
+            <p className="leading-[1.65] mb-0">Text + Browse…</p>
+            <p className="leading-[1.65] mb-0">Example: ggml-base.en.bin. Validated on blur.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`196 · Extra arguments  ·  (empty)`}</p>
+            <p className="leading-[1.65] mb-0">Tag input · one argv token per tag · Never shell-interpolated.</p>
+            <p className="leading-[1.65] mb-0">Each tag is passed as a separate argument. Do not include the audio file path; it is added automatically.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`197 · Output parsing  ·  JSON (--output-json)`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">198 · Test Executable</p>
+            <p className="leading-[1.65] mb-0">Button · runs a bundled 2-second sample clip and shows the returned transcript plus wall-clock time.</p>
+            <p className="leading-[1.65] mb-0">Returned transcript: unresolved until test.</p>
+            <p className="leading-[1.65] mb-0">Wall-clock time: unresolved until test.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Executable names and model filenames above are supplied specification examples, not verified files. No user-supplied path or file is assumed to exist.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:667" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:668">
+            Custom HTTP endpoint
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:669">
+            <p className="leading-[1.65] mb-0">{`187 · Speech-to-text provider  ·  Custom HTTP endpoint`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`199 · Request URL  ·  (empty)`}</p>
+            <p className="leading-[1.65] mb-0">Text · Required · Not yet verified</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`200 · HTTP method  ·  POST`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`201 · Headers  ·  (empty)`}</p>
+            <p className="leading-[1.65] mb-0">{`Key/value row editor · Values may reference {{apiKey}}.`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`202 · API key  ·  (empty)`}</p>
+            <p className="leading-[1.65] mb-0">{`Password, masked · Injected wherever {{apiKey}} appears.`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`203 · How to send the audio  ·  Multipart form file`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`204 · Audio field name  ·  file`}</p>
+            <p className="leading-[1.65] mb-0">Text · The form field or JSON key holding the audio.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`205 · Additional form fields  ·  (empty)`}</p>
+            <p className="leading-[1.65] mb-0">{`Key/value row editor · Sent alongside the audio; supports {{language}}.`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`206 · Transcript location  ·  text`}</p>
+            <p className="leading-[1.65] mb-0">Text · Dot path into the JSON response.</p>
+            <p className="leading-[1.65] mb-0">Examples: text or results.0.transcript</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`207 · Audio format to send  ·  WAV 16-bit 16 kHz`}</p>
+            <p className="leading-[1.65]">Dropdown</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:670" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:671">
+            Raw request body · field name hidden
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:672">
+            <p className="leading-[1.65] mb-0">{`203 · How to send the audio  ·  Raw request body`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Audio field name (204) is hidden, not disabled. All other Custom HTTP endpoint fields remain in their specified order.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Multipart form file and Base64 string in JSON show Audio field name (204), default file. It names the form field or JSON key holding the audio.</p>
+            <p className="leading-[1.65]">{`Additional form fields (205) supports {{language}}; Headers (201) may reference {{apiKey}}.`}</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:673" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:674">
+            Developer mode On · Mock (testing)
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:675">
+            <p className="leading-[1.65] mb-0">{`Advanced 178 · Developer mode  ·  On`}</p>
+            <p className="leading-[1.65] mb-0">Toggle · default Off</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`187 · Speech-to-text provider  ·  Mock (testing)`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown · hidden unless Developer mode is On</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Returns a fixed transcript from a bundled fixture without opening the microphone. Fixture transcript is unresolved, not invented here. No provider-specific fields are defined for Mock.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Permission status is part of the active-provider layout. The shared Activation, Input Device, Transcription Handling and Privacy blocks remain specified beneath the provider. Mock must not open a microphone, including for a live-preview illustration.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Show words as I speak (224) is disabled: This provider returns the full transcript at once.</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 w-full" data-node-id="2021:676" data-name="Settings state">
+          <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[16px] w-full" data-node-id="2021:677">
+            Microphone permission · four states
+          </p>
+          <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.65] not-italic relative shrink-0 text-[#202124] text-[13px] w-full" data-node-id="2021:678">
+            Directly beneath Speech-to-text provider whenever 187 ≠ Off (typing only). Permission is not requested in Off.
+          </p>
+          <div className="border-[#e8eaed] border-b border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip py-[10px] relative shrink-0 w-full" data-node-id="2021:679" data-name="Permission state">
+            <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="2021:680">
+              Not yet requested
+            </p>
+            <div className="content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 w-full" data-node-id="2021:681" data-name="Permission status">
+              <div className="relative shrink-0 size-[7px]" data-node-id="2021:682" data-name="Status dot">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgStatusDot} />
+              </div>
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:683">
+                Microphone access will be requested the first time you use voice input.
+              </p>
+            </div>
+          </div>
+          <div className="border-[#e8eaed] border-b border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip py-[10px] relative shrink-0 w-full" data-node-id="2021:684" data-name="Permission state">
+            <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="2021:685">
+              Granted
+            </p>
+            <div className="content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 w-full" data-node-id="2021:686" data-name="Permission status">
+              <div className="relative shrink-0 size-[7px]" data-node-id="2021:687" data-name="Status dot">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgStatusDot1} />
+              </div>
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:688">
+                Microphone access granted.
+              </p>
+            </div>
+          </div>
+          <div className="border-[#e8eaed] border-b border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip py-[10px] relative shrink-0 w-full" data-node-id="2021:689" data-name="Permission state">
+            <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="2021:690">
+              Denied
+            </p>
+            <div className="content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 w-full" data-node-id="2021:691" data-name="Permission status">
+              <div className="relative shrink-0 size-[7px]" data-node-id="2021:692" data-name="Status dot">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgStatusDot2} />
+              </div>
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:693">
+                Windows is blocking microphone access.
+              </p>
+            </div>
+            <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex items-start overflow-clip px-[10px] py-[6px] relative rounded-[4px] shrink-0" data-node-id="2021:694" data-name="Permission action">
+              <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="2021:695">
+                Open Windows Microphone Settings
+              </p>
+            </div>
+          </div>
+          <div className="border-[#e8eaed] border-b border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip py-[10px] relative shrink-0 w-full" data-node-id="2021:696" data-name="Permission state">
+            <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="2021:697">
+              No device found
+            </p>
+            <div className="content-stretch flex gap-[8px] items-center overflow-clip relative shrink-0 w-full" data-node-id="2021:698" data-name="Permission status">
+              <div className="relative shrink-0 size-[7px]" data-node-id="2021:699" data-name="Status dot">
+                <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgStatusDot3} />
+              </div>
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:700">
+                No microphone detected.
+              </p>
+            </div>
+            <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex items-start overflow-clip px-[10px] py-[6px] relative rounded-[4px] shrink-0" data-node-id="2021:701" data-name="Permission action">
+              <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="2021:702">
+                ↻ Rescan
+              </p>
+            </div>
+          </div>
+          <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.65] not-italic relative shrink-0 text-[#202124] text-[13px] w-full" data-node-id="2021:703">
+            Open Windows Microphone Settings opens ms-settings:privacy-microphone. Denied permission keeps Activation and Input Device controls 208–220 visible; the red permission row stays above them.
+          </p>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:704" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:705">
+            Activation · all active providers
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:706">
+            <p className="leading-[1.65] mb-0">{`208 · How voice input starts  ·  Push-to-talk (hold the hotkey)`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`209 · Show a microphone button on the input box  ·  On`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`210 · Stop listening after silence  ·  0.9`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 0.3–5.0 s · step 0.1</p>
+            <p className="leading-[1.65] mb-0">Hidden for Push-to-talk (hold the hotkey).</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`211 · Maximum recording length  ·  120`}</p>
+            <p className="leading-[1.65] mb-0">Slider + numeric · 5–300 s</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`212 · Play a sound when recording starts / stops  ·  On`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`213 · Pause listening while the companion is speaking  ·  On`}</p>
+            <p className="leading-[1.65] mb-0">Toggle · visible only when Voice → 83 ≠ Off (text only).</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Push-to-talk release ends the utterance. There is no always-on listening or wake-word control. Hands-free is explicitly activated and stops when you stop talking.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:707" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:708">
+            Toggle / Hands-free · silence and VAD visible
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:709">
+            <p className="leading-[1.65] mb-0">208 · How voice input starts</p>
+            <p className="leading-[1.65] mb-0">Toggle (press to start, press to stop)</p>
+            <p className="leading-[1.65] mb-0">or Hands-free (stops when you stop talking)</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`210 · Stop listening after silence  ·  0.9`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 0.3–5.0 s · step 0.1</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`219 · Voice detection sensitivity  ·  [Midpoint, 0.02]`}</p>
+            <p className="leading-[1.65] mb-0">Slider · Low ←→ High · vadThreshold 0.08 → 0.005</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Both controls are visible for Toggle and Hands-free, and hidden for Push-to-talk (hold the hotkey). Maximum recording length stays visible in every mode.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:710" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:711">
+            Voice output Off · pause listening hidden
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:712">
+            <p className="leading-[1.65] mb-0">{`Voice 83 · Text-to-speech provider  ·  Off (text only)`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Pause listening while the companion is speaking (213) is hidden entirely. It returns, default On, whenever the Voice provider is active. Other Voice Input controls are unchanged.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:713" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:714">
+            Input Device · all active providers
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:715">
+            <p className="leading-[1.65] mb-0">{`214 · Microphone  ·  System default`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown · other entries enumerated from input devices at runtime</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">215 · Input level</p>
+            <p className="leading-[1.65] mb-0">Live meter, read-only · horizontal bar · 0–100</p>
+            <p className="leading-[1.65] mb-0">Updates only while the panel is open.</p>
+            <p className="leading-[1.65] mb-0">Microphone active for level preview</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`216 · Input gain  ·  1.0×`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 0.5×–4.0× · step 0.1</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`217 · Noise suppression  ·  Browser default`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`218 · Echo cancellation  ·  On`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`219 · Voice detection sensitivity  ·  [Midpoint, 0.02]`}</p>
+            <p className="leading-[1.65] mb-0">Slider · Low ←→ High · maps to vadThreshold 0.08 → 0.005</p>
+            <p className="leading-[1.65] mb-0">Hidden for Push-to-talk (hold the hotkey).</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">220 · Test Microphone</p>
+            <p className="leading-[1.65] mb-0">Button · records 3 s, plays it back, then transcribes it with the configured provider and shows the result.</p>
+            <p className="leading-[1.65] mb-0">Test transcript: unresolved until test.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Device lists are runtime data, not a fabricated discovery. Level preview opens the mic only while Voice Input is visible and provider 187 is not Off; releases it on panel blur or window close. Mock never opens the microphone.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 w-full" data-node-id="2021:716" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[#202124] text-[16px] w-full" data-node-id="2021:717">
+            Loopback / Stereo Mix · device warning
+          </p>
+          <div className="bg-[#f0f1f3] border border-[#a56a13] border-solid content-stretch flex font-['Inter:Regular'] font-normal gap-[8px] items-start overflow-clip p-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:718" data-name="Device warning">
+            <p className="leading-[normal] relative shrink-0 text-[#a56a13] text-[15px] whitespace-nowrap" data-node-id="2021:719">
+              !
+            </p>
+            <p className="flex-[1_0_0] leading-[1.4] min-w-px relative text-[#202124] text-[13px]" data-node-id="2021:720">
+              This looks like a playback-monitoring device. The companion may transcribe its own voice.
+            </p>
+          </div>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[#202124] text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:721">
+            <p className="leading-[1.65] mb-0">{`214 · Microphone  ·  [Playback-monitoring device example]`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown · a loopback/“Stereo Mix”-style monitor device is selected</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">This looks like a playback-monitoring device. The companion may transcribe its own voice.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">{`Render the warning in amber whenever the selected device is a playback monitor. This state is illustrative: no device has been enumerated. Do not silently replace the user's selected device.`}</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:722" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:723">
+            Transcription Handling · all active providers
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:724">
+            <p className="leading-[1.65] mb-0">{`221 · Spoken language  ·  Detect automatically`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown · ISO language list; examples: English, Spanish, Japanese</p>
+            <p className="leading-[1.65] mb-0">Language list is unresolved runtime content, not a discovered list.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`222 · What to do with the transcript  ·  Put it in the input box and wait`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`223 · Countdown before sending  ·  1.5`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 0.5–5.0 s · step 0.5</p>
+            <p className="leading-[1.65] mb-0">Visible only for Send after a short countdown.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`224 · Show words as I speak  ·  On`}</p>
+            <p className="leading-[1.65] mb-0">Toggle · enabled only for Windows built-in dictation.</p>
+            <p className="leading-[1.65] mb-0">Disabled for every batch-only provider: This provider returns the full transcript at once.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`225 · Insert transcript  ·  At the cursor`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`226 · Capitalize and punctuate  ·  On`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`227 · Recognize spoken punctuation  ·  Off`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">{`Turns the spoken words "period", "comma", and "new line" into characters. Most Whisper models already punctuate — leaving this off is usually better.`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`228 · Remove filler words  ·  Off`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`229 · Custom vocabulary  ·  (empty)`}</p>
+            <p className="leading-[1.65] mb-0">Textarea, 3 rows · ≤ 1000 chars</p>
+            <p className="leading-[1.65] mb-0">Comma-separated names/terms sent as a biasing prompt.</p>
+            <p className="leading-[1.65] mb-0">Helps the engine recognize unusual names, jargon, and acronyms.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`230 · Discard transcripts below confidence  ·  0%`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 0%–90%</p>
+            <p className="leading-[1.65] mb-0">Not all engines report confidence. When unavailable, every transcript is kept.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`231 · If transcription fails  ·  Show an error and keep what I typed`}</p>
+            <p className="leading-[1.65]">Dropdown · Fall back to Windows dictation hidden for Windows built-in dictation.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:725" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:726">
+            Send after a short countdown · countdown visible
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:727">
+            <p className="leading-[1.65] mb-0">{`222 · What to do with the transcript  ·  Send after a short countdown`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`223 · Countdown before sending  ·  1.5`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 0.5–5.0 s · step 0.5</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Countdown before sending is hidden for Put it in the input box and wait and Send it immediately. The action is governed by control 222, not Executable path (194).</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:728" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:729">
+            Privacy · all active providers
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:730">
+            <p className="leading-[1.65] mb-0">{`Read-only informational block above the panel's reset button; not controls:`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">The microphone opens only when you activate voice input, and closes the moment the utterance ends.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Recorded audio is held in memory and discarded after transcription. It is never written to disk.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">With a local provider, no audio leaves this computer.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Current provider sends audio to: this computer only</p>
+            <p className="leading-[1.65] mb-0">Local provider variant.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Current provider sends audio to: api.openai.com</p>
+            <p className="leading-[1.65] mb-0">{`Resolved-hostname example for the default https://api.openai.com/v1 endpoint; not a connection result.`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">For Custom HTTP endpoint, resolve the hostname of Request URL (199). If the URL is empty or invalid, destination is unresolved; do not invent a host.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`232 · Include transcripts in logs  ·  Off`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Preview caption (215) separately discloses the temporary mic access for the visible level meter. Advanced 233 is the explicitly disclosed audio-on-disk debugging exception.</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 w-full" data-node-id="2021:731" data-name="Settings state">
+          <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[16px] w-full" data-node-id="2021:732">
+            Batch-only provider · Show words disabled
+          </p>
+          <div className="content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="2021:733" data-name="Disabled setting">
+            <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#62666c] text-[13px]" data-node-id="2021:734">
+              Show words as I speak
+            </p>
+            <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="2021:735" data-name="Disabled toggle">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgDisabledToggle} />
+            </div>
+          </div>
+          <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.65] not-italic relative shrink-0 text-[#202124] text-[13px] w-full" data-node-id="2021:737">
+            224 · Default On, but disabled for every provider except Windows built-in dictation. Tooltip: This provider returns the full transcript at once.
+          </p>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 w-full" data-node-id="2021:738" data-name="Settings state">
+          <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[16px] w-full" data-node-id="2021:739">
+            Input level · preview active / released
+          </p>
+          <div className="[word-break:break-word] content-stretch flex font-['Inter:Regular'] font-normal items-center justify-between leading-[normal] not-italic overflow-clip relative shrink-0 w-full whitespace-nowrap" data-node-id="2021:740" data-name="Meter heading">
+            <p className="relative shrink-0 text-[#202124] text-[13px]" data-node-id="2021:741">
+              Input level
+            </p>
+            <p className="relative shrink-0 text-[#62666c] text-[11px]" data-node-id="2021:742">
+              Microphone active for level preview
+            </p>
+          </div>
+          <div className="bg-[#e8eaed] content-stretch flex h-[8px] items-start overflow-clip relative rounded-[4px] shrink-0 w-full" data-node-id="2021:743" data-name="Level preview">
+            <div className="bg-[#1768b2] h-[8px] relative rounded-[4px] shrink-0 w-[220px]" data-node-id="2021:744" data-name="Example level" />
+          </div>
+          <div className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[0] not-italic relative shrink-0 text-[#202124] text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:745">
+            <p className="leading-[1.65] mb-0">{`Illustrative level only, not a measured microphone reading. Read-only horizontal meter, range 0–100; role="meter" and aria-valuenow in implementation.`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Visible active provider: preview updates while Voice Input is open, with permission. Panel blur / window close: release the mic and stop updates. Off: meter and caption unmount; no microphone access. Mock uses no microphone.</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 w-full" data-node-id="2021:746" data-name="Settings state">
+          <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[16px] w-full" data-node-id="2021:747">
+            Log redaction On · transcripts locked Off
+          </p>
+          <div className="content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="2021:748" data-name="Locked setting">
+            <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#62666c] text-[13px]" data-node-id="2021:749">
+              Include transcripts in logs
+            </p>
+            <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="2021:750" data-name="Toggle locked Off">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleLockedOff} />
+            </div>
+          </div>
+          <div className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[0] not-italic relative shrink-0 text-[#202124] text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:752">
+            <p className="leading-[1.65] mb-0">{`Advanced 171 · Redact prompts and replies from logs  ·  On (default)`}</p>
+            <p className="leading-[1.65] mb-0">Force 232 Off and disable. Tooltip:</p>
+            <p className="leading-[1.65] mb-0">Disabled because log redaction is enabled in Advanced.</p>
+            <p className="leading-[1.65]">When redaction is Off, 232 is editable; its default is still Off.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 w-full" data-node-id="2021:753" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[#202124] text-[16px] w-full" data-node-id="2021:754">
+            Debug recording On · persistent privacy warning
+          </p>
+          <div className="bg-[#f0f1f3] border border-[#c43b3b] border-solid content-stretch flex font-['Inter:Regular'] font-normal gap-[8px] items-start overflow-clip p-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:755" data-name="Persistent warning">
+            <p className="leading-[normal] relative shrink-0 text-[#c43b3b] text-[15px] whitespace-nowrap" data-node-id="2021:756">
+              !
+            </p>
+            <p className="flex-[1_0_0] leading-[1.4] min-w-px relative text-[#202124] text-[13px]" data-node-id="2021:757">
+              Save the last recording to disk for debugging is On. Writes raw microphone audio to the logs folder. Leave this off unless you are diagnosing a transcription problem.
+            </p>
+          </div>
+          <p className="font-['Inter:Regular'] font-normal leading-[1.65] relative shrink-0 text-[#202124] text-[13px] w-full" data-node-id="2021:758">
+            Advanced 233 is the explicit audio-storage exception. Warning remains while active. Resets to Off on every app launch — never sticky.
+          </p>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 w-full" data-node-id="2021:759" data-name="Settings state">
+          <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[16px] w-full" data-node-id="2021:760">
+            Recording · accessible status snapshots
+          </p>
+          <div className="content-stretch flex gap-[12px] items-start overflow-clip relative shrink-0 w-full" data-node-id="2021:761" data-name="Recording states">
+            <div className="bg-[#e5effa] border border-[#d9dce1] border-solid content-stretch flex items-start overflow-clip px-[10px] py-[8px] relative rounded-[4px] shrink-0" data-node-id="2021:762" data-name="Recording status">
+              <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="2021:763">
+                Listening
+              </p>
+            </div>
+            <div className="bg-[#e5effa] border border-[#d9dce1] border-solid content-stretch flex items-start overflow-clip px-[10px] py-[8px] relative rounded-[4px] shrink-0" data-node-id="2021:764" data-name="Recording status">
+              <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="2021:765">
+                Transcribing
+              </p>
+            </div>
+            <div className="bg-[#e5effa] border border-[#d9dce1] border-solid content-stretch flex items-start overflow-clip px-[10px] py-[8px] relative rounded-[4px] shrink-0" data-node-id="2021:766" data-name="Recording status">
+              <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="2021:767">
+                Transcript inserted
+              </p>
+            </div>
+          </div>
+          <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.65] not-italic relative shrink-0 text-[#202124] text-[13px] w-full" data-node-id="2021:768">{`Each status is announced via aria-live="polite". Text accompanies the visual indicator; the mic icon or level meter is never the sole indication of recording.`}</p>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:769" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:770">
+            Dropdown choices · exact order
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:771">
+            <p className="leading-[1.65] mb-0">187 · Speech-to-text provider</p>
+            <p className="leading-[1.65] mb-0">Off (typing only)</p>
+            <p className="leading-[1.65] mb-0">Windows built-in dictation</p>
+            <p className="leading-[1.65] mb-0">OpenAI-compatible endpoint (Whisper)</p>
+            <p className="leading-[1.65] mb-0">Local Whisper executable</p>
+            <p className="leading-[1.65] mb-0">Custom HTTP endpoint</p>
+            <p className="leading-[1.65] mb-0">Mock (testing)</p>
+            <p className="leading-[1.65] mb-0">Mock (testing) is visible only when Advanced Developer mode (178) is On.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">188 · Recognition language</p>
+            <p className="leading-[1.65] mb-0">[System default]</p>
+            <p className="leading-[1.65] mb-0">Other entries enumerated from installed Windows speech packs.</p>
+            <p className="leading-[1.65] mb-0">English (United States) is the supplied example only.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">192 · Model · editable combo examples, not fixed enum options</p>
+            <p className="leading-[1.65] mb-0">whisper-1</p>
+            <p className="leading-[1.65] mb-0">Systran/faster-whisper-large-v3</p>
+            <p className="leading-[1.65] mb-0">base.en</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">197 · Output parsing</p>
+            <p className="leading-[1.65] mb-0">JSON (--output-json)</p>
+            <p className="leading-[1.65] mb-0">Plain text (stdout)</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">200 · HTTP method</p>
+            <p className="leading-[1.65] mb-0">POST</p>
+            <p className="leading-[1.65] mb-0">PUT</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">203 · How to send the audio</p>
+            <p className="leading-[1.65] mb-0">Multipart form file</p>
+            <p className="leading-[1.65] mb-0">Raw request body</p>
+            <p className="leading-[1.65] mb-0">Base64 string in JSON</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">207 · Audio format to send</p>
+            <p className="leading-[1.65] mb-0">WAV 16-bit 16 kHz</p>
+            <p className="leading-[1.65] mb-0">WAV 16-bit 48 kHz</p>
+            <p className="leading-[1.65] mb-0">FLAC</p>
+            <p className="leading-[1.65] mb-0">Opus (OGG)</p>
+            <p className="leading-[1.65] mb-0">MP3</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">208 · How voice input starts</p>
+            <p className="leading-[1.65] mb-0">Push-to-talk (hold the hotkey)</p>
+            <p className="leading-[1.65] mb-0">Toggle (press to start, press to stop)</p>
+            <p className="leading-[1.65] mb-0">Hands-free (stops when you stop talking)</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">214 · Microphone</p>
+            <p className="leading-[1.65] mb-0">System default</p>
+            <p className="leading-[1.65] mb-0">Other entries enumerated per input device at runtime.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">217 · Noise suppression</p>
+            <p className="leading-[1.65] mb-0">Browser default</p>
+            <p className="leading-[1.65] mb-0">Aggressive</p>
+            <p className="leading-[1.65] mb-0">Off</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">221 · Spoken language</p>
+            <p className="leading-[1.65] mb-0">Detect automatically</p>
+            <p className="leading-[1.65] mb-0">ISO language list · examples in source order:</p>
+            <p className="leading-[1.65] mb-0">English</p>
+            <p className="leading-[1.65] mb-0">Spanish</p>
+            <p className="leading-[1.65] mb-0">Japanese</p>
+            <p className="leading-[1.65] mb-0">Examples only; not a fixed three-language inventory.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">222 · What to do with the transcript</p>
+            <p className="leading-[1.65] mb-0">Put it in the input box and wait</p>
+            <p className="leading-[1.65] mb-0">Send it immediately</p>
+            <p className="leading-[1.65] mb-0">Send after a short countdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">225 · Insert transcript</p>
+            <p className="leading-[1.65] mb-0">At the cursor</p>
+            <p className="leading-[1.65] mb-0">Replace everything in the box</p>
+            <p className="leading-[1.65] mb-0">Append to the end</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">231 · If transcription fails · non-Windows providers</p>
+            <p className="leading-[1.65] mb-0">Show an error and keep what I typed</p>
+            <p className="leading-[1.65] mb-0">Fall back to Windows dictation</p>
+            <p className="leading-[1.65] mb-0">Silently discard</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">231 · If transcription fails · Windows built-in dictation</p>
+            <p className="leading-[1.65] mb-0">Show an error and keep what I typed</p>
+            <p className="leading-[1.65]">Silently discard</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:772" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:773">
+            General / Hotkeys · voice input bindings
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:774">
+            <p className="leading-[1.65] mb-0">Table format: Action · Current binding · [Record] · [Clear]</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">184 · Voice input (push-to-talk / toggle)</p>
+            <p className="leading-[1.65] mb-0">Ctrl + Shift + V · Record · Clear</p>
+            <p className="leading-[1.65] mb-0">Clearable: Yes</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">185 · Voice input and send immediately</p>
+            <p className="leading-[1.65] mb-0">(unbound) · Record · Clear</p>
+            <p className="leading-[1.65] mb-0">Clearable: Yes</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">186 · Mute microphone</p>
+            <p className="leading-[1.65] mb-0">(unbound) · Record · Clear</p>
+            <p className="leading-[1.65] mb-0">Clearable: Yes</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Rows 184–186 are hidden entirely when provider 187 = Off (typing only).</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">184 is hold-to-record for Push-to-talk (hold the hotkey); otherwise press-to-toggle. This follows activation control 208, not Recognition language (188).</p>
+            <p className="leading-[1.65] mb-0">185 always performs a one-shot capture with auto-send regardless of What to do with the transcript (222), not Executable path (194).</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Recording captures the next chord. Esc aborts recording.</p>
+            <p className="leading-[1.65] mb-0">{`App-binding conflict: Already assigned to "<action>"`}</p>
+            <p className="leading-[1.65] mb-0">Reject the conflicting chord.</p>
+            <p className="leading-[1.65] mb-0">OS-reserved conflict: This shortcut is reserved by Windows</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`20 · Stop speaking / cancel generation  ·  Esc`}</p>
+            <p className="leading-[1.65] mb-0">Fixed, non-rebindable; greyed; not clearable.</p>
+            <p className="leading-[1.65]">Always available while the companion is generating or speaking, and while the microphone is open.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:775" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:776">
+            Keyboard hook unavailable · persisted fallback
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:777">
+            <p className="leading-[1.65] mb-0">{`Electron's globalShortcut provides no key-up event. Global push-to-talk requires a low-level keyboard hook.`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">If the hook fails to install, automatically switch How voice input starts (208) to Toggle (press to start, press to stop), persist the change, and show this toast once:</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Push-to-talk needs a keyboard hook that could not be started. Voice input has been switched to toggle mode.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">The microphone must never be left open. The fallback is not a new enum or a shortened “Toggle” label in the control.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:778" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:779">
+            Advanced / Developer · audio logging exception
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:780">
+            <p className="leading-[1.65] mb-0">{`178 · Developer mode  ·  Off`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`233 · Save the last recording to disk for debugging  ·  Off`}</p>
+            <p className="leading-[1.65] mb-0">Toggle · visible only when Developer mode (178) is On</p>
+            <p className="leading-[1.65] mb-0">Red warning icon; tooltip:</p>
+            <p className="leading-[1.65] mb-0">Writes raw microphone audio to the logs folder. Leave this off unless you are diagnosing a transcription problem.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">When On: show a persistent warning banner in Voice Input while active. This is the explicit exception to the normal “never written to disk” audio policy; do not conceal it in help text.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Resets to Off on every app launch — never sticky.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`234 · Show microphone level and VAD state overlay  ·  Off`}</p>
+            <p className="leading-[1.65] mb-0">Toggle · visible only when Developer mode (178) is On</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`183 · Force state  ·  Automatic`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown · visible only when Developer mode (178) is On</p>
+            <p className="leading-[1.65] mb-0">Options in source order:</p>
+            <p className="leading-[1.65] mb-0">Automatic</p>
+            <p className="leading-[1.65] mb-0">Idle</p>
+            <p className="leading-[1.65] mb-0">Thinking</p>
+            <p className="leading-[1.65] mb-0">Speaking</p>
+            <p className="leading-[1.65] mb-0">Listening</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Developer mode Off hides controls 179–183, 233–234 and Mock (testing) in provider 187. Turning Developer mode On reveals them.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:781" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:782">
+            Reactive cross-panel dependencies · complete STT matrix
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:783">
+            <p className="leading-[1.65] mb-0">Re-evaluate each dependency whenever its source changes; never a one-time render check.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">187 = Off (typing only)</p>
+            <p className="leading-[1.65] mb-0">Unmount Voice Input panel body; hide General hotkey rows 184–186 and mic button on sprite input bar; never call getUserMedia.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">187 = Windows built-in dictation</p>
+            <p className="leading-[1.65] mb-0">Hide Fall back to Windows dictation in control 231.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">187 ≠ Windows built-in dictation</p>
+            <p className="leading-[1.65] mb-0">Disable Show words as I speak (224) with batch-provider tooltip.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">187 changes</p>
+            <p className="leading-[1.65] mb-0">Show only its matching provider fields 188–207.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">208 = Push-to-talk (hold the hotkey)</p>
+            <p className="leading-[1.65] mb-0">Hide Stop listening after silence (210) and Voice detection sensitivity (219).</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">208 = Push-to-talk (hold the hotkey), hook unavailable</p>
+            <p className="leading-[1.65] mb-0">Force Toggle (press to start, press to stop), persist, toast once.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">83 = Off (text only)</p>
+            <p className="leading-[1.65] mb-0">Hide Pause listening while the companion is speaking (213).</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">203 = Raw request body</p>
+            <p className="leading-[1.65] mb-0">Hide Audio field name (204).</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">222 ≠ Send after a short countdown</p>
+            <p className="leading-[1.65] mb-0">Hide Countdown before sending (223).</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">171 = On</p>
+            <p className="leading-[1.65] mb-0">Force Include transcripts in logs (232) Off and disable.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">178 = Off</p>
+            <p className="leading-[1.65] mb-0">Hide 233, 234 and Mock (testing) in provider 187.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Microphone permission denied</p>
+            <p className="leading-[1.65]">Keep controls 208–220 visible, with the red permission row above them.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:784" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:785">
+            Accessibility · recording and controls
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:786">
+            <p className="leading-[1.65] mb-0">Full keyboard navigation: Tab through controls; Ctrl + 1–7 jumps to panels. Arrow keys operate sliders in single steps; Home / End jumps to minimum / maximum.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Every control has a programmatic label. Every dropdown is a native <select> or an ARIA-complete listbox. All text meets WCAG AA contrast in each built-in theme.`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Recording state is conveyed non-visually as well as visually. An aria-live="polite" region announces, in state order:`}</p>
+            <p className="leading-[1.65] mb-0">Listening</p>
+            <p className="leading-[1.65] mb-0">Transcribing</p>
+            <p className="leading-[1.65] mb-0">Transcript inserted</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`The Input level meter (215) has role="meter", range 0–100 and aria-valuenow. It is read-only and must never be the only indication that the microphone is open. Show the Microphone active for level preview caption beside it.`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Voice input is fully operable without a hotkey: the mic button (209) provides a keyboard/pointer path, reachable by Tab.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Honor prefers-reduced-motion: Text reveal (145) defaults to Appear instantly; State transition (42) defaults to Instant cut. Voice Input status remains legible without relying on motion.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Recorded UI states are static documentation, not prototype interactions.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="2021:787" data-name="Settings state">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="2021:788">{`Validation, saving & reset`}</p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="2021:789">
+            <p className="leading-[1.65] mb-0">Toggles, sliders and dropdowns live-apply on change. Free-text and secret fields commit on blur, debounced 400 ms, or on Enter / focus loss. Custom HTTP fields retain template literals exactly.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Secrets and endpoint URLs require explicit Test Connection before green verified status. Saving unverified values is allowed: amber dot, tooltip Not yet verified.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Invalid controls show a red 1 px border and inline error below the row. Invalid values are not persisted; retain the last valid stored value and the user's editable text. A red dot on the Voice Input navigation entry marks an invalid field.`}</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Executable path (194) must exist and be executable on blur. Model file path (195) is validated on blur. Request URL (199) is required. Custom vocabulary (229) is at most 1000 characters.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Reset this panel to defaults</p>
+            <p className="leading-[1.65] mb-0">Text action at bottom-right of the panel body; opens confirmation.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Reset Voice Input to defaults?</p>
+            <p className="leading-[1.65] mb-0">Reset this panel to its default values. Other panels will not change.</p>
+            <p className="leading-[1.65] mb-0">Cancel · Reset</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Reset returns Speech-to-text provider (187) to Off (typing only) and all panel controls to their specified defaults.</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 w-full" data-node-id="2021:790" data-name="Settings state">
+          <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] min-w-full not-italic relative shrink-0 text-[#202124] text-[16px] w-[min-content]" data-node-id="2021:791">
+            Reset panel · confirmation
+          </p>
+          <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex flex-col gap-[14px] items-start overflow-clip p-[20px] relative rounded-[8px] shrink-0 w-[460px]" data-node-id="2021:792" data-name="Confirmation dialog">
+            <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[17px] w-full" data-node-id="2021:793">
+              Reset Voice Input to defaults?
+            </p>
+            <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.5] not-italic relative shrink-0 text-[#62666c] text-[13px] w-full" data-node-id="2021:794">
+              Reset this panel to its default values. Other panels will not change.
+            </p>
+            <div className="content-stretch flex gap-[8px] items-start justify-end overflow-clip relative shrink-0 w-full" data-node-id="2021:795" data-name="Dialog actions">
+              <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex items-start overflow-clip px-[16px] py-[7px] relative rounded-[4px] shrink-0" data-node-id="2021:796" data-name="Cancel action">
+                <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="2021:797">
+                  Cancel
+                </p>
+              </div>
+              <div className="bg-[#1768b2] content-stretch flex items-start overflow-clip px-[16px] py-[7px] relative rounded-[4px] shrink-0" data-node-id="2021:798" data-name="Reset action">
+                <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[13px] text-white whitespace-nowrap" data-node-id="2021:799">
+                  Reset
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-[#e5effa] border border-[#e5effa] border-solid content-stretch flex font-['Inter:Regular'] font-normal gap-[8px] items-start not-italic overflow-clip p-[12px] relative rounded-[4px] shrink-0 text-[#1768b2] w-full" data-node-id="2021:800" data-name="Status message">
+          <p className="leading-[normal] relative shrink-0 text-[14px] whitespace-nowrap" data-node-id="2021:801">
+            ⓘ
+          </p>
+          <p className="flex-[1_0_0] leading-[1.4] min-w-px relative text-[13px]" data-node-id="2021:802">
+            Provider cards show only their own fields. Activation, Input Device, Transcription Handling and Privacy are shared beneath the active provider; none appears for Off (typing only). Runtime devices, installed languages, latency and returned transcripts are examples or unresolved. Light and dark collections carry identical authoritative content.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

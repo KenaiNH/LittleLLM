@@ -1,0 +1,15 @@
+import { z } from 'zod';
+import { configSchema,configSectionSchema } from '../../shared/config';
+import { appErrorSchema } from '../../shared/errors';
+export const emptySchema=z.object({}).strict();
+export const configSetSchema=z.object({section:configSectionSchema,value:z.unknown()}).strict();
+export const configResetSchema=z.object({section:configSectionSchema}).strict();
+export const settingsRequestSchema=z.object({panel:z.enum(['General','Sprites','Model','Persona','Voice','Voice Input','Appearance','Advanced']).default('General')}).strict();
+export const booleanSchema=z.boolean();
+export const moveSchema=z.object({x:z.number().finite(),y:z.number().finite()}).strict();
+export const resizeSchema=z.object({width:z.number().int().min(1).max(10000),height:z.number().int().min(1).max(10000)}).strict();
+export const resultSchema=<T extends z.ZodTypeAny>(value:T)=>z.discriminatedUnion('ok',[z.object({ok:z.literal(true),value}),z.object({ok:z.literal(false),error:appErrorSchema})]);
+export const configResultSchema=resultSchema(configSchema);
+export const voidResultSchema=resultSchema(z.null());
+export const visibilitySchema=z.object({visible:z.boolean()}).strict();
+export const dpiSchema=z.object({scaleFactor:z.number().positive()}).strict();

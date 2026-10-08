@@ -1,0 +1,127 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/d109ff47-de64-43a7-bba3-d3c901df382d";
+const imgSearch = `${assetPathPrefix}/ac478.svg`;
+const imgToggleOff = `${assetPathPrefix}/a371f.svg`;
+const imgExpandChoices = `${assetPathPrefix}/64390.svg`;
+
+export default function SettingsVoiceInputLight() {
+  return (
+    <div className="bg-[#f7f7f7] border border-[#d9dce1] border-solid content-stretch flex flex-col items-start overflow-clip relative rounded-[8px] shadow-[0px_8px_28px_0px_rgba(25,40,60,0.09)] size-full" data-node-id="2021:545" data-name="Settings — Voice Input (light)">
+      <div className="[word-break:break-word] bg-[#f0f1f3] content-stretch flex font-['Inter:Regular'] font-normal h-[40px] items-center justify-between not-italic overflow-clip pl-[16px] relative shrink-0 text-[#202124] w-full" data-node-id="2021:546" data-name="OS title bar">
+        <p className="leading-[normal] relative shrink-0 text-[12px] whitespace-nowrap" data-node-id="2021:547">
+          Settings
+        </p>
+        <div className="flex flex-col h-[40px] justify-center leading-[0] relative shrink-0 text-[16px] text-center w-[138px]" data-node-id="2021:548">
+          <p className="leading-[normal]">− □ ×</p>
+        </div>
+      </div>
+      <div className="content-stretch flex h-[640px] items-start overflow-clip relative shrink-0 w-full" data-node-id="2021:549" data-name="Window body">
+        <div className="bg-[#f0f1f3] content-stretch flex flex-col gap-[16px] h-full items-start overflow-clip pb-[18px] pt-[20px] px-[12px] relative shrink-0 w-[200px]" data-node-id="2021:550" data-name="Sidebar">
+          <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex gap-[7px] h-[34px] items-center overflow-clip px-[10px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:551" data-name="Settings search">
+            <div className="relative shrink-0 size-[11px]" data-node-id="2021:552" data-name="Search">
+              <div className="absolute inset-[0_11.11%_11.11%_0]">
+                <img alt="" className="block max-w-none size-full" src={imgSearch} />
+              </div>
+            </div>
+            <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#62666c] text-[12px] whitespace-nowrap" data-node-id="2021:553">
+              Search settings
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col gap-[4px] items-start overflow-clip relative shrink-0 w-full" data-node-id="2021:554" data-name="Panels">
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:555" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:556">
+                General
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:557" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:558">
+                Sprites
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:559" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:560">
+                Model
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:561" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:562">
+                Voice
+              </p>
+            </div>
+            <div className="bg-[#e5effa] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:563" data-name="Navigation item">
+              <div className="absolute bg-[#1768b2] h-[20px] left-0 rounded-[2px] top-[10px] w-[3px]" data-node-id="2021:564" data-name="Selection indicator" />
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Semi_Bold'] font-semibold leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:565">
+                Voice Input
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:566" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:567">
+                Appearance
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:568" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:569">
+                Advanced
+              </p>
+            </div>
+          </div>
+          <div className="flex-[1_0_0] min-h-px relative w-full" data-node-id="2021:570" data-name="Sidebar spacer" />
+          <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex gap-[12px] h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:571" data-name="Dark mode control">
+            <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:572">
+              Dark mode
+            </p>
+            <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="2021:573" data-name="Toggle Off">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleOff} />
+            </div>
+          </div>
+          <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#62666c] text-[11px] whitespace-nowrap" data-node-id="2021:575">
+            Ctrl + 1–7 to switch panels
+          </p>
+        </div>
+        <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start min-w-px overflow-clip relative" data-node-id="2021:576" data-name="Content pane">
+          <div className="[word-break:break-word] content-stretch flex h-[76px] items-center justify-between leading-[normal] not-italic overflow-clip px-[28px] relative shrink-0 w-full whitespace-nowrap" data-node-id="2021:577" data-name="Panel header">
+            <p className="font-['Inter:Semi_Bold'] font-semibold relative shrink-0 text-[#202124] text-[25px]" data-node-id="2021:578">
+              Voice Input
+            </p>
+            <p className="font-['Inter:Regular'] font-normal relative shrink-0 text-[#62666c] text-[12px]" data-node-id="2021:579">
+              Changes apply automatically
+            </p>
+          </div>
+          <div className="content-stretch flex flex-[1_0_0] flex-col gap-[20px] items-start min-h-px overflow-clip pb-[28px] px-[28px] relative w-full" data-node-id="2021:580" data-name="Panel body">
+            <div className="content-stretch flex flex-col gap-[3px] items-start overflow-clip relative shrink-0 w-full" data-node-id="2021:581" data-name="Provider">
+              <div className="[word-break:break-word] flex flex-col font-['Inter:Semi_Bold'] font-semibold h-[36px] justify-center leading-[0] not-italic relative shrink-0 text-[#202124] text-[15px] w-full" data-node-id="2021:582">
+                <p className="leading-[normal]">Provider</p>
+              </div>
+              <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col items-start overflow-clip px-[14px] relative rounded-[6px] shrink-0 w-full" data-node-id="2021:583" data-name="Settings group">
+                <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="2021:584" data-name="Setting">
+                  <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:585">
+                    Speech-to-text provider
+                  </p>
+                  <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex gap-[8px] items-center min-h-[32px] overflow-clip px-[10px] py-[6px] relative rounded-[4px] shrink-0 w-[320px]" data-node-id="2021:586" data-name="Combo box">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:587">
+                      Off (typing only)
+                    </p>
+                    <div className="h-[3px] relative shrink-0 w-[6px]" data-node-id="2021:588" data-name="Expand choices">
+                      <div className="absolute inset-[-16.67%_-8.33%_-23.57%_-8.33%]">
+                        <img alt="" className="block max-w-none size-full" src={imgExpandChoices} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.4] min-w-full not-italic relative shrink-0 text-[#62666c] text-[13px] w-[min-content]" data-node-id="2021:589">
+              Voice input is disabled. The microphone will never be accessed. The companion accepts typed input only.
+            </p>
+            <div className="flex-[1_0_0] min-h-px relative w-full" data-node-id="2021:590" data-name="Body spacer" />
+            <div className="content-stretch flex items-start justify-end overflow-clip relative shrink-0 w-full" data-node-id="2021:591" data-name="Panel actions">
+              <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#1768b2] text-[13px] whitespace-nowrap" data-node-id="2021:592">
+                Reset this panel to defaults
+              </p>
+            </div>
+            <div className="absolute bg-[#e8eaed] h-[520px] right-[6px] rounded-[3px] top-[6px] w-[3px]" data-node-id="2021:593" data-name="Scroll track" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,34 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/1bff2627-e3b2-41a0-87b2-008bcb328ac8";
+const imgDesktopExample = `${assetPathPrefix}/6d5b4.png`;
+const imgDialogueContinuation = `${assetPathPrefix}/26b2d.svg`;
+const imgMic = `${assetPathPrefix}/7cf04.svg`;
+
+export default function DesktopExample() {
+  return (
+    <div className="content-stretch flex flex-col items-start justify-end relative size-full" data-node-id="2016:81" data-name="Desktop Example">
+      <img alt="" className="absolute inset-0 max-w-none object-cover pointer-events-none size-full" src={imgDesktopExample} />
+      <div className="bg-[rgba(120,151,214,0.78)] border border-[#e4e9ff] border-solid content-stretch flex flex-col h-[167px] items-start overflow-clip p-[5px] relative shrink-0 w-[1280px]" data-node-id="2016:82" data-name="Bottom chatbox">
+        <div className="border border-[rgba(204,217,255,0.7)] border-solid content-stretch flex flex-[1_0_0] flex-col gap-[12px] items-start min-h-px overflow-clip px-[25px] py-[18px] relative w-full" data-node-id="2016:83" data-name="Inner border">
+          <p className="[word-break:break-word] font-['Courier_Prime:Regular'] leading-[1.4] min-w-full not-italic relative shrink-0 text-[24px] text-shadow-[1.5px_2px_0px_#182642] text-white w-[min-content]" data-node-id="2016:84">
+            [Name Placeholder]
+          </p>
+          <p className="[word-break:break-word] font-['Courier_Prime:Regular'] leading-[1.4] min-w-full not-italic relative shrink-0 text-[26px] text-shadow-[1.5px_2px_0px_#182642] text-white w-[min-content]" data-node-id="2016:85">
+            Placeholder text
+          </p>
+          <div className="absolute bottom-[19px] h-[10px] right-[23px] w-[14px]" data-node-id="2016:86" data-name="Dialogue continuation">
+            <div className="absolute inset-[0_-10.71%_-20%_0]">
+              <img alt="" className="block max-w-none size-full" src={imgDialogueContinuation} />
+            </div>
+          </div>
+          <div className="absolute bg-[rgba(255,255,255,0.1)] border border-[rgba(204,217,255,0.7)] border-solid content-stretch flex flex-col items-center justify-center right-[23px] rounded-[22px] size-[44px] top-[17px]" data-node-id="2024:3" data-name="Microphone button">
+            <div className="relative shrink-0 size-[20px]" data-node-id="2024:6" data-name="mic">
+              <div className="absolute inset-[0_0_-6.67%_0]">
+                <img alt="" className="block max-w-none size-full" src={imgMic} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

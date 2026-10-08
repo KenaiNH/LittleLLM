@@ -1,0 +1,258 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/fa1ce28c-2496-4fae-9df3-629852efc9f3";
+const imgInfo = `${assetPathPrefix}/a2d30.svg`;
+
+export default function SpritesSupportingSettingsStates() {
+  return (
+    <div className="bg-[#f0f1f3] content-stretch flex flex-col gap-[24px] items-start overflow-clip p-[24px] relative rounded-[8px] size-full" data-node-id="16:1035" data-name="Sprites — supporting settings states">
+      <div className="[word-break:break-word] content-stretch flex flex-col gap-[6px] items-start not-italic overflow-clip relative shrink-0 w-full" data-node-id="16:1036" data-name="State collection heading">
+        <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[#202124] text-[30px] whitespace-nowrap" data-node-id="16:1037">
+          Sprites / Settings states
+        </p>
+        <p className="font-['Inter:Regular'] font-normal leading-[1.4] min-w-full relative shrink-0 text-[#62666c] text-[13px] w-[min-content]" data-node-id="16:1038">
+          Reference states for the same Settings window · not additional app screens
+        </p>
+      </div>
+      <div className="bg-[#f7f7f7] content-stretch flex flex-col gap-[20px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 w-full" data-node-id="16:1039" data-name="Conditional states and choices">
+        <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#202124] text-[18px] whitespace-nowrap" data-node-id="16:1040">{`Conditional controls & alternate states`}</p>
+        <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.4] min-w-full not-italic relative shrink-0 text-[#62666c] text-[12px] w-[min-content]" data-node-id="16:1041">
+          Compact control snapshots show exact labels, values, widgets and visibility rules.
+        </p>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1042" data-name="Idle · Sprite sheet">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1043">
+            Idle · Sprite sheet
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1044">
+            <p className="leading-[1.65] mb-0">{`Source type  ·  Sprite sheet`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">File / folder</p>
+            <p className="leading-[1.65] mb-0">Drop zone · Browse…</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Frame width  ·  Auto`}</p>
+            <p className="leading-[1.65] mb-0">Numeric · 1–8192 px</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Frame height  ·  Auto`}</p>
+            <p className="leading-[1.65] mb-0">Numeric · 1–8192 px</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Frame count  ·  Auto-derived`}</p>
+            <p className="leading-[1.65] mb-0">Numeric · 1–512</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Columns  ·  Auto`}</p>
+            <p className="leading-[1.65] mb-0">Numeric · 1–512</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Frame order  ·  Left to right, then down`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Playback speed  ·  12 fps`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 1–60 fps</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Playback mode  ·  Loop forever`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Anchor point  ·  Custom…`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Custom anchor X  ·  0.5`}</p>
+            <p className="leading-[1.65] mb-0">Numeric · 0.0–1.0 · step 0.01</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Custom anchor Y  ·  1.0`}</p>
+            <p className="leading-[1.65] mb-0">Numeric · 0.0–1.0 · step 0.01</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Preview</p>
+            <p className="leading-[1.65] mb-0">Preview · Canvas · Scrubber · ▶ / ⏸</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Reset to Default Sprite</p>
+            <p className="leading-[1.65]">​</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1045" data-name="Thinking · Image sequence (folder)">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1046">
+            Thinking · Image sequence (folder)
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1047">
+            <p className="leading-[1.65] mb-0">{`Source type  ·  Image sequence (folder)`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">File / folder</p>
+            <p className="leading-[1.65] mb-0">Drop zone · Browse…</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">N frames detected</p>
+            <p className="leading-[1.65] mb-0">{`Playback speed  ·  12 fps`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 1–60 fps</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Playback mode  ·  Loop forever`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Anchor point  ·  Bottom center`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Preview</p>
+            <p className="leading-[1.65] mb-0">Preview · Canvas · Scrubber · ▶ / ⏸</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Reset to Default Sprite</p>
+            <p className="leading-[1.65]">​</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1048" data-name="Speaking · animated GIF / APNG">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1049">
+            Speaking · animated GIF / APNG
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1050">
+            <p className="leading-[1.65] mb-0">{`Source type  ·  Static image`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">File / folder</p>
+            <p className="leading-[1.65] mb-0">Drop zone · Browse…</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Timing source  ·  Use the file's own frame delays`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Playback speed  ·  12 fps`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 1–60 fps · when Override with fixed fps · Disabled</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Playback mode  ·  Loop forever`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Anchor point  ·  Bottom center`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Preview</p>
+            <p className="leading-[1.65] mb-0">Preview · Canvas · Scrubber · ▶ / ⏸</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Reset to Default Sprite</p>
+            <p className="leading-[1.65]">​</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1051" data-name="Mouth frames enabled · Voice Off">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1052">
+            Mouth frames enabled · Voice Off
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1053">
+            <p className="leading-[1.65] mb-0">{`Enable mouth frames  ·  On`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Driven by  ·  Text streaming rate`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Audio amplitude is unavailable when Voice is Off (text only). Text streaming rate is used instead.</p>
+            <p className="leading-[1.65] mb-0">{`Source type  ·  Sprite sheet`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">File / folder</p>
+            <p className="leading-[1.65] mb-0">Drop zone · Browse…</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Frame count  ·  3`}</p>
+            <p className="leading-[1.65] mb-0">Numeric · 2–8</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Frame order</p>
+            <p className="leading-[1.65] mb-0">Quietest → loudest</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Offset X  ·  0 px`}</p>
+            <p className="leading-[1.65] mb-0">Numeric · −512–512 px</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Offset Y  ·  0 px`}</p>
+            <p className="leading-[1.65] mb-0">Numeric · −512–512 px</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Sensitivity  ·  1.0`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 0.1–5.0 · step 0.1</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Smoothing  ·  0.60`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 0–0.95 · step 0.05</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Silence threshold  ·  0.04`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 0–0.5 · step 0.01</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Test Mouth Sync</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">3-second test tone; a test phrase is used when TTS is active.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1054" data-name="Mouth driver · Fixed loop">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1055">
+            Mouth driver · Fixed loop
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1056">
+            <p className="leading-[1.65] mb-0">{`Driven by  ·  Fixed loop`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Sensitivity, Smoothing and Silence threshold are hidden. All other mouth-frame controls remain available.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1057" data-name="Instant transition">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1058">
+            Instant transition
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1059">
+            <p className="leading-[1.65] mb-0">{`State transition  ·  Instant cut`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Crossfade duration is hidden. This is also the reduced-motion default.</p>
+          </div>
+        </div>
+        <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1060" data-name="Dropdown choices · exact order">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1061">
+            Dropdown choices · exact order
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1062">
+            <p className="leading-[1.65] mb-0">Source type · per state</p>
+            <p className="leading-[1.65] mb-0">Static image</p>
+            <p className="leading-[1.65] mb-0">Sprite sheet</p>
+            <p className="leading-[1.65] mb-0">Image sequence (folder)</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Frame order</p>
+            <p className="leading-[1.65] mb-0">Left to right, then down</p>
+            <p className="leading-[1.65] mb-0">Top to bottom, then across</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Playback mode · all states default to Loop forever</p>
+            <p className="leading-[1.65] mb-0">Loop forever</p>
+            <p className="leading-[1.65] mb-0">Play once, hold last frame</p>
+            <p className="leading-[1.65] mb-0">Play once, return to idle</p>
+            <p className="leading-[1.65] mb-0">Ping-pong (loop back and forth)</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Anchor point</p>
+            <p className="leading-[1.65] mb-0">Bottom center</p>
+            <p className="leading-[1.65] mb-0">Center</p>
+            <p className="leading-[1.65] mb-0">Top center</p>
+            <p className="leading-[1.65] mb-0">Bottom left</p>
+            <p className="leading-[1.65] mb-0">Bottom right</p>
+            <p className="leading-[1.65] mb-0">Custom…</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Timing source</p>
+            <p className="leading-[1.65] mb-0">{`Use the file's own frame delays`}</p>
+            <p className="leading-[1.65] mb-0">Override with fixed fps</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Scale mode</p>
+            <p className="leading-[1.65] mb-0">Fixed percentage</p>
+            <p className="leading-[1.65] mb-0">Match display scaling (DPI aware)</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Image smoothing</p>
+            <p className="leading-[1.65] mb-0">Automatic (detect pixel art)</p>
+            <p className="leading-[1.65] mb-0">Always smooth (bilinear)</p>
+            <p className="leading-[1.65] mb-0">Never smooth (nearest neighbor)</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">State transition</p>
+            <p className="leading-[1.65] mb-0">Instant cut</p>
+            <p className="leading-[1.65] mb-0">Crossfade</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Driven by · Audio amplitude disabled while Voice Off</p>
+            <p className="leading-[1.65] mb-0">Audio amplitude</p>
+            <p className="leading-[1.65] mb-0">Text streaming rate</p>
+            <p className="leading-[1.65] mb-0">Fixed loop</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Source type · mouth frames</p>
+            <p className="leading-[1.65] mb-0">Sprite sheet</p>
+            <p className="leading-[1.65]">Image sequence (folder)</p>
+          </div>
+        </div>
+        <div className="bg-[#e5effa] content-stretch flex gap-[8px] items-start overflow-clip p-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="16:1063" data-name="Status message">
+          <div className="relative shrink-0 size-[16px]" data-node-id="16:1437" data-name="info">
+            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgInfo} />
+          </div>
+          <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#1768b2] text-[13px]" data-node-id="16:1065">
+            The editable companion drawing is an illustrative preview; the bundled default asset was not supplied. Imported assets are copied into userData, not linked to editable source paths.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}

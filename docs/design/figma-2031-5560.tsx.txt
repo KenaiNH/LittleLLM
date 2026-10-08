@@ -1,0 +1,125 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/d6051c5d-a8d1-4a84-9962-f251c3224b49";
+const imgSearch = `${assetPathPrefix}/ac478.svg`;
+const imgToggleOff = `${assetPathPrefix}/a371f.svg`;
+
+export default function SettingsPersonaLight() {
+  return (
+    <div className="bg-[#f7f7f7] border border-[#d9dce1] border-solid content-stretch flex flex-col items-start overflow-clip relative rounded-[8px] shadow-[0px_8px_28px_0px_rgba(25,40,60,0.09)] size-full" data-node-id="2031:5560" data-name="Settings — Persona (light)">
+      <div className="[word-break:break-word] bg-[#f0f1f3] content-stretch flex font-['Inter:Regular'] font-normal h-[40px] items-center justify-between not-italic overflow-clip pl-[16px] relative shrink-0 text-[#202124] w-full" data-node-id="2031:5561" data-name="OS title bar">
+        <p className="leading-[normal] relative shrink-0 text-[12px] whitespace-nowrap" data-node-id="2031:5562">
+          Settings
+        </p>
+        <div className="flex flex-col h-[40px] justify-center leading-[0] relative shrink-0 text-[16px] text-center w-[138px]" data-node-id="2031:5563">
+          <p className="leading-[normal]">− □ ×</p>
+        </div>
+      </div>
+      <div className="content-stretch flex h-[640px] items-start overflow-clip relative shrink-0 w-full" data-node-id="2031:5564" data-name="Window body">
+        <div className="bg-[#f0f1f3] content-stretch flex flex-col gap-[16px] h-full items-start overflow-clip pb-[18px] pt-[20px] px-[12px] relative shrink-0 w-[200px]" data-node-id="2031:5565" data-name="Sidebar">
+          <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex gap-[7px] h-[34px] items-center overflow-clip px-[10px] relative rounded-[4px] shrink-0 w-full" data-node-id="2031:5566" data-name="Settings search">
+            <div className="relative shrink-0 size-[11px]" data-node-id="2031:5567" data-name="Search">
+              <div className="absolute inset-[0_11.11%_11.11%_0]">
+                <img alt="" className="block max-w-none size-full" src={imgSearch} />
+              </div>
+            </div>
+            <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#62666c] text-[12px] whitespace-nowrap" data-node-id="2031:5568">
+              Search settings
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col gap-[4px] items-start overflow-clip relative shrink-0 w-full" data-node-id="2031:5569" data-name="Panels">
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2031:5570" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2031:5571">
+                General
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2031:5572" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2031:5573">
+                Sprites
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2031:5574" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2031:5575">
+                Model
+              </p>
+            </div>
+            <div className="bg-[#e5effa] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2031:5576" data-name="Navigation item">
+              <div className="absolute bg-[#1768b2] h-[20px] left-0 rounded-[2px] top-[10px] w-[3px]" data-node-id="2031:5577" data-name="Selection indicator" />
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Semi_Bold'] font-semibold leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2031:5578">
+                Persona
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2031:5579" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2031:5580">
+                Voice
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2031:5581" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2031:5582">
+                Voice Input
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2031:5583" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2031:5584">
+                Appearance
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2031:5585" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2031:5586">
+                Advanced
+              </p>
+            </div>
+          </div>
+          <div className="flex-[1_0_0] min-h-px relative w-full" data-node-id="2031:5587" data-name="Sidebar spacer" />
+          <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex gap-[12px] h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2031:5588" data-name="Dark mode control">
+            <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2031:5589">
+              Dark mode
+            </p>
+            <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="2031:5590" data-name="Toggle Off">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleOff} />
+            </div>
+          </div>
+          <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#62666c] text-[11px] whitespace-nowrap" data-node-id="2031:5592">
+            Ctrl + 1–8 to switch panels
+          </p>
+        </div>
+        <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start min-w-px overflow-clip relative" data-node-id="2031:5593" data-name="Content pane">
+          <div className="[word-break:break-word] content-stretch flex h-[76px] items-center justify-between leading-[normal] not-italic overflow-clip px-[28px] relative shrink-0 w-full whitespace-nowrap" data-node-id="2031:5594" data-name="Panel header">
+            <p className="font-['Inter:Semi_Bold'] font-semibold relative shrink-0 text-[#202124] text-[25px]" data-node-id="2031:5595">
+              Persona
+            </p>
+            <p className="font-['Inter:Regular'] font-normal relative shrink-0 text-[#62666c] text-[12px]" data-node-id="2031:5596">
+              Changes apply automatically
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col h-[516px] items-start overflow-clip pb-[28px] px-[28px] relative shrink-0 w-full" data-node-id="2031:5597" data-name="Scrollable pane">
+            <div className="content-stretch flex flex-col gap-[20px] items-start overflow-clip relative shrink-0 w-full" data-node-id="2031:5598" data-name="Disabled Persona content">
+              <div className="content-stretch flex flex-col gap-[3px] items-start overflow-clip relative shrink-0 w-full" data-node-id="2031:5599" data-name="Enable & Active Persona">
+                <div className="[word-break:break-word] flex flex-col font-['Inter:Semi_Bold'] font-semibold h-[36px] justify-center leading-[0] not-italic relative shrink-0 text-[#202124] text-[15px] w-full" data-node-id="2031:5600">
+                  <p className="leading-[normal]">{`Enable & Active Persona`}</p>
+                </div>
+                <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col items-start overflow-clip px-[14px] relative rounded-[6px] shrink-0 w-full" data-node-id="2031:5601" data-name="Settings group">
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center min-h-[50px] overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="2031:5602" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2031:5603">
+                      Give the assistant a persona
+                    </p>
+                    <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="2031:5604" data-name="Toggle Off">
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleOff} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.5] not-italic relative shrink-0 text-[#62666c] text-[13px] w-full" data-node-id="2031:5606">
+                Adds a character description to every message. This increases token use on each request.
+              </p>
+            </div>
+            <div className="absolute bg-[#e8eaed] h-[504px] right-[6px] rounded-[3px] top-[6px] w-[3px]" data-node-id="2031:5607" data-name="Scroll track" />
+          </div>
+          <div className="content-stretch flex h-[48px] items-center justify-end overflow-clip px-[28px] relative shrink-0 w-full" data-node-id="2031:5608" data-name="Panel reset">
+            <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#1768b2] text-[13px] whitespace-nowrap" data-node-id="2031:5609">
+              Reset this panel to defaults
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,28 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/a884b10c-c3ab-454d-8abd-1eba4cbdec72";
+const imgBubbleSurface = `${assetPathPrefix}/f5eb2.svg`;
+const imgInnerBorder = `${assetPathPrefix}/b5c17.svg`;
+const imgDialogueContinuation = `${assetPathPrefix}/26b2d.svg`;
+
+export default function TextBubble() {
+  return (
+    <div className="content-stretch flex flex-col gap-[12px] items-start pb-[44px] pt-[24px] px-[30px] relative size-full" data-node-id="2016:89" data-name="Text bubble">
+      <div className="absolute h-[232px] left-0 top-0 w-[560px]" data-node-id="2016:90" data-name="Bubble surface">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgBubbleSurface} />
+      </div>
+      <div className="absolute h-[216px] left-[5px] top-[5px] w-[550px]" data-node-id="2016:91" data-name="Inner border">
+        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgInnerBorder} />
+      </div>
+      <p className="[word-break:break-word] font-['Courier_Prime:Regular'] leading-[1.4] min-w-full not-italic relative shrink-0 text-[22px] text-shadow-[1.5px_2px_0px_#182642] text-white w-[min-content]" data-node-id="2016:92">
+        [Name Placeholder]
+      </p>
+      <p className="[word-break:break-word] font-['Courier_Prime:Regular'] leading-[1.4] min-w-full not-italic relative shrink-0 text-[22px] text-shadow-[1.5px_2px_0px_#182642] text-white w-[min-content]" data-node-id="2016:93">
+        Placeholder text
+      </p>
+      <div className="absolute h-[10px] right-[26px] top-[177px] w-[14px]" data-node-id="2016:94" data-name="Dialogue continuation">
+        <div className="absolute inset-[0_-10.71%_-20%_0]">
+          <img alt="" className="block max-w-none size-full" src={imgDialogueContinuation} />
+        </div>
+      </div>
+    </div>
+  );
+}

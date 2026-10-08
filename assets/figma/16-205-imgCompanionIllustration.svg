@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="64" height="76" viewBox="0 0 64 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Companion illustration">
+<ellipse id="Body" cx="32" cy="43.5" rx="26" ry="28.5" fill="#ADC5D9"/>
+<ellipse id="Face" cx="32" cy="24.5" rx="23" ry="21.5" fill="#C8DCEB"/>
+<ellipse id="Eye" cx="23" cy="24" rx="2" ry="3" fill="#202124"/>
+<ellipse id="Eye_2" cx="41" cy="24" rx="2" ry="3" fill="#202124"/>
+<rect id="Mouth" x="29" y="33" width="8" height="2" rx="1" fill="#202124"/>
+<ellipse id="Foot" cx="14.5" cy="69" rx="12.5" ry="4" fill="#91AEC5"/>
+<ellipse id="Foot_2" cx="48.5" cy="69" rx="12.5" ry="4" fill="#91AEC5"/>
+</g>
+</svg>

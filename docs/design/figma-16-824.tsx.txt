@@ -1,0 +1,457 @@
+const assetPathPrefix = "https://www.figma.com/api/mcp/asset/415bd559-d485-4bcc-82bd-4d39eb778f0f";
+const imgSearch = `${assetPathPrefix}/b6936.svg`;
+const imgToggleOff = `${assetPathPrefix}/3640f.svg`;
+const imgChevronDown = `${assetPathPrefix}/3e51b.svg`;
+const imgThumb = `${assetPathPrefix}/c31b2.svg`;
+const imgToggleOn = `${assetPathPrefix}/9eeee.svg`;
+const imgTriangleAlert = `${assetPathPrefix}/f2eb0.svg`;
+
+export default function SettingsAdvanced() {
+  return (
+    <div className="bg-[#f7f7f7] border border-[#d9dce1] border-solid content-stretch flex flex-col items-start overflow-clip relative rounded-[8px] shadow-[0px_8px_28px_0px_rgba(25,40,60,0.09)] size-full" data-node-id="16:824" data-name="Settings — Advanced">
+      <div className="[word-break:break-word] bg-[#f0f1f3] content-stretch flex font-['Inter:Regular'] font-normal h-[40px] items-center justify-between not-italic overflow-clip pl-[16px] relative shrink-0 text-[#202124] w-full" data-node-id="16:825" data-name="OS title bar">
+        <p className="leading-[normal] relative shrink-0 text-[12px] whitespace-nowrap" data-node-id="16:826">
+          Settings
+        </p>
+        <div className="flex flex-col h-[40px] justify-center leading-[0] relative shrink-0 text-[16px] text-center w-[138px]" data-node-id="16:827">
+          <p className="leading-[normal]">− □ ×</p>
+        </div>
+      </div>
+      <div className="content-stretch flex h-[640px] items-start overflow-clip relative shrink-0 w-full" data-node-id="16:828" data-name="Window body">
+        <div className="bg-[#f0f1f3] content-stretch flex flex-col gap-[16px] h-full items-start overflow-clip pb-[18px] pt-[20px] px-[12px] relative shrink-0 w-[200px]" data-node-id="16:829" data-name="Sidebar">
+          <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex gap-[7px] h-[34px] items-center overflow-clip px-[10px] relative rounded-[4px] shrink-0 w-full" data-node-id="16:830" data-name="Settings search">
+            <div className="relative shrink-0 size-[14px]" data-node-id="16:1407" data-name="search">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgSearch} />
+            </div>
+            <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#62666c] text-[12px] whitespace-nowrap" data-node-id="16:832">
+              Search settings
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col gap-[4px] items-start overflow-clip relative shrink-0 w-full" data-node-id="16:833" data-name="Panels">
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="16:834" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:835">
+                General
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="16:836" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:837">
+                Sprites
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="16:838" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:839">
+                Model
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="16:840" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:841">
+                Voice
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2021:991" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2021:992">
+                Voice Input
+              </p>
+            </div>
+            <div className="bg-[#f0f1f3] content-stretch flex h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="16:842" data-name="Navigation item">
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:843">
+                Appearance
+              </p>
+            </div>
+            <div className="bg-[#e5effa] content-stretch flex gap-[12px] h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="16:844" data-name="Navigation item">
+              <div className="absolute bg-[#1768b2] h-[20px] left-0 rounded-[2px] top-[10px] w-[3px]" data-node-id="16:845" data-name="Selection indicator" />
+              <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Semi_Bold'] font-semibold leading-[normal] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:846">
+                Advanced
+              </p>
+            </div>
+          </div>
+          <div className="flex-[1_0_0] min-h-px relative w-[100px]" data-node-id="16:847" data-name="Sidebar spacer" />
+          <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex gap-[12px] h-[40px] items-center overflow-clip px-[12px] relative rounded-[4px] shrink-0 w-full" data-node-id="2003:34" data-name="Dark mode toggle">
+            <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="2003:35">
+              Dark mode
+            </p>
+            <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="2003:36" data-name="Toggle Off">
+              <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleOff} />
+            </div>
+          </div>
+          <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#62666c] text-[11px] whitespace-nowrap" data-node-id="16:848">
+            Ctrl + 1–7 to switch panels
+          </p>
+        </div>
+        <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-start min-w-px overflow-clip relative" data-node-id="16:849" data-name="Content pane">
+          <div className="[word-break:break-word] content-stretch flex h-[76px] items-center justify-between leading-[normal] not-italic overflow-clip px-[28px] relative shrink-0 w-full whitespace-nowrap" data-node-id="16:850" data-name="Panel header">
+            <p className="font-['Inter:Semi_Bold'] font-semibold relative shrink-0 text-[#202124] text-[25px]" data-node-id="16:851">
+              Advanced
+            </p>
+            <p className="font-['Inter:Regular'] font-normal relative shrink-0 text-[#62666c] text-[12px]" data-node-id="16:852">
+              Changes apply automatically
+            </p>
+          </div>
+          <div className="content-stretch flex flex-col h-[516px] items-start overflow-clip pb-[28px] px-[28px] relative shrink-0 w-full" data-node-id="16:853" data-name="Scrollable pane">
+            <div className="content-stretch flex flex-col gap-[20px] items-start overflow-clip relative shrink-0 w-full" data-node-id="16:854" data-name="Panel content">
+              <div className="content-stretch flex flex-col gap-[3px] items-start overflow-clip relative shrink-0 w-full" data-node-id="16:855" data-name="Interaction">
+                <div className="[word-break:break-word] flex flex-col font-['Inter:Semi_Bold'] font-semibold h-[36px] justify-center leading-[0] not-italic relative shrink-0 text-[#202124] text-[15px] w-full" data-node-id="16:856">
+                  <p className="leading-[normal]">Interaction</p>
+                </div>
+                <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col items-start overflow-clip px-[14px] relative rounded-[6px] shrink-0 w-full" data-node-id="16:857" data-name="Settings group">
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:858" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:859">
+                      Click-through mode
+                    </p>
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex gap-[8px] items-center min-h-[32px] overflow-clip px-[10px] py-[6px] relative rounded-[4px] shrink-0 w-[320px]" data-node-id="16:860" data-name="Combo box">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:861">
+                        Per-pixel (alpha mask)
+                      </p>
+                      <div className="relative shrink-0 size-[12px]" data-node-id="16:1410" data-name="chevron-down">
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgChevronDown} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:863" data-name="Setting">
+                    <div className="[word-break:break-word] content-stretch flex flex-[1_0_0] flex-col font-['Inter:Regular'] font-normal gap-[5px] items-start min-w-px not-italic overflow-clip relative" data-node-id="16:864" data-name="Label and help">
+                      <p className="leading-[normal] relative shrink-0 text-[#202124] text-[13px] w-full" data-node-id="16:865">
+                        Transparency threshold
+                      </p>
+                      <p className="leading-[1.4] relative shrink-0 text-[#62666c] text-[12px] w-full" data-node-id="16:866">
+                        Pixels with alpha below this value let clicks pass through to whatever is behind the companion.
+                      </p>
+                    </div>
+                    <div className="content-stretch flex flex-col h-[51px] items-start overflow-clip relative shrink-0 w-[320px]" data-node-id="16:867" data-name="Slider and value">
+                      <div className="absolute bg-[#c9cdd3] h-[3px] left-0 rounded-[2px] top-[15px] w-[222px]" data-node-id="16:868" data-name="Track" />
+                      <div className="absolute bg-[#1768b2] h-[3px] left-0 top-[15px] w-[8px]" data-node-id="16:869" data-name="Progress" />
+                      <div className="absolute left-px size-[14px] top-[9px]" data-node-id="16:870" data-name="Thumb">
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgThumb} />
+                      </div>
+                      <div className="absolute bg-white border border-[#d9dce1] border-solid content-stretch flex h-[32px] items-center left-[244px] overflow-clip px-[8px] rounded-[4px] top-0 w-[76px]" data-node-id="16:871" data-name="Numeric value">
+                        <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="16:872">
+                          10
+                        </p>
+                      </div>
+                      <p className="[word-break:break-word] absolute font-['Inter:Regular'] font-normal leading-[normal] left-0 not-italic text-[#62666c] text-[11px] top-[34px] w-[320px]" data-node-id="16:873">
+                        1–254
+                      </p>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:874" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:875">
+                      Hit-test sample rate
+                    </p>
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex gap-[8px] items-center min-h-[32px] overflow-clip px-[10px] py-[6px] relative rounded-[4px] shrink-0 w-[320px]" data-node-id="16:876" data-name="Combo box">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:877">
+                        Every 2nd frame
+                      </p>
+                      <div className="relative shrink-0 size-[12px]" data-node-id="16:1413" data-name="chevron-down">
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgChevronDown} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:879" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:880">
+                      Allow dragging the sprite
+                    </p>
+                    <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="16:881" data-name="Toggle On">
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleOn} />
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:883" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:884">
+                      Drag requires modifier key
+                    </p>
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex gap-[8px] items-center min-h-[32px] overflow-clip px-[10px] py-[6px] relative rounded-[4px] shrink-0 w-[320px]" data-node-id="16:885" data-name="Combo box">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:886">
+                        No modifier
+                      </p>
+                      <div className="relative shrink-0 size-[12px]" data-node-id="16:1416" data-name="chevron-down">
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgChevronDown} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="content-stretch flex flex-col gap-[3px] items-start overflow-clip relative shrink-0 w-full" data-node-id="16:888" data-name="Performance">
+                <div className="[word-break:break-word] flex flex-col font-['Inter:Semi_Bold'] font-semibold h-[36px] justify-center leading-[0] not-italic relative shrink-0 text-[#202124] text-[15px] w-full" data-node-id="16:889">
+                  <p className="leading-[normal]">Performance</p>
+                </div>
+                <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col items-start overflow-clip px-[14px] relative rounded-[6px] shrink-0 w-full" data-node-id="16:890" data-name="Settings group">
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:891" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:892">
+                      Animation frame rate cap
+                    </p>
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex gap-[8px] items-center min-h-[32px] overflow-clip px-[10px] py-[6px] relative rounded-[4px] shrink-0 w-[320px]" data-node-id="16:893" data-name="Combo box">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:894">
+                        Match display refresh rate
+                      </p>
+                      <div className="relative shrink-0 size-[12px]" data-node-id="16:1419" data-name="chevron-down">
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgChevronDown} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:896" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:897">
+                      Pause animation when sprite is not visible
+                    </p>
+                    <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="16:898" data-name="Toggle On">
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleOn} />
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:900" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:901">
+                      Reduce frame rate on battery power
+                    </p>
+                    <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="16:902" data-name="Toggle On">
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleOn} />
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex flex-col items-start overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:904" data-name="Setting">
+                    <div className="content-stretch flex gap-[20px] items-center overflow-clip relative shrink-0 w-full" data-node-id="16:905" data-name="Label and control">
+                      <div className="content-stretch flex flex-[1_0_0] flex-col gap-[4px] items-start min-w-px overflow-clip relative" data-node-id="16:906" data-name="Label">
+                        <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.4] min-w-full not-italic relative shrink-0 text-[#202124] text-[13px] w-[min-content]" data-node-id="16:907">
+                          Hardware acceleration
+                        </p>
+                        <div className="bg-[#f0f1f3] content-stretch flex items-start overflow-clip px-[7px] py-[2px] relative rounded-[20px] shrink-0" data-node-id="16:908" data-name="Status badge">
+                          <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#62666c] text-[11px] whitespace-nowrap" data-node-id="16:909">
+                            Restart required
+                          </p>
+                        </div>
+                      </div>
+                      <div className="content-stretch flex items-start justify-end overflow-clip relative shrink-0 w-[320px]" data-node-id="16:910" data-name="Control">
+                        <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="16:911" data-name="Toggle On">
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleOn} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:913" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:914">
+                      Sprite cache size
+                    </p>
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex gap-[8px] items-center min-h-[32px] overflow-clip px-[10px] py-[6px] relative rounded-[4px] shrink-0 w-[320px]" data-node-id="16:915" data-name="Combo box">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:916">
+                        128 MB
+                      </p>
+                      <div className="relative shrink-0 size-[12px]" data-node-id="16:1422" data-name="chevron-down">
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgChevronDown} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="content-stretch flex flex-col gap-[3px] items-start overflow-clip relative shrink-0 w-full" data-node-id="16:918" data-name="Network">
+                <div className="[word-break:break-word] flex flex-col font-['Inter:Semi_Bold'] font-semibold h-[36px] justify-center leading-[0] not-italic relative shrink-0 text-[#202124] text-[15px] w-full" data-node-id="16:919">
+                  <p className="leading-[normal]">Network</p>
+                </div>
+                <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col items-start overflow-clip px-[14px] relative rounded-[6px] shrink-0 w-full" data-node-id="16:920" data-name="Settings group">
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:921" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:922">
+                      Proxy
+                    </p>
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex gap-[8px] items-center min-h-[32px] overflow-clip px-[10px] py-[6px] relative rounded-[4px] shrink-0 w-[320px]" data-node-id="16:923" data-name="Combo box">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:924">
+                        Use Windows system proxy
+                      </p>
+                      <div className="relative shrink-0 size-[12px]" data-node-id="16:1425" data-name="chevron-down">
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgChevronDown} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex flex-col gap-[5px] items-start overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:926" data-name="Setting">
+                    <div className="content-stretch flex gap-[20px] items-center overflow-clip relative shrink-0 w-full" data-node-id="16:927" data-name="Label and control">
+                      <div className="content-stretch flex flex-[1_0_0] flex-col gap-[4px] items-start min-w-px overflow-clip relative" data-node-id="16:928" data-name="Label">
+                        <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.4] min-w-full not-italic relative shrink-0 text-[#202124] text-[13px] w-[min-content]" data-node-id="16:929">
+                          Allow self-signed certificates
+                        </p>
+                        <div className="content-stretch flex items-start overflow-clip relative shrink-0" data-node-id="16:930" data-name="Warning icon">
+                          <div className="relative shrink-0 size-[16px]" data-node-id="16:1428" data-name="triangle-alert">
+                            <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgTriangleAlert} />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="content-stretch flex items-start justify-end overflow-clip relative shrink-0 w-[320px]" data-node-id="16:932" data-name="Control">
+                        <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="16:933" data-name="Toggle Off">
+                          <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleOff} />
+                        </div>
+                      </div>
+                    </div>
+                    <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[1.4] not-italic relative shrink-0 text-[#62666c] text-[12px] w-full" data-node-id="16:935">
+                      Only enable this for local endpoints you control.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="content-stretch flex flex-col gap-[3px] items-start overflow-clip relative shrink-0 w-full" data-node-id="16:936" data-name="Data & Diagnostics">
+                <div className="[word-break:break-word] flex flex-col font-['Inter:Semi_Bold'] font-semibold h-[36px] justify-center leading-[0] not-italic relative shrink-0 text-[#202124] text-[15px] w-full" data-node-id="16:937">
+                  <p className="leading-[normal]">{`Data & Diagnostics`}</p>
+                </div>
+                <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col items-start overflow-clip px-[14px] relative rounded-[6px] shrink-0 w-full" data-node-id="16:938" data-name="Settings group">
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:939" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:940">
+                      Log level
+                    </p>
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex gap-[8px] items-center min-h-[32px] overflow-clip px-[10px] py-[6px] relative rounded-[4px] shrink-0 w-[320px]" data-node-id="16:941" data-name="Combo box">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:942">
+                        Warnings
+                      </p>
+                      <div className="relative shrink-0 size-[12px]" data-node-id="16:1431" data-name="chevron-down">
+                        <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgChevronDown} />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:944" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:945">
+                      Redact prompts and replies from logs
+                    </p>
+                    <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="16:946" data-name="Toggle On">
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleOn} />
+                    </div>
+                  </div>
+                  <div className="content-start flex flex-wrap gap-[8px] items-start overflow-clip py-[12px] relative shrink-0 w-full" data-node-id="16:948" data-name="Actions">
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex h-[32px] items-center justify-center overflow-clip px-[12px] relative rounded-[4px] shrink-0" data-node-id="16:949" data-name="Action">
+                      <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="16:950">
+                        Open Logs Folder
+                      </p>
+                    </div>
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex h-[32px] items-center justify-center overflow-clip px-[12px] relative rounded-[4px] shrink-0" data-node-id="16:951" data-name="Action">
+                      <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="16:952">
+                        Open Config Folder
+                      </p>
+                    </div>
+                  </div>
+                  <div className="content-start flex flex-wrap gap-[8px] items-start overflow-clip py-[12px] relative shrink-0 w-full" data-node-id="16:953" data-name="Actions">
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex h-[32px] items-center justify-center overflow-clip px-[12px] relative rounded-[4px] shrink-0" data-node-id="16:954" data-name="Action">
+                      <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="16:955">
+                        Export Settings…
+                      </p>
+                    </div>
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex h-[32px] items-center justify-center overflow-clip px-[12px] relative rounded-[4px] shrink-0" data-node-id="16:956" data-name="Action">
+                      <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="16:957">
+                        Import Settings…
+                      </p>
+                    </div>
+                  </div>
+                  <div className="content-start flex flex-wrap gap-[8px] items-start overflow-clip py-[12px] relative shrink-0 w-full" data-node-id="16:958" data-name="Actions">
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex h-[32px] items-center justify-center overflow-clip px-[12px] relative rounded-[4px] shrink-0" data-node-id="16:959" data-name="Action">
+                      <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#bd2929] text-[13px] whitespace-nowrap" data-node-id="16:960">
+                        Reset All Settings
+                      </p>
+                    </div>
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex h-[32px] items-center justify-center overflow-clip px-[12px] relative rounded-[4px] shrink-0" data-node-id="16:961" data-name="Action">
+                      <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#bd2929] text-[13px] whitespace-nowrap" data-node-id="16:962">
+                        Clear Stored API Keys
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="content-stretch flex flex-col gap-[3px] items-start overflow-clip relative shrink-0 w-full" data-node-id="16:963" data-name="Developer">
+                <div className="[word-break:break-word] flex flex-col font-['Inter:Semi_Bold'] font-semibold h-[36px] justify-center leading-[0] not-italic relative shrink-0 text-[#202124] text-[15px] w-full" data-node-id="16:964">
+                  <p className="leading-[normal]">Developer</p>
+                </div>
+                <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col items-start overflow-clip px-[14px] relative rounded-[6px] shrink-0 w-full" data-node-id="16:965" data-name="Settings group">
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:966" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:967">
+                      Developer mode
+                    </p>
+                    <div className="h-[20px] relative shrink-0 w-[40px]" data-node-id="16:968" data-name="Toggle Off">
+                      <img alt="" className="absolute block inset-0 max-w-none size-full" src={imgToggleOff} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="content-stretch flex flex-col gap-[3px] items-start overflow-clip relative shrink-0 w-full" data-node-id="16:970" data-name="About">
+                <div className="[word-break:break-word] flex flex-col font-['Inter:Semi_Bold'] font-semibold h-[36px] justify-center leading-[0] not-italic relative shrink-0 text-[#202124] text-[15px] w-full" data-node-id="16:971">
+                  <p className="leading-[normal]">About</p>
+                </div>
+                <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col items-start overflow-clip px-[14px] relative rounded-[6px] shrink-0 w-full" data-node-id="16:972" data-name="Settings group">
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:973" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:974">
+                      App version
+                    </p>
+                    <div className="content-stretch flex items-start justify-end overflow-clip relative shrink-0 w-[320px]" data-node-id="16:975" data-name="Control">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#62666c] text-[13px]" data-node-id="16:976">
+                        [Version unresolved]
+                      </p>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:977" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:978">
+                      Electron version
+                    </p>
+                    <div className="content-stretch flex items-start justify-end overflow-clip relative shrink-0 w-[320px]" data-node-id="16:979" data-name="Control">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#62666c] text-[13px]" data-node-id="16:980">
+                        [Version unresolved]
+                      </p>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:981" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:982">
+                      Chromium version
+                    </p>
+                    <div className="content-stretch flex items-start justify-end overflow-clip relative shrink-0 w-[320px]" data-node-id="16:983" data-name="Control">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#62666c] text-[13px]" data-node-id="16:984">
+                        [Version unresolved]
+                      </p>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:985" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:986">
+                      Node version
+                    </p>
+                    <div className="content-stretch flex items-start justify-end overflow-clip relative shrink-0 w-[320px]" data-node-id="16:987" data-name="Control">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#62666c] text-[13px]" data-node-id="16:988">
+                        [Version unresolved]
+                      </p>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:989" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:990">
+                      schemaVersion
+                    </p>
+                    <div className="content-stretch flex items-start justify-end overflow-clip relative shrink-0 w-[320px]" data-node-id="16:991" data-name="Control">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#62666c] text-[13px]" data-node-id="16:992">
+                        [Version unresolved]
+                      </p>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:993" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:994">
+                      Config file path
+                    </p>
+                    <div className="content-stretch flex items-start justify-end overflow-clip relative shrink-0 w-[320px]" data-node-id="16:995" data-name="Control">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#62666c] text-[13px]" data-node-id="16:996">
+                        [Runtime path unresolved]
+                      </p>
+                    </div>
+                  </div>
+                  <div className="border-[#e8eaed] border-b border-solid content-stretch flex gap-[20px] items-center overflow-clip py-[9px] relative shrink-0 w-full" data-node-id="16:997" data-name="Setting">
+                    <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#202124] text-[13px]" data-node-id="16:998">
+                      License
+                    </p>
+                    <div className="content-stretch flex items-start justify-end overflow-clip relative shrink-0 w-[320px]" data-node-id="16:999" data-name="Control">
+                      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular'] font-normal leading-[1.4] min-w-px not-italic relative text-[#62666c] text-[13px]" data-node-id="16:1000">
+                        [License unresolved]
+                      </p>
+                    </div>
+                  </div>
+                  <div className="content-start flex flex-wrap gap-y-[8px] items-start overflow-clip py-[12px] relative shrink-0 w-full" data-node-id="16:1001" data-name="Actions">
+                    <div className="bg-white border border-[#d9dce1] border-solid content-stretch flex h-[32px] items-center justify-center overflow-clip px-[12px] relative rounded-[4px] shrink-0" data-node-id="16:1002" data-name="Action">
+                      <p className="[word-break:break-word] font-['Inter:Regular'] font-normal leading-[normal] not-italic relative shrink-0 text-[#202124] text-[13px] whitespace-nowrap" data-node-id="16:1003">
+                        Check for Updates
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="absolute bg-[#e8eaed] h-[520px] right-[6px] rounded-[3px] top-[6px] w-[3px]" data-node-id="16:1006" data-name="Scroll track" />
+            <div className="absolute bg-[#c9cdd3] h-[142px] right-[6px] rounded-[3px] top-[6px] w-[3px]" data-node-id="16:1007" data-name="Scroll thumb" />
+          </div>
+          <div className="content-stretch flex h-[48px] items-center justify-end overflow-clip px-[28px] relative shrink-0 w-full" data-node-id="2021:1056" data-name="Panel reset">
+            <p className="[word-break:break-word] font-['Inter:Semi_Bold'] font-semibold leading-[normal] not-italic relative shrink-0 text-[#1768b2] text-[13px] whitespace-nowrap" data-node-id="2021:995">
+              Reset this panel to defaults
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,417 @@
+export default function SettingsState() {
+  return (
+    <div className="[word-break:break-word] bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start not-italic overflow-clip p-[18px] relative rounded-[6px] size-full" data-node-id="2031:5893" data-name="Settings state">
+      <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.4] relative shrink-0 text-[#202124] text-[16px] w-full" data-node-id="2031:5894">
+        Exact control inventory · defaults, options and conditional fields
+      </p>
+      <p className="font-['Inter:Regular'] font-normal leading-[1.5] relative shrink-0 text-[#62666c] text-[13px] w-full" data-node-id="2031:5895">
+        Controls below retain source order and table defaults. The complete native form is retained in the enabled window; distinctive conditional controls have visual specimens below. Parenthesized library / runtime options are unresolved inventories.
+      </p>
+      <div className="content-stretch flex flex-col gap-[14px] items-start overflow-clip pt-[16px] relative shrink-0 text-[#202124] w-full" data-node-id="2031:5896" data-name="Control inventory group">
+        <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 text-[18px] w-full" data-node-id="2031:5897">{`Enable & Active Persona`}</p>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5898" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5899">
+            236 · Give the assistant a persona
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5900">
+            <p className="leading-[1.5] mb-0">toggle · Default: Off</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Help / tooltip: Adds a character description to every message. This increases token use on each request.</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Off: unmount the entire body 237–267. Fresh install Off; assembled prompt is byte-identical to control 67.</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5901" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5902">
+            237 · Active persona
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5903">
+            <p className="leading-[1.5] mb-0">select · Default: — None —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Options / menu in source order</p>
+            <p className="leading-[1.5] mb-0">(one entry per card in the library)</p>
+            <p className="leading-[1.5] mb-0">— None —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">One active card at a time. Switching during a conversation follows control 267. — None — disables 238–260 with: Create or select a persona first.</p>
+          </div>
+        </div>
+      </div>
+      <div className="content-stretch flex flex-col gap-[14px] items-start overflow-clip pt-[16px] relative shrink-0 text-[#202124] w-full" data-node-id="2031:5904" data-name="Control inventory group">
+        <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 text-[18px] w-full" data-node-id="2031:5905">
+          Identity
+        </p>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5906" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5907">
+            238 · Name
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5908">
+            <p className="leading-[1.5] mb-0">text · Default: Companion</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">1–48 chars, required</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5909" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5910">
+            239 · Pronouns
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5911">
+            <p className="leading-[1.5] mb-0">select · Default: Not specified</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Options / menu in source order</p>
+            <p className="leading-[1.5] mb-0">Not specified</p>
+            <p className="leading-[1.5] mb-0">she/her</p>
+            <p className="leading-[1.5] mb-0">it/its</p>
+            <p className="leading-[1.5] mb-0">he/him</p>
+            <p className="leading-[1.5] mb-0">they/them</p>
+            <p className="leading-[1.5]">Custom…</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5912" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5913">
+            240 · Custom pronouns
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5914">
+            <p className="leading-[1.5] mb-0">text · Default: (empty) · ≤ 32 chars</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Visible only when Pronouns = Custom….</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5915" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5916">
+            241 · Who they are
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5917">
+            <p className="leading-[1.5] mb-0">area · Default: (empty) · ≤ 4000 chars · 8 rows</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Placeholder: A small cat-shaped assistant who lives on the desktop. Curious, a little sarcastic, genuinely helpful when it counts.</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">{`Unrecognized {{...}} renders an amber inline warning listing unknown names; the text is not altered.`}</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5918" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5919">
+            242 · How they speak
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5920">
+            <p className="leading-[1.5] mb-0">area · Default: (empty) · ≤ 1000 chars · 4 rows</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Placeholder: Short sentences. Dry humor. Never uses exclamation marks.</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">{`Live counter. Unrecognized {{...}} renders an amber inline warning listing unknown names; the text is not altered.`}</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5921" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5922">
+            243 · Insert a variable ▾
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5923">
+            <p className="leading-[1.5] mb-0">button · Default: —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Options / menu in source order</p>
+            <p className="leading-[1.5] mb-0">{`{{persona.name}}`}</p>
+            <p className="leading-[1.5] mb-0">{`{{user.name}}`}</p>
+            <p className="leading-[1.5] mb-0">{`{{date}}`}</p>
+            <p className="leading-[1.5] mb-0">{`{{time}}`}</p>
+            <p className="leading-[1.5] mb-0">{`{{weekday}}`}</p>
+            <p className="leading-[1.5]">{`{{app.state}}`}</p>
+          </div>
+        </div>
+      </div>
+      <div className="content-stretch flex flex-col gap-[14px] items-start overflow-clip pt-[16px] relative shrink-0 text-[#202124] w-full" data-node-id="2031:5924" data-name="Control inventory group">
+        <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 text-[18px] w-full" data-node-id="2031:5925">
+          Example Dialogue
+        </p>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5926" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5927">
+            244 · Example exchanges
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5928">
+            <p className="leading-[1.5] mb-0">exchanges · Default: —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Help / tooltip: These are sent as real example messages before your conversation. Two or three good examples shape the voice more than a long description does.</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Repeatable row list, max 8. You said / They replied: ≤ 500 chars each. Drag handle, delete ×, + Add an exchange. Empty rows (either field blank) are dropped at assembly time, not saved as blanks. Move up / Move down reachable by Tab.</p>
+          </div>
+        </div>
+      </div>
+      <div className="content-stretch flex flex-col gap-[14px] items-start overflow-clip pt-[16px] relative shrink-0 text-[#202124] w-full" data-node-id="2031:5929" data-name="Control inventory group">
+        <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 text-[18px] w-full" data-node-id="2031:5930">{`Context & Behavior`}</p>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5931" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5932">
+            245 · What they know about you
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5933">
+            <p className="leading-[1.5] mb-0">area · Default: (empty) · ≤ 1000 chars · 3 rows</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">User-authored and static. Nothing writes facts automatically.</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5934" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5935">
+            246 · What to call you
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5936">
+            <p className="leading-[1.5] mb-0">text · Default: (empty) · ≤ 64 chars</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">{`Placeholder: Your name — leave blank and they'll say "there".`}</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5937" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5938">
+            247 · Where the persona goes
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5939">
+            <p className="leading-[1.5] mb-0">select · Default: After my system prompt</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Options / menu in source order</p>
+            <p className="leading-[1.5] mb-0">After my system prompt</p>
+            <p className="leading-[1.5] mb-0">Replace my system prompt</p>
+            <p className="leading-[1.5] mb-0">Before my system prompt</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Replace my system prompt: amber hint — Your system prompt will not be sent at all.</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5940" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5941">
+            248 · Reply length
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5942">
+            <p className="leading-[1.5] mb-0">select · Default: One or two sentences</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Options / menu in source order</p>
+            <p className="leading-[1.5] mb-0">Follow my system prompt</p>
+            <p className="leading-[1.5] mb-0">One or two sentences</p>
+            <p className="leading-[1.5] mb-0">A short paragraph</p>
+            <p className="leading-[1.5]">No limit</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5943" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5944">
+            249 · Staying in character
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5945">
+            <p className="leading-[1.5] mb-0">select · Default: Drop character for technical answers</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Options / menu in source order</p>
+            <p className="leading-[1.5] mb-0">Always stay in character</p>
+            <p className="leading-[1.5] mb-0">Drop character for technical answers</p>
+            <p className="leading-[1.5]">No instruction</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5946" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5947">
+            250 · Allow actions in asterisks
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5948">
+            <p className="leading-[1.5] mb-0">toggle · Default: Off</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Help / tooltip: Lets the assistant write things like *tilts head*. Off by default because it adds length to every reply.</p>
+          </div>
+        </div>
+      </div>
+      <div className="content-stretch flex flex-col gap-[14px] items-start overflow-clip pt-[16px] relative shrink-0 text-[#202124] w-full" data-node-id="2031:5949" data-name="Control inventory group">
+        <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 text-[18px] w-full" data-node-id="2031:5950">
+          Assembled Prompt Preview
+        </p>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5951" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5952">
+            251 · Token estimate
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5953">
+            <p className="leading-[1.5] mb-0">estimate · Default: —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Persona adds ~N tokens to every message — live, recomputed on any change to 238–250. Amber above 8000 chars, red above 16000. Use text prefixes Warning: / Too long:. N is unresolved until runtime; no measured estimate is asserted.</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5954" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5955">
+            252 · Show the assembled prompt
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5956">
+            <p className="leading-[1.5] mb-0">button · Default: —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Expands a read-only monospace block: exact final system string plus example-dialogue turns, base prompt and persona block visually delimited. Focusable, selectable, screen-reader-readable region, not an image or canvas.</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5957" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5958">
+            253 · Test this persona
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5959">
+            <p className="leading-[1.5] mb-0">button · Default: —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Fixed probe: Say hello and tell me one thing about yourself. Reply appears inline. Does not touch conversation history. Response unresolved until test.</p>
+          </div>
+        </div>
+      </div>
+      <div className="content-stretch flex flex-col gap-[14px] items-start overflow-clip pt-[16px] relative shrink-0 text-[#202124] w-full" data-node-id="2031:5960" data-name="Control inventory group">
+        <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 text-[18px] w-full" data-node-id="2031:5961">
+          Greeting
+        </p>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5962" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5963">
+            254 · Say something on launch
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5964">
+            <p className="leading-[1.5] mb-0">{`select · Default: Don't greet me`}</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Options / menu in source order</p>
+            <p className="leading-[1.5] mb-0">{`Don't greet me`}</p>
+            <p className="leading-[1.5] mb-0">Show a fixed message</p>
+            <p className="leading-[1.5] mb-0">Ask the model for a greeting</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">{`Don't greet me hides 255–259. Show a fixed message: Free and instant — no request is sent. Ask the model for a greeting: Sends one request each time it fires.`}</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5965" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5966">
+            255 · Greeting text
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5967">
+            <p className="leading-[1.5] mb-0">area · Default: (empty) · ≤ 500 chars · 2 rows</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Visible only for Show a fixed message.</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5968" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5969">
+            256 · Greeting instruction
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5970">
+            <p className="leading-[1.5] mb-0">text · Default: Greet me in one short sentence. · ≤ 500 chars</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Visible only for Ask the model for a greeting.</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5971" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5972">
+            257 · How often
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5973">
+            <p className="leading-[1.5] mb-0">select · Default: Once per launch</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Options / menu in source order</p>
+            <p className="leading-[1.5] mb-0">Once per launch</p>
+            <p className="leading-[1.5] mb-0">Every time the sprite appears</p>
+            <p className="leading-[1.5] mb-0">Once a day</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">{`Hidden when Don't greet me.`}</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5974" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5975">
+            258 · Wait before greeting
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5976">
+            <p className="leading-[1.5] mb-0">slider · Default: 3.0 s</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">{`0–30 s, step 0.5. Hidden when Don't greet me.`}</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5977" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5978">
+            259 · Speak the greeting aloud
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5979">
+            <p className="leading-[1.5] mb-0">toggle · Default: On</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">{`Hidden when Don't greet me or TTS provider = Off (text only).`}</p>
+          </div>
+        </div>
+      </div>
+      <div className="content-stretch flex flex-col gap-[14px] items-start overflow-clip pt-[16px] relative shrink-0 text-[#202124] w-full" data-node-id="2031:5980" data-name="Control inventory group">
+        <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 text-[18px] w-full" data-node-id="2031:5981">
+          Persona Library
+        </p>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5982" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5983">
+            260 · Preferred voice for this persona
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5984">
+            <p className="leading-[1.5] mb-0">select · Default: — Use my default voice —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Options / menu in source order</p>
+            <p className="leading-[1.5] mb-0">— Use my default voice —</p>
+            <p className="leading-[1.5] mb-0">(Voice → voice list, unresolved at runtime)</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Editable combo box. First option is the default. Applies only while this card is active. Hidden when TTS provider = Off (text only).</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5985" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5986">
+            261 · Save as a new persona
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5987">
+            <p className="leading-[1.5] mb-0">button · Default: —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Snapshots 238–260 into the library with a new UUID. Library cap 50 cards; disabled at the cap with a tooltip.</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start leading-[1.5] overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5988" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold relative shrink-0 w-full" data-node-id="2031:5989">
+            262 · Duplicate this persona
+          </p>
+          <p className="font-['Inter:Regular'] font-normal relative shrink-0 w-full" data-node-id="2031:5990">
+            button · Default: —
+          </p>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5991" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5992">
+            263 · Delete this persona
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5993">
+            <p className="leading-[1.5] mb-0">button · Default: —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">Destructive styling, confirm dialog. Disabled when the library has one card and it is active; deleting the last card sets 236 to Off.</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5994" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5995">
+            264 · Export persona…
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5996">
+            <p className="leading-[1.5] mb-0">button · Default: —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">{`Writes <name>.persona.json. Local files only.`}</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:5997" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:5998">
+            265 · Import persona…
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:5999">
+            <p className="leading-[1.5] mb-0">button · Default: —</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5]">{`Accepts .persona.json, Zod-validated, rejects files > 64 KB, previews before applying. voiceOverride is a separate, unchecked checkbox; never applied without explicit consent, even under Apply automatically.`}</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:6000" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:6001">
+            266 · Personas bundled in Sprite Packs
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:6002">
+            <p className="leading-[1.5] mb-0">select · Default: Ask me before applying</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Options / menu in source order</p>
+            <p className="leading-[1.5] mb-0">Ask me before applying</p>
+            <p className="leading-[1.5] mb-0">Apply automatically</p>
+            <p className="leading-[1.5]">Always ignore them</p>
+          </div>
+        </div>
+        <div className="bg-[#f7f7f7] border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[8px] items-start overflow-clip p-[14px] relative rounded-[4px] shrink-0 text-[13px] w-full" data-node-id="2031:6003" data-name="Inventory entry">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[1.5] relative shrink-0 w-full" data-node-id="2031:6004">
+            267 · When I switch personas
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 w-full whitespace-pre-wrap" data-node-id="2031:6005">
+            <p className="leading-[1.5] mb-0">select · Default: Start a new conversation</p>
+            <p className="leading-[1.5] mb-0">​</p>
+            <p className="leading-[1.5] mb-0">Options / menu in source order</p>
+            <p className="leading-[1.5] mb-0">Start a new conversation</p>
+            <p className="leading-[1.5] mb-0">Keep the current conversation</p>
+            <p className="leading-[1.5]">Ask me each time</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,18 @@
+appId: com.littlellm.companion
+productName: LittleLLM
+directories:
+  output: dist
+files:
+  - out/**
+  - assets/**
+  - package.json
+asarUnpack:
+  - node_modules/sharp/**
+  - node_modules/@img/**
+win:
+  target:
+    - target: nsis
+      arch: [x64, arm64]
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true

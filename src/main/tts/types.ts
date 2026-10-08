@@ -1,0 +1,1 @@
+export interface TTSProvider {id:string;requiresApiKey:boolean;listVoices():Promise<{id:string;name:string}[]>;synthesize(text:string,opts:{signal:AbortSignal;voice:string;speed:number;format:string}):AsyncIterable<Uint8Array>;dispose():void;}

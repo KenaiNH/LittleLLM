@@ -1,0 +1,229 @@
+export default function AppearanceSupportingSettingsStates() {
+  return (
+    <div className="[word-break:break-word] bg-[#f0f1f3] content-stretch flex flex-col gap-[24px] items-start not-italic overflow-clip p-[24px] relative rounded-[8px] size-full" data-node-id="16:1137" data-name="Appearance — supporting settings states">
+      <div className="content-stretch flex flex-col gap-[6px] items-start overflow-clip relative shrink-0 w-full" data-node-id="16:1138" data-name="State collection heading">
+        <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[#202124] text-[30px] whitespace-nowrap" data-node-id="16:1139">
+          Appearance / Settings states
+        </p>
+        <p className="font-['Inter:Regular'] font-normal leading-[1.4] min-w-full relative shrink-0 text-[#62666c] text-[13px] w-[min-content]" data-node-id="16:1140">
+          Reference states for the same Settings window · not additional app screens
+        </p>
+      </div>
+      <div className="bg-[#f7f7f7] content-stretch flex flex-col gap-[20px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 w-full" data-node-id="16:1141" data-name="Conditional states and choices">
+        <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[#202124] text-[18px] whitespace-nowrap" data-node-id="16:1142">{`Conditional controls & alternate states`}</p>
+        <p className="font-['Inter:Regular'] font-normal leading-[1.4] min-w-full relative shrink-0 text-[#62666c] text-[12px] w-[min-content]" data-node-id="16:1143">
+          Compact control snapshots show exact labels, values, widgets and visibility rules.
+        </p>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1144" data-name="Screen-relative size">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1145">
+            Screen-relative size
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1146">
+            <p className="leading-[1.65] mb-0">{`Scale is relative to  ·  The screen size`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Max width (% of screen)  ·  25%`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 10%–60%</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Max height (% of screen)  ·  40%`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 10%–80%</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Maximum width and Maximum height are hidden. Other scale modes use pre-scale base values × Bubble scale.</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1147" data-name="Custom theme · typed hex inputs">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1148">
+            Custom theme · typed hex inputs
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1149">
+            <p className="leading-[1.65] mb-0">{`Theme  ·  Custom`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Background color</p>
+            <p className="leading-[1.65] mb-0">#FFFFFF</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Text color</p>
+            <p className="leading-[1.65] mb-0">#202124</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Accent color</p>
+            <p className="leading-[1.65] mb-0">#5B8DEF</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Contrast ratio 16.1:1 · WCAG AA</p>
+            <p className="leading-[1.65] mb-0">Custom · live preview</p>
+            <p className="leading-[1.65] mb-0">You can adjust the bubble while keeping your companion in view.</p>
+            <p className="leading-[1.65]">↓ New messages</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1150" data-name="Custom contrast warning">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1151">
+            Custom contrast warning
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1152">
+            <p className="leading-[1.65] mb-0">Text color</p>
+            <p className="leading-[1.65] mb-0">#AAAAAA</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Contrast ratio 2.3:1 · Below 4.5:1</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1153" data-name="Voice active · reveal matched to speech">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1154">
+            Voice active · reveal matched to speech
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1155">
+            <p className="leading-[1.65] mb-0">{`Text reveal  ·  Typewriter by word`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Reveal speed  ·  45`}</p>
+            <p className="leading-[1.65] mb-0">Slider · 10–200 units/sec · Disabled</p>
+            <p className="leading-[1.65] mb-0">Reveal speed is being matched to the voice.</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Match reveal speed to speech  ·  On`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Wait for speech to finish before hiding  ·  On`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65]">​</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1156" data-name="Reduced motion / instant text">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1157">
+            Reduced motion / instant text
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1158">
+            <p className="leading-[1.65] mb-0">{`Text reveal  ·  Appear instantly`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Reveal speed is hidden. Appear instantly and Instant cut are the reduced-motion defaults.</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1159" data-name="Markdown Off / manual dismissal">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1160">
+            Markdown Off / manual dismissal
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1161">
+            <p className="leading-[1.65] mb-0">{`Render Markdown  ·  Off`}</p>
+            <p className="leading-[1.65] mb-0">Toggle</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">{`Hide the bubble  ·  Only when I dismiss it`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65]">Code block theme and Keep open while the mouse is over it are hidden.</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1162" data-name="Input newline behavior">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1163">
+            Input newline behavior
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1164">
+            <p className="leading-[1.65] mb-0">{`Send message with  ·  Ctrl + Enter`}</p>
+            <p className="leading-[1.65] mb-0">Dropdown</p>
+            <p className="leading-[1.65] mb-0">Plain Enter inserts a newline.</p>
+            <p className="leading-[1.65]">​</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1165" data-name="Built-in theme previews">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1166">
+            Built-in theme previews
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full" data-node-id="16:1167">
+            <p className="leading-[1.65] mb-0">Light / Follow Windows (light)</p>
+            <p className="leading-[1.65] mb-0">You can adjust the bubble while keeping your companion in view.</p>
+            <p className="leading-[1.65] mb-0">↓ New messages</p>
+            <p className="leading-[1.65] mb-0">Dark</p>
+            <p className="leading-[1.65] mb-0">You can adjust the bubble while keeping your companion in view.</p>
+            <p className="leading-[1.65] mb-0">↓ New messages</p>
+            <p className="leading-[1.65] mb-0">High contrast</p>
+            <p className="leading-[1.65] mb-0">You can adjust the bubble while keeping your companion in view.</p>
+            <p className="leading-[1.65] mb-0">↓ New messages</p>
+            <p className="leading-[1.65]">↓ New messages appears after scrolling up; clicking it or returning to the bottom resumes auto-scroll.</p>
+          </div>
+        </div>
+        <div className="bg-white border border-[#e8eaed] border-solid content-stretch flex flex-col gap-[12px] items-start overflow-clip p-[18px] relative rounded-[6px] shrink-0 text-[#202124] w-full" data-node-id="16:1168" data-name="Dropdown choices · exact order">
+          <p className="font-['Inter:Semi_Bold'] font-semibold leading-[normal] relative shrink-0 text-[16px] w-full" data-node-id="16:1169">
+            Dropdown choices · exact order
+          </p>
+          <div className="font-['Inter:Regular'] font-normal leading-[0] relative shrink-0 text-[13px] w-full whitespace-pre-wrap" data-node-id="16:1170">
+            <p className="leading-[1.65] mb-0">Scale is relative to</p>
+            <p className="leading-[1.65] mb-0">{`The sprite's size`}</p>
+            <p className="leading-[1.65] mb-0">A fixed pixel size</p>
+            <p className="leading-[1.65] mb-0">The screen size</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Bubble placement</p>
+            <p className="leading-[1.65] mb-0">Automatic (avoid screen edges)</p>
+            <p className="leading-[1.65] mb-0">Above the sprite</p>
+            <p className="leading-[1.65] mb-0">Below the sprite</p>
+            <p className="leading-[1.65] mb-0">Left of the sprite</p>
+            <p className="leading-[1.65] mb-0">Right of the sprite</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Scrollbar</p>
+            <p className="leading-[1.65] mb-0">Show while scrolling</p>
+            <p className="leading-[1.65] mb-0">Always show</p>
+            <p className="leading-[1.65] mb-0">Never show</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Mouse wheel over bubble</p>
+            <p className="leading-[1.65] mb-0">Scrolls the bubble</p>
+            <p className="leading-[1.65] mb-0">Passes through to the window behind</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Theme</p>
+            <p className="leading-[1.65] mb-0">Follow Windows</p>
+            <p className="leading-[1.65] mb-0">Light</p>
+            <p className="leading-[1.65] mb-0">Dark</p>
+            <p className="leading-[1.65] mb-0">High contrast</p>
+            <p className="leading-[1.65] mb-0">Custom</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Background blur</p>
+            <p className="leading-[1.65] mb-0">None</p>
+            <p className="leading-[1.65] mb-0">Subtle</p>
+            <p className="leading-[1.65] mb-0">Strong (acrylic)</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Border</p>
+            <p className="leading-[1.65] mb-0">None</p>
+            <p className="leading-[1.65] mb-0">Thin</p>
+            <p className="leading-[1.65] mb-0">Thick</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Drop shadow</p>
+            <p className="leading-[1.65] mb-0">None</p>
+            <p className="leading-[1.65] mb-0">Soft</p>
+            <p className="leading-[1.65] mb-0">Strong</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Font · installed families enumerated at runtime</p>
+            <p className="leading-[1.65] mb-0">System UI default</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Code block theme</p>
+            <p className="leading-[1.65] mb-0">Match bubble theme</p>
+            <p className="leading-[1.65] mb-0">GitHub Light</p>
+            <p className="leading-[1.65] mb-0">GitHub Dark</p>
+            <p className="leading-[1.65] mb-0">Monokai</p>
+            <p className="leading-[1.65] mb-0">Solarized Dark</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Text reveal</p>
+            <p className="leading-[1.65] mb-0">Appear instantly</p>
+            <p className="leading-[1.65] mb-0">Typewriter by character</p>
+            <p className="leading-[1.65] mb-0">Typewriter by word</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Hide the bubble</p>
+            <p className="leading-[1.65] mb-0">Only when I dismiss it</p>
+            <p className="leading-[1.65] mb-0">After 10 seconds</p>
+            <p className="leading-[1.65] mb-0">After 20 seconds</p>
+            <p className="leading-[1.65] mb-0">After 30 seconds</p>
+            <p className="leading-[1.65] mb-0">After 60 seconds</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Open the input box on</p>
+            <p className="leading-[1.65] mb-0">Single click</p>
+            <p className="leading-[1.65] mb-0">Double click</p>
+            <p className="leading-[1.65] mb-0">Hotkey only</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Send message with</p>
+            <p className="leading-[1.65] mb-0">Enter</p>
+            <p className="leading-[1.65] mb-0">Ctrl + Enter</p>
+            <p className="leading-[1.65] mb-0">​</p>
+            <p className="leading-[1.65] mb-0">Input box width</p>
+            <p className="leading-[1.65] mb-0">Match the bubble width</p>
+            <p className="leading-[1.65] mb-0">Compact</p>
+            <p className="leading-[1.65]">Wide</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

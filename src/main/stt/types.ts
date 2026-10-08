@@ -1,0 +1,2 @@
+export type STTResult={text:string;isFinal:boolean;confidence?:number;durationMs?:number;language?:string};
+export interface STTProvider{id:string;requiresApiKey:boolean;streaming:boolean;transcribe?(clip:Uint8Array,opts:{signal:AbortSignal;mimeType:string;language:string;prompt?:string}):Promise<STTResult>;transcribeStream?(audio:AsyncIterable<Int16Array>,opts:{signal:AbortSignal;language:string;prompt?:string}):AsyncIterable<STTResult>;dispose():void;}
