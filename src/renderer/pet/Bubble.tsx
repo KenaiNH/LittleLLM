@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import type { Config } from '../../shared/config';
+import type { Attachment } from '../../shared/attachments';
 import type { PetViewport } from '../../shared/petLayout';
 import { bubbleLimits } from '../../shared/petLayout';
 import surface from '../../../assets/figma/2016-89-imgBubbleSurface.svg';
@@ -18,6 +19,8 @@ export function Bubble({
   onStop,
   onRegenerate,
   error,
+  attachments = [],
+  userText = '',
 }: {
   name: string;
   text: string;
@@ -28,6 +31,8 @@ export function Bubble({
   onStop?: () => void;
   onRegenerate?: () => void;
   error?: string;
+  attachments?: Attachment[];
+  userText?: string;
 }) {
   const root = useRef<HTMLElement>(null),
     content = useRef<HTMLDivElement>(null),
@@ -237,6 +242,14 @@ export function Bubble({
           }
         }}
       >
+        {attachments.length > 0 && (
+          <div className={styles.attachments} aria-label="Your attached images">
+            <span className={styles.attachmentCaption}>You{userText ? ': ' + userText : ''}</span>
+            {attachments.map((item) => (
+              <img key={item.id} src={item.thumbnail} alt={item.name} />
+            ))}
+          </div>
+        )}
         {html !== null ? (
           <div dangerouslySetInnerHTML={{ __html: html }} />
         ) : (

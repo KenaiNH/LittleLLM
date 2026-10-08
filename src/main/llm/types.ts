@@ -1,4 +1,5 @@
-export type ChatMessage = { role: 'user' | 'assistant'; content: string };
+import type { ChatImage } from '../../shared/attachments';
+export type ChatMessage = { role: 'user' | 'assistant'; content: string; images?: ChatImage[] };
 export type { ChatDelta, ModelInfo } from '../../shared/llm';
 import type { ChatDelta, ModelInfo } from '../../shared/llm';
 export type ChatOptions = {
@@ -14,6 +15,7 @@ export type ChatOptions = {
 export interface LLMProvider {
   id: string;
   supportsImages: boolean;
+  imageSupport?(model: string): Promise<boolean | null>;
   listModels?(): Promise<ModelInfo[]>;
   chat(messages: ChatMessage[], opts: ChatOptions): AsyncIterable<ChatDelta>;
 }

@@ -11,6 +11,7 @@ import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
 import type { Exchange } from '../llm/history';
+import { chatImageSchema } from '../../shared/attachments';
 const schema = z
   .object({
     version: z.literal(1),
@@ -20,6 +21,7 @@ const schema = z
           .object({
             user: z.string().max(32000),
             assistant: z.string().max(512000),
+            images: z.array(chatImageSchema).max(10).optional(),
           })
           .strict(),
       )

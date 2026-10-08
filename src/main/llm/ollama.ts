@@ -4,6 +4,7 @@ import type { ChatDelta, ChatMessage, ChatOptions, LLMProvider, ModelInfo } from
 import { utf8Lines } from './streamParser';
 import { httpError, providerError, ProviderError } from './errors';
 import { endpoint, requestHeaders, boundedJson, fetchWithReset } from './http';
+import { ollamaMessages } from './imageEncoding';
 
 const chunkSchema = z.object({
   message: z.object({ content: z.string() }).optional(),
@@ -25,6 +26,28 @@ export class OllamaProvider implements LLMProvider {
       'Content-Type': 'application/json',
       ...(key ? { Authorization: `Bearer ${key}` } : {}),
     });
+  }
+  async imageSupport(model: string): Promise<boolean | null> {
+    const signal = AbortSignal.timeout(Math.min(5000, this.config.timeoutMs));
+    const response = await this.fetcher(endpoint(this.config.baseUrl, '/api/show'), {
+      method: 'POST',
+      headers: await this.headers(),
+      body: JSON.stringify({ model }),
+      signal,
+      redirect: 'error',
+    });
+    if (!response.ok) return null;
+    const data = z
+      .object({
+        capabilities: z.array(z.string()).optional(),
+        model_info: z.record(z.unknown()).optional(),
+      })
+      .parse(await boundedJson(response));
+    if (data.capabilities) return data.capabilities.includes('vision');
+    return data.model_info &&
+      Object.keys(data.model_info).some((key) => /clip\.|vision\.|projector\./.test(key))
+      ? true
+      : null;
   }
   async listModels(): Promise<ModelInfo[]> {
     const signal = AbortSignal.timeout(this.config.timeoutMs);
@@ -59,7 +82,7 @@ export class OllamaProvider implements LLMProvider {
             model: options.model,
             messages: [
               ...(options.systemPrompt ? [{ role: 'system', content: options.systemPrompt }] : []),
-              ...messages,
+              ...ollamaMessages(messages),
             ],
             stream: options.stream !== false,
             options: {

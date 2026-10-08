@@ -139,7 +139,9 @@ test('Settings live apply, validation, encrypted keys, explicit verification and
     await expect(settings.getByText('2 models available', { exact: true })).toBeVisible();
     await expect(settings.locator('[data-verified=true]')).toHaveCount(0);
     await settings.getByRole('button', { name: 'Test Connection', exact: true }).click();
-    await expect(settings.getByRole('status')).toHaveText('Connected — 2 models found');
+    await expect(settings.getByRole('status', { name: 'Model connection' })).toHaveText(
+      'Connected — 2 models found',
+    );
     await expect(settings.locator('[data-verified=true]')).toHaveCount(2);
     expect(requests.find((request) => request.url.endsWith('/chat/completions'))).toMatchObject({
       authorization: 'Bearer fixture-test-key-9087',

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import type { ModelInfo } from '../../shared/llm';
+import type { ImageCapability } from '../../shared/attachments';
 import type { SecretStatus, SecretId } from '../../shared/settings';
 import { useSettingsStore, flushSettings } from './store';
 import { PANELS, SETTINGS, SPRITE_SEARCH_LABELS, matchesSearch, type Panel } from './definitions';
@@ -37,6 +38,7 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
     ),
     [query, setQuery] = useState(''),
     [models, setModels] = useState<ModelInfo[]>([]),
+    [imageSupport, setImageSupport] = useState<ImageCapability | null>(null),
     [status, setStatus] = useState('Idle'),
     [verifiedSignature, setVerified] = useState(''),
     [credentials, setCredentials] = useState<Partial<Record<SecretId, SecretStatus>>>({}),
@@ -97,6 +99,15 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
     return () => document.removeEventListener('keydown', key);
   }, []);
   const provider = config?.llm.provider;
+  useEffect(() => {
+    let active = true;
+    void window.companion.getAttachmentCapability().then((result) => {
+      if (active && result.ok) setImageSupport(result.value);
+    });
+    return () => {
+      active = false;
+    };
+  }, [config?.llm.provider, config?.llm.model, config?.llm.baseUrl, config?.llm.enableImages]);
   const secretId: SecretId | null =
     provider === 'openai-compatible' || provider === 'anthropic' ? `llm.${provider}` : null;
   const signature = JSON.stringify([
@@ -243,7 +254,11 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
       >
         Test Connection
       </button>
-      <span role="status" className={status.startsWith('Failed') ? styles.error : styles.hint}>
+      <span
+        role="status"
+        aria-label="Model connection"
+        className={status.startsWith('Failed') ? styles.error : styles.hint}
+      >
         {status}
       </span>
     </div>
@@ -327,6 +342,15 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
               <section key={group} className={styles.section}>
                 <h2>{group}</h2>
                 <div className={styles.group}>
+                  {panel === 'Model' &&
+                    group === 'Image & Attachment Handling' &&
+                    config.llm.enableImages &&
+                    imageSupport?.supportsImages !== true && (
+                      <p className={styles.warning} role="status">
+                        {imageSupport?.reason ??
+                          'Vision support is unverified. This model may reject images.'}
+                      </p>
+                    )}
                   {panel === 'Model' && group === 'Provider' ? (
                     <>
                       {providerRows.filter((d) => d.id === 60 || d.id === 61).map(renderRow)}

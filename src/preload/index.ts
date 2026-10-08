@@ -39,6 +39,12 @@ import {
   resetPanelResultSchema,
 } from '../shared/settings';
 import { z } from 'zod';
+import {
+  attachmentFileSchema,
+  attachmentRemoveSchema,
+  attachmentsSchema,
+  capabilitySchema,
+} from '../shared/attachments';
 import { companionStateSchema, overrideStateSchema } from '../shared/state';
 import {
   spriteImportRequestSchema,
@@ -46,6 +52,25 @@ import {
   spritePatchSchema,
 } from '../shared/spriteImport';
 const api: CompanionAPI = {
+  getAttachmentCapability: async () =>
+    resultSchema(capabilitySchema).parse(await ipcRenderer.invoke(CHANNELS.attachCapability, {})),
+  attachClipboardImage: async () =>
+    resultSchema(attachmentsSchema).parse(await ipcRenderer.invoke(CHANNELS.attachClipboard, {})),
+  browseAttachments: async () =>
+    resultSchema(attachmentsSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.attachFile, attachmentFileSchema.parse({})),
+    ),
+  attachDroppedFiles: async (files) =>
+    resultSchema(attachmentsSchema).parse(
+      await ipcRenderer.invoke(
+        CHANNELS.attachFile,
+        attachmentFileSchema.parse({ paths: files.map((file) => webUtils.getPathForFile(file)) }),
+      ),
+    ),
+  removeAttachment: async (id) =>
+    resultSchema(attachmentsSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.attachRemove, attachmentRemoveSchema.parse({ id })),
+    ),
   browseSprite: async (state, mode) =>
     configResultSchema.parse(
       await ipcRenderer.invoke(

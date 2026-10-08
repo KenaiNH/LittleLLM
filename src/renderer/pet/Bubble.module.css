@@ -228,3 +228,18 @@
 .content :global(.hljs-comment) {
   color: var(--code-comment);
 }
+.attachments {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.attachments img {
+  max-width: 128px;
+  max-height: 82px;
+  object-fit: contain;
+  border: 1px solid #e4e9ff;
+}
+.attachmentCaption {
+  flex-basis: 100%;
+}

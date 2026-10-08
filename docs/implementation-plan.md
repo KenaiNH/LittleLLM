@@ -30,6 +30,8 @@ TextChat bubble 2016:89 provides the anchored bubble visual. User clarified: the
 
 Not visually specified in retrieved TextChat: editable input, attachment thumbnails/removal, streaming stop/regenerate/copy footer, suspended-scroll affordance, recording/cancel/transcribing states, region selection overlay, actual sprite placement and animations. Required functionality will be mapped to existing components; new screen designs require approval. No design writes or redesigns are authorized.
 
+Region selector proposal (approval requested, implementation pending): an activation-only transparent window covering each display, a dim black fill at 35%, a 2 px selection outline in Figma's #e4e9ff, and an existing blue dialogue surface containing Courier Prime text “Drag to capture · Esc to cancel.” Dragging selects within one display; Esc closes all selectors without attaching or sending anything. Capture/crop/normalization happen in main; selection coordinates use validated IPC. No screenshot is persisted or sent until the user submits the attached image. The overlay closes before returning focus to the existing input bar. A new selector screen needs the user's approval under the original instruction; other attachment sources can be completed independently.
+
 ## Ordered build and verification
 
 Follow main §14 in order. Before phase 1, define every stored enum/label and complete Zod config tree, incorporating C1–C27 and omitted controls. Maintain explicit control-to-config coverage, session-only debug settings, errors and all IPC channel names.

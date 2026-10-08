@@ -7,11 +7,15 @@ import { historyMessages, type Exchange } from './history';
 import { buildSystemPrompt } from './persona';
 import { providerError } from './errors';
 import type { ConversationStore } from '../services/conversationStore';
+import type { ChatImage } from '../../shared/attachments';
+import { imageCapability } from './capabilities';
+import { ProviderError } from './errors';
 type Active = { id: string; controller: AbortController; terminal: boolean };
 export class ChatService {
   private active: Active | null = null;
   private exchanges: Exchange[] = [];
   private lastPrompt: string | null = null;
+  private lastImages: ChatImage[] = [];
   private lastCompleted = false;
   constructor(
     private getConfig: () => Config,
@@ -25,19 +29,23 @@ export class ChatService {
   persistenceChanged() {
     if (this.getConfig().llm.persistence === 'permanent') this.history?.save(this.exchanges);
   }
-  start(text: string, regenerate = false): string {
+  start(text: string, regenerate = false, images: ChatImage[] = []): string {
     this.abort();
     const cfg = this.getConfig();
     if (regenerate) {
       if (!this.lastPrompt) throw new Error('No prompt to regenerate');
       text = this.lastPrompt;
+      images = this.lastImages;
       if (this.lastCompleted) this.exchanges.pop();
-    } else this.lastPrompt = text;
+    } else {
+      this.lastPrompt = text;
+      this.lastImages = images;
+    }
     this.lastCompleted = false;
     const active = { id: randomUUID(), controller: new AbortController(), terminal: false };
     this.active = active;
     // Start after the invoke response so renderers can subscribe by request ID.
-    setImmediate(() => void this.run(active, text, cfg));
+    setImmediate(() => void this.run(active, text, cfg, images));
     return active.id;
   }
   regenerate() {
@@ -58,6 +66,7 @@ export class ChatService {
     this.history?.clear();
     this.exchanges = [];
     this.lastPrompt = null;
+    this.lastImages = [];
     this.lastCompleted = false;
   }
   private send(active: Active, delta: ChatDelta) {
@@ -69,13 +78,29 @@ export class ChatService {
     if (this.makeProvider) return this.makeProvider(cfg);
     return createLLMProvider(cfg, this.getKey);
   }
-  private async run(active: Active, text: string, cfg: Config) {
+  private async run(active: Active, text: string, cfg: Config, images: ChatImage[]) {
     let reply = '';
     try {
       active.controller.signal.throwIfAborted();
-      const provider = this.provider(cfg),
-        system = buildSystemPrompt(cfg).text,
-        messages = historyMessages(this.exchanges, text, cfg.llm, system);
+      const provider = this.provider(cfg);
+      if (images.length > cfg.llm.maxAttachments) {
+        throw new ProviderError({
+          code: 'INVALID_RESPONSE',
+          userMessage: 'Too many attachments for this message.',
+          retryable: false,
+        });
+      }
+      const system = buildSystemPrompt(cfg).text,
+        messages = historyMessages(this.exchanges, text, cfg.llm, system, [], images);
+      if (messages.some((message) => message.images?.length)) {
+        const capability = await imageCapability(cfg, provider);
+        if (!capability.allowed)
+          throw new ProviderError({
+            code: 'INVALID_RESPONSE',
+            userMessage: capability.reason + ' Clear the conversation to remove earlier images.',
+            retryable: false,
+          });
+      }
       for await (const raw of provider.chat(messages, {
         signal: active.controller.signal,
         model: cfg.llm.model,
@@ -94,7 +119,11 @@ export class ChatService {
         }
         if (delta.type === 'done') {
           if (reply) {
-            this.exchanges.push({ user: text, assistant: reply });
+            this.exchanges.push({
+              user: text,
+              assistant: reply,
+              ...(images.length ? { images } : {}),
+            });
             this.lastCompleted = true;
             if (
               cfg.llm.persistence === 'permanent' &&

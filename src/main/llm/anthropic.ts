@@ -4,6 +4,7 @@ import type { ChatDelta, ChatMessage, ChatOptions, LLMProvider, ModelInfo } from
 import { parseSse } from './streamParser';
 import { httpError, providerError, ProviderError } from './errors';
 import { endpoint, requestHeaders, boundedJson, fetchWithReset } from './http';
+import { anthropicMessages } from './imageEncoding';
 const count = z.number().int().nonnegative();
 const eventSchema = z.object({
   type: z.string(),
@@ -100,7 +101,7 @@ export class AnthropicProvider implements LLMProvider {
           headers: await this.headers(),
           body: JSON.stringify({
             model: options.model,
-            messages,
+            messages: anthropicMessages(messages),
             ...(options.systemPrompt ? { system: options.systemPrompt } : {}),
             stream: options.stream !== false,
             max_tokens: options.maxTokens ?? this.config.maxTokens,

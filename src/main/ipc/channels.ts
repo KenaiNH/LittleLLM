@@ -41,6 +41,8 @@ export const CHANNELS = {
   attachClipboard: 'attach:clipboard',
   attachFile: 'attach:file',
   attachRegion: 'attach:region',
+  attachRemove: 'attach:remove',
+  attachCapability: 'attach:capability',
   windowMove: 'window:move',
   windowIgnoreMouse: 'window:set-ignore-mouse',
   windowResize: 'window:resize',

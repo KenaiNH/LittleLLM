@@ -4,6 +4,7 @@ import type { ChatDelta, ChatMessage, ChatOptions, LLMProvider, ModelInfo } from
 import { parseSse } from './streamParser';
 import { httpError, networkCode, providerError, ProviderError } from './errors';
 import type { Config } from '../../shared/config';
+import { openAiMessages } from './imageEncoding';
 
 const usage = z
   .object({
@@ -154,8 +155,11 @@ export class OpenAICompatibleProvider implements LLMProvider {
         response: Response;
       for (;;) {
         const input = options.systemPrompt
-          ? [{ role, content: options.systemPrompt }, ...messages]
-          : messages;
+          ? [
+              { role, content: options.systemPrompt },
+              ...openAiMessages(messages, this.config.imageDetail),
+            ]
+          : openAiMessages(messages, this.config.imageDetail);
         const payload = {
           model: options.model,
           messages: input,

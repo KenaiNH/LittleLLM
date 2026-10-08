@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, screen, dialog, clipboard } from 'electron';
 import { z } from 'zod';
 import type { ConfigStore } from '../services/configStore';
 import { CHANNELS } from '../ipc/channels';
@@ -13,6 +13,16 @@ import { getSettingsWindow } from './settingsWindow';
 import type { ConversationStore } from '../services/conversationStore';
 import { booleanSchema } from '../ipc/schemas';
 import { ChatService } from '../llm/chatService';
+import { AttachmentStore } from '../services/attachments';
+import {
+  attachmentFileSchema,
+  attachmentRemoveSchema,
+  attachmentsSchema,
+  capabilitySchema,
+} from '../../shared/attachments';
+import { imageCapability } from '../llm/capabilities';
+import { createLLMProvider } from '../llm/registry';
+import { ProviderError } from '../llm/errors';
 import {
   chatEventSchema,
   abortChatSchema,
@@ -21,7 +31,14 @@ import {
 } from '../../shared/llm';
 
 export class InputWindow {
-  private state: ChatUi = { inputOpen: false, draft: '', reply: null, error: null };
+  private state: ChatUi = {
+    inputOpen: false,
+    draft: '',
+    attachments: [],
+    reply: null,
+    error: null,
+  };
+  private attachments: AttachmentStore;
   private chat: ChatService;
   private queued: ReturnType<typeof setTimeout> | null = null;
   private win: BrowserWindow | null = null;
@@ -38,6 +55,7 @@ export class InputWindow {
     secrets?: SecretStore,
     private history?: ConversationStore,
   ) {
+    this.attachments = new AttachmentStore(() => config.get());
     this.lifecycle = new StateController(
       () => config.get(),
       (state) => {
@@ -94,10 +112,80 @@ export class InputWindow {
             value: await action(request.parse(payload)),
           });
         } catch (error) {
-          return { ok: false, error: normalizeError(error) };
+          return {
+            ok: false,
+            error: error instanceof ProviderError ? error.normalized : normalizeError(error),
+          };
         }
       });
     handle(CHANNELS.chatUiGet, emptySchema, chatUiSchema, () => this.state);
+    const capability = () => {
+      const cfg = config.get(),
+        provider = cfg.llm.provider;
+      return imageCapability(
+        cfg,
+        createLLMProvider(cfg, async () =>
+          provider === 'openai-compatible' || provider === 'anthropic'
+            ? secrets?.get(`llm.${provider}`)
+            : undefined,
+        ),
+      );
+    };
+    const requireImages = async () => {
+      const result = await capability();
+      if (!result.allowed)
+        throw new ProviderError({
+          code: 'INVALID_RESPONSE',
+          userMessage: result.reason,
+          retryable: false,
+        });
+    };
+    const publishAttachments = () => {
+      this.state = { ...this.state, attachments: this.attachments.views };
+      this.position();
+      this.broadcast();
+      return this.state.attachments;
+    };
+    handle(CHANNELS.attachCapability, emptySchema, capabilitySchema, capability);
+    handle(CHANNELS.attachRemove, attachmentRemoveSchema, attachmentsSchema, (p) => {
+      this.attachments.remove(p.id);
+      return publishAttachments();
+    });
+    handle(CHANNELS.attachClipboard, emptySchema, attachmentsSchema, async () => {
+      await requireImages();
+      const items = await clipboard.read();
+      const item = items.find((value) =>
+        value.types.some((type) => /^image\/(png|jpeg|webp|gif)$/.test(type)),
+      );
+      const type = item?.types.find((value) => /^image\/(png|jpeg|webp|gif)$/.test(value));
+      if (!item || !type) return this.attachments.views;
+      const image = await item.getType(type);
+      if (!('arrayBuffer' in image) || image.size > 10 * 1024 * 1024)
+        throw new ProviderError({
+          code: 'FILE_TOO_LARGE',
+          userMessage: 'Clipboard images must be at most 10 MiB.',
+          retryable: false,
+        });
+      await this.attachments.add([
+        { bytes: Buffer.from(await image.arrayBuffer()), name: 'Clipboard image' },
+      ]);
+      return publishAttachments();
+    });
+    handle(CHANNELS.attachFile, attachmentFileSchema, attachmentsSchema, async (p) => {
+      await requireImages();
+      let paths = p.paths;
+      if (!paths) {
+        const result = await dialog.showOpenDialog(this.win ?? this.pet, {
+          title: 'Attach images',
+          properties: ['openFile', 'multiSelections'],
+          filters: [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif'] }],
+        });
+        if (result.canceled) return this.attachments.views;
+        paths = result.filePaths;
+      }
+      await this.attachments.files(paths);
+      return publishAttachments();
+    });
     handle(CHANNELS.stateGet, emptySchema, companionStateSchema, () => this.lifecycle.snapshot);
     handle(CHANNELS.stateOverride, overrideStateSchema, z.null(), (p) => {
       if (!import.meta.env.DEV && !this.config.get().advanced.developerMode)
@@ -114,8 +202,8 @@ export class InputWindow {
       this.close();
       return null;
     });
-    handle(CHANNELS.inputSubmit, submitSchema, z.null(), (p) => {
-      this.begin(p.text);
+    handle(CHANNELS.inputSubmit, submitSchema, z.null(), async (p) => {
+      await this.begin(p.text);
       return null;
     });
     handle(CHANNELS.llmChat, submitSchema, requestIdSchema, (p) => this.begin(p.text));
@@ -172,13 +260,38 @@ export class InputWindow {
     this.lifecycle.dispose();
     this.quitting = true;
   };
-  private begin(text: string, regenerate = false) {
-    const requestId = regenerate ? this.chat.regenerate() : this.chat.start(text);
+  private async begin(text: string, regenerate = false) {
+    if (!regenerate && !text.trim() && !this.attachments.views.length)
+      throw new ProviderError({
+        code: 'INVALID_RESPONSE',
+        userMessage: 'Type a message or attach an image before sending.',
+        retryable: false,
+      });
+    const previous = this.state.reply,
+      views = regenerate ? (previous?.attachments ?? []) : this.attachments.views;
+    if (!regenerate && views.length > this.config.get().llm.maxAttachments)
+      throw new ProviderError({
+        code: 'FILE_INVALID',
+        userMessage: 'Remove attachments above the configured limit before sending.',
+        retryable: false,
+      });
+    const requestId = regenerate
+      ? this.chat.regenerate()
+      : this.chat.start(text, false, this.attachments.images);
+    if (!regenerate) this.attachments.clear();
     this.lifecycle.begin(requestId);
     this.state = {
       ...this.state,
       draft: '',
-      reply: { requestId, name: 'Companion', text: '', streaming: true },
+      attachments: [],
+      reply: {
+        requestId,
+        name: 'Companion',
+        text: '',
+        streaming: true,
+        userText: regenerate ? (previous?.userText ?? '') : text,
+        attachments: views,
+      },
       error: null,
     };
     if (!this.config.get().input.keepOpenAfterSend) this.close();
@@ -263,7 +376,7 @@ export class InputWindow {
             ? 280
             : cfg.bubble.baseWidthPx * cfg.bubble.scale,
       ),
-      height = Math.min(167, area.height);
+      height = Math.min(167 + (this.state.attachments.length ? 104 : 0), area.height);
     this.win.setBounds({
       x: area.x + area.width - width,
       y: area.y + area.height - height,

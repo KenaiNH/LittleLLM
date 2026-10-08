@@ -10,8 +10,14 @@ import type { SecretId, SecretStatus, SettingsEnvironment } from './settings';
 import type { ModelInfo, ConnectionTest } from './llm';
 import type { SpriteTarget } from './spriteImport';
 import type { SpriteStateConfig } from './config';
+import type { Attachment, ImageCapability } from './attachments';
 export type Result<T> = { ok: true; value: T } | { ok: false; error: AppError };
 export interface CompanionAPI {
+  getAttachmentCapability(): Promise<Result<ImageCapability>>;
+  attachClipboardImage(): Promise<Result<Attachment[]>>;
+  browseAttachments(): Promise<Result<Attachment[]>>;
+  attachDroppedFiles(files: File[]): Promise<Result<Attachment[]>>;
+  removeAttachment(id: string): Promise<Result<Attachment[]>>;
   browseSprite(state: SpriteTarget, mode: SpriteStateConfig['mode']): Promise<Result<Config>>;
   importDroppedSprite(
     state: SpriteTarget,

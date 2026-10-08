@@ -1,6 +1,7 @@
 import type { ChatMessage } from './types';
 import type { Config } from '../../shared/config';
-export type Exchange = { user: string; assistant: string };
+import type { ChatImage } from '../../shared/attachments';
+export type Exchange = { user: string; assistant: string; images?: ChatImage[] };
 export function estimateTokens(text: string): number {
   let cjk = 0,
     other = 0;
@@ -16,6 +17,7 @@ export function historyMessages(
   config: Config['llm'],
   system: string,
   examples: ChatMessage[] = [],
+  images: ChatImage[] = [],
 ): ChatMessage[] {
   const count =
     config.contextMode === 'none'
@@ -25,27 +27,41 @@ export function historyMessages(
         : exchanges.length;
   const retained = count ? exchanges.slice(-count) : [];
   if (config.contextMode === 'token-budget') {
+    const imageCost = config.imageDetail === 'low' ? 85 : 1105;
     const fixed =
+      images.length * imageCost +
       estimateTokens(system) +
       estimateTokens(current) +
       examples.reduce((sum, item) => sum + estimateTokens(item.content), 0);
     let used =
       fixed +
       retained.reduce(
-        (sum, item) => sum + estimateTokens(item.user) + estimateTokens(item.assistant),
+        (sum, item) =>
+          sum +
+          estimateTokens(item.user) +
+          estimateTokens(item.assistant) +
+          (item.images?.length ?? 0) * imageCost,
         0,
       );
     while (retained.length && used > config.tokenBudget) {
       const removed = retained.shift();
-      if (removed) used -= estimateTokens(removed.user) + estimateTokens(removed.assistant);
+      if (removed)
+        used -=
+          estimateTokens(removed.user) +
+          estimateTokens(removed.assistant) +
+          (removed.images?.length ?? 0) * imageCost;
     }
   }
   return [
     ...examples,
     ...retained.flatMap((item) => [
-      { role: 'user' as const, content: item.user },
+      {
+        role: 'user' as const,
+        content: item.user,
+        ...(item.images?.length ? { images: item.images } : {}),
+      },
       { role: 'assistant' as const, content: item.assistant },
     ]),
-    { role: 'user', content: current },
+    { role: 'user', content: current, ...(images.length ? { images } : {}) },
   ];
 }
