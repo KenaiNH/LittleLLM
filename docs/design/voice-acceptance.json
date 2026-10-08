@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-08",
+  "platform": "Windows",
+  "unitTestsPassed": 129,
+  "lint": "passed",
+  "strictTypecheckAndBuild": "passed",
+  "electronTargetedTestsPassed": 4,
+  "windowsSpeech": {
+    "backend": "Windows.Media.SpeechSynthesis (WinRT)",
+    "voicesEnumerated": 3,
+    "nonSilentPlayback": "passed",
+    "escPlaybackCancellation": "passed",
+    "offCreatesNoAudioContext": "passed",
+    "labelledOutputEnumeration": "passed",
+    "microphonePermissionWhileSTTOff": "denied"
+  },
+  "customHTTP": {
+    "source": "local HTTP protocol fixture through production provider and Electron audio player",
+    "binaryPCM24kHz": "passed",
+    "jsonBase64PCM24kHz": "passed",
+    "jsonAudioURLPCM24kHz": "passed",
+    "getTemplateQuery": "passed",
+    "invalidTemplateRetainsLastValidConfig": "passed",
+    "secretAbsentFromConfig": "passed",
+    "audioURLDoesNotReceiveEndpointCredentials": "passed"
+  },
+  "elevenlabs": "protocol unit tests passed; live cloud test unverified without a user key",
+  "hostedOpenAI": "live speech unverified without a user key",
+  "kokoro": "SKIPPED by explicit user instruction; compatibility and latency unverified",
+  "mouthAnimationAndLipSync": "deferred by explicit user instruction",
+  "STT": "not implemented or tested"
+}

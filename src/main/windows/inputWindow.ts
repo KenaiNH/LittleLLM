@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import type { SpeechService } from '../tts/speechService';
 import type { ChatImage, Attachment } from '../../shared/attachments';
+import { synthesisScope } from '../../shared/ttsCustom';
 import {
   ttsPacketSchema,
   ttsFeedbackSchema,
@@ -114,12 +115,7 @@ export class InputWindow {
       if (section === 'bubble') this.lifecycle.settingsChanged();
       if (section === 'advanced' && !cfg.advanced.developerMode) this.lifecycle.force('auto');
       if (section === 'tts') {
-        if (
-          ['provider', 'voice', 'baseUrl', 'model', 'pitch', 'format'].some(
-            (key) =>
-              cfg.tts[key as keyof typeof cfg.tts] !== speechConfig[key as keyof typeof cfg.tts],
-          )
-        ) {
+        if (synthesisScope(cfg.tts) !== synthesisScope(speechConfig)) {
           this.voice?.abort();
           try {
             this.voice?.cache.clear();
@@ -188,10 +184,12 @@ export class InputWindow {
           retryable: false,
         });
       const id = randomUUID(),
-        credentialRevision =
-          cfg.provider === 'openai-compatible-tts'
-            ? (secrets?.status('tts.openai-compatible-tts').revision ?? '')
-            : '';
+        credentialRevision = ['openai-compatible-tts', 'elevenlabs', 'custom-http'].includes(
+          cfg.provider,
+        )
+          ? (secrets?.status(`tts.${cfg.provider}` as import('../../shared/settings').SecretId)
+              .revision ?? '')
+          : '';
       const firstAudioMs = await voice.preview(id, cfg, "Hello. I'm your desktop companion.");
       return {
         requestId: id,
@@ -510,7 +508,7 @@ export class InputWindow {
             !reply ||
             reply.requestId !== requestId ||
             this.quitting ||
-            this.config.get().tts.provider !== speechConfig.provider
+            synthesisScope(this.config.get().tts) !== synthesisScope(speechConfig)
           )
             return;
           voice.begin(requestId, speechConfig);

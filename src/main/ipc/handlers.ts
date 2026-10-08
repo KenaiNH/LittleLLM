@@ -1,6 +1,7 @@
 import { BrowserWindow, ipcMain, shell, clipboard, dialog, screen } from 'electron';
 import { z } from 'zod';
 import { CHANNELS } from './channels';
+import { applyTTSFields } from '../../shared/ttsCustom';
 import {
   emptySchema,
   configSetSchema,
@@ -381,6 +382,7 @@ export function registerHandlers(
     configResultSchema.options[0].shape.value,
     async (p) => {
       if (p.section === 'sprite') await spriteManager.patch(p.value);
+      else if (p.section === 'tts') config.set('tts', applyTTSFields(config.get().tts, p.value));
       else config.set(p.section, { ...config.get()[p.section], ...p.value });
       return broadcast();
     },

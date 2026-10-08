@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { OPTIONS } from './enums';
+import { speechBody } from './ttsCustom';
 
 export const CONFIG_SCHEMA_VERSION = 1;
 const en = <K extends keyof typeof OPTIONS>(key: K) => {
@@ -41,7 +42,8 @@ const headersSchema = z
     (headers) =>
       !Object.entries(headers).some(
         ([key, value]) =>
-          /authorization|api[-_]?key|cookie|token|secret/i.test(key) && value !== '{{apiKey}}',
+          /authorization|api[-_]?key|cookie|token|secret/i.test(key) &&
+          !/^(?:[A-Za-z-]+ )?{{apiKey}}$/.test(value),
       ),
     'Store credentials in the secret field, referenced as {{apiKey}}',
   );
@@ -204,7 +206,7 @@ export const ttsSchema = z
     mouthSync: z.boolean().default(false),
     elevenlabs: z
       .object({
-        voiceId: z.string().default(''),
+        voiceId: z.string().max(200).default(''),
         modelId: en('elevenModel').default('eleven_flash_v2_5'),
         stability: num(0, 1, 0.5),
         similarityBoost: num(0, 1, 0.75),
@@ -218,7 +220,18 @@ export const ttsSchema = z
         method: en('ttsMethod').default('POST'),
         url: httpUrlSchema.optional(),
         headers: headersSchema.default({}),
-        bodyTemplate: z.string().max(16000).default('{"text":"{{text}}"}'),
+        bodyTemplate: z
+          .string()
+          .max(16000)
+          .refine((template) => {
+            try {
+              speechBody(template, 'Text', 'voice', 1);
+              return true;
+            } catch {
+              return false;
+            }
+          }, 'Enter a JSON object containing {{text}}; supported placeholders are {{text}}, {{voice}} and {{speed}}.')
+          .default('{"text":"{{text}}"}'),
         responseMode: en('responseMode').default('binary'),
         jsonPath: z.string().max(200).default(''),
         format: en('customAudioFormat').default('mp3'),

@@ -11,6 +11,7 @@ import {
 } from 'node:fs';
 import { join } from 'node:path';
 import type { Config } from '../../shared/config';
+import { synthesisScope } from '../../shared/ttsCustom';
 const cacheFile = /^[a-f0-9]{64}\.audio$/;
 export function audioCacheKey(config: Config['tts'], text: string, format: string) {
   return createHash('sha256')
@@ -51,11 +52,7 @@ export class AudioCache {
   }
   scope(config: Config['tts']) {
     // Keep the specified utterance key, while preventing reuse after external config edits/restarts.
-    const owner = createHash('sha256')
-      .update(
-        JSON.stringify([config.provider, config.voice, config.baseUrl, config.model, config.pitch]),
-      )
-      .digest('hex');
+    const owner = createHash('sha256').update(synthesisScope(config)).digest('hex');
     const path = join(this.directory, 'owner.sha256');
     let previous = '';
     try {

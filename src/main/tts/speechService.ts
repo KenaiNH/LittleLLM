@@ -250,7 +250,14 @@ export class SpeechService {
     }
   }
   private async synthesize(turn: Turn, text: string, segment: number, provider: TTSProvider) {
-    const format = provider.id === 'windows-sapi' ? 'wav' : turn.cfg.format;
+    const format =
+      provider.id === 'windows-sapi'
+        ? 'wav'
+        : provider.id === 'elevenlabs'
+          ? 'mp3'
+          : provider.id === 'custom-http'
+            ? turn.cfg.custom.format
+            : turn.cfg.format;
     const cfg =
       provider.id === 'windows-sapi' && turn.cfg.provider !== 'windows-sapi'
         ? { ...turn.cfg, provider: 'windows-sapi' as const, voice: '' }

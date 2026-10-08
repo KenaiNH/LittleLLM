@@ -66,8 +66,15 @@ const input = (
 ) => field('input', key, { ...definition, panel: 'Appearance' });
 const notMock = (cfg: Config) => cfg.llm.provider !== 'mock';
 const speech = (cfg: Config) => cfg.tts.provider !== 'none';
-const voice = (key: keyof Config['tts'], definition: Omit<Setting, 'section' | 'key' | 'panel'>) =>
-  field('tts', key, { ...definition, panel: 'Voice' });
+const voice = (
+  key:
+    | keyof Config['tts']
+    | `elevenlabs.${keyof Config['tts']['elevenlabs']}`
+    | `custom.${keyof Config['tts']['custom']}`,
+  definition: Omit<Setting, 'section' | 'key' | 'panel'>,
+): Setting => ({ ...definition, section: 'tts', key, panel: 'Voice' });
+const eleven = (cfg: Config) => cfg.tts.provider === 'elevenlabs';
+const customVoice = (cfg: Config) => cfg.tts.provider === 'custom-http';
 export const SETTINGS: Setting[] = [
   voice('provider', {
     id: 83,
@@ -75,7 +82,6 @@ export const SETTINGS: Setting[] = [
     label: 'Text-to-speech provider',
     kind: 'select',
     options: OPTIONS.ttsProvider,
-    unavailableOptions: ['elevenlabs', 'custom-http'],
   }),
   voice('voice', {
     id: 84,
@@ -125,6 +131,109 @@ export const SETTINGS: Setting[] = [
     kind: 'select',
     options: OPTIONS.audioFormat,
     visible: (cfg) => cfg.tts.provider === 'openai-compatible-tts',
+  }),
+  voice('elevenlabs.voiceId', {
+    id: 92,
+    group: 'ElevenLabs',
+    label: 'Voice',
+    kind: 'select',
+    visible: eleven,
+  }),
+  voice('elevenlabs.modelId', {
+    id: 93,
+    group: 'ElevenLabs',
+    label: 'Model',
+    kind: 'select',
+    options: OPTIONS.elevenModel,
+    visible: eleven,
+  }),
+  voice('elevenlabs.stability', {
+    id: 94,
+    group: 'ElevenLabs',
+    label: 'Stability',
+    kind: 'range',
+    min: 0,
+    max: 1,
+    step: 0.01,
+    visible: eleven,
+  }),
+  voice('elevenlabs.similarityBoost', {
+    id: 95,
+    group: 'ElevenLabs',
+    label: 'Similarity boost',
+    kind: 'range',
+    min: 0,
+    max: 1,
+    step: 0.01,
+    visible: eleven,
+  }),
+  voice('elevenlabs.style', {
+    id: 96,
+    group: 'ElevenLabs',
+    label: 'Style exaggeration',
+    kind: 'range',
+    min: 0,
+    max: 1,
+    step: 0.01,
+    visible: eleven,
+  }),
+  voice('elevenlabs.speakerBoost', {
+    id: 97,
+    group: 'ElevenLabs',
+    label: 'Speaker boost',
+    kind: 'toggle',
+    visible: eleven,
+  }),
+  voice('custom.url', {
+    id: 98,
+    group: 'Custom HTTP endpoint',
+    label: 'Request URL',
+    kind: 'text',
+    maxLength: 2000,
+    visible: customVoice,
+  }),
+  voice('custom.method', {
+    id: 99,
+    group: 'Custom HTTP endpoint',
+    label: 'HTTP method',
+    kind: 'select',
+    options: OPTIONS.ttsMethod,
+    visible: customVoice,
+  }),
+  voice('custom.bodyTemplate', {
+    id: 102,
+    group: 'Custom HTTP endpoint',
+    label: 'Body template',
+    kind: 'textarea',
+    rows: 4,
+    maxLength: 16000,
+    hint: 'JSON containing {{text}}; also supports {{voice}} and {{speed}}. GET sends these fields as query parameters.',
+    visible: customVoice,
+  }),
+  voice('custom.responseMode', {
+    id: 103,
+    group: 'Custom HTTP endpoint',
+    label: 'Response type',
+    kind: 'select',
+    options: OPTIONS.responseMode,
+    visible: customVoice,
+  }),
+  voice('custom.jsonPath', {
+    id: 104,
+    group: 'Custom HTTP endpoint',
+    label: 'JSON field path',
+    kind: 'text',
+    maxLength: 200,
+    hint: 'For example: data.audio. Numeric path segments select array entries.',
+    visible: (cfg) => customVoice(cfg) && cfg.tts.custom.responseMode !== 'binary',
+  }),
+  voice('custom.format', {
+    id: 105,
+    group: 'Custom HTTP endpoint',
+    label: 'Audio format',
+    kind: 'select',
+    options: OPTIONS.customAudioFormat,
+    visible: customVoice,
   }),
   voice('outputDeviceId', {
     id: 106,

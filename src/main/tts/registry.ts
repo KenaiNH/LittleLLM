@@ -14,5 +14,13 @@ export async function createTTSProvider(
     const { OpenAICompatibleTTSProvider } = await import('./providers/openaiCompatibleTts');
     return new OpenAICompatibleTTSProvider(config, key);
   }
-  throw new Error('This speech provider is not implemented yet.');
+  if (config.provider === 'elevenlabs') {
+    const { ElevenLabsTTSProvider } = await import('./providers/elevenlabs');
+    return new ElevenLabsTTSProvider(config, key);
+  }
+  if (config.provider === 'custom-http') {
+    const { CustomHttpTTSProvider } = await import('./providers/customHttp');
+    return new CustomHttpTTSProvider(config, key);
+  }
+  throw new Error('This speech provider is not implemented.');
 }

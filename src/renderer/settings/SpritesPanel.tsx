@@ -555,6 +555,12 @@ function MouthSection({
     <section className={styles.section}>
       <h2>Mouth Frames (Lip Sync)</h2>
       <div className={styles.group}>
+        <div className={styles.row}>
+          <span className={styles.hint}>
+            Mouth animation and lip syncing are planned for a future release. These controls prepare
+            assets only.
+          </span>
+        </div>
         {matchesSearch('Enable mouth frames', query) && (
           <div className={styles.row} data-control="45">
             <span className={styles.label}>Enable mouth frames</span>

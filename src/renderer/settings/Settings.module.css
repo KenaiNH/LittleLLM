@@ -466,6 +466,23 @@
   margin: 12px 16px;
   font-size: 13px;
 }
+.headerEditor {
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.headerPair {
+  display: flex;
+  width: 100%;
+  gap: 6px;
+}
+.headerPair input {
+  width: 0;
+  min-width: 0;
+  flex: 1;
+}
 [data-dark='true'] .warning {
   color: #e5bf66;
 }

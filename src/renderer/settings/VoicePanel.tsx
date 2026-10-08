@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { Config } from '../../shared/config';
 import type { SecretStatus } from '../../shared/settings';
+import { synthesisScope } from '../../shared/ttsCustom';
+import { VoiceHeaders } from './VoiceHeaders';
 import { SETTINGS, matchesSearch } from './definitions';
 import { SettingRow } from './SettingRow';
 import { SecretInput, flushSecrets } from './SecretInput';
@@ -14,33 +16,46 @@ export function VoicePanel({ config, query }: { config: Config; query: string })
     [verified, setVerified] = useState(''),
     [credentials, setCredentials] = useState<SecretStatus | null>(null);
   const signature = JSON.stringify([
-    config.tts.provider,
-    config.tts.baseUrl,
-    config.tts.model,
-    config.tts.voice,
-    config.tts.format,
+    synthesisScope(config.tts),
     config.tts.speed,
     credentials?.revision ?? '',
   ]);
+  const secretId =
+    config.tts.provider === 'openai-compatible-tts' ||
+    config.tts.provider === 'elevenlabs' ||
+    config.tts.provider === 'custom-http'
+      ? (`tts.${config.tts.provider}` as import('../../shared/settings').SecretId)
+      : null;
   const invalid = useSettingsStore((state) => state.invalid);
   useEffect(() => {
     let active = true;
     setVoices([]);
     setStatus('Idle');
-    if (
-      config.tts.provider !== 'none' &&
-      !['elevenlabs', 'custom-http'].includes(config.tts.provider)
-    )
+    if (config.tts.provider !== 'none')
       void window.companion.listVoices().then((result) => {
         if (active) {
-          if (result.ok) setVoices(result.value);
-          else setStatus('Failed: ' + result.error.userMessage);
+          if (result.ok) {
+            setVoices(result.value);
+            const current = useSettingsStore.getState().config;
+            if (
+              current?.tts.provider === 'elevenlabs' &&
+              !current.tts.elevenlabs.voiceId &&
+              result.value[0]
+            )
+              void useSettingsStore
+                .getState()
+                .patch('tts', { 'elevenlabs.voiceId': result.value[0].id });
+          } else setStatus('Failed: ' + result.error.userMessage);
         }
       });
     return () => {
       active = false;
     };
   }, [config.tts.provider, config.tts.baseUrl, credentials?.revision]);
+  useEffect(() => {
+    setCredentials(null);
+    setVerified('');
+  }, [config.tts.provider]);
   useEffect(() => {
     if (config.tts.provider === 'none') {
       setDevices([]);
@@ -77,16 +92,9 @@ export function VoicePanel({ config, query }: { config: Config; query: string })
       const current = useSettingsStore.getState().config;
       if (!current) throw new Error('Settings have not loaded.');
       const before = current.tts;
-      const secret =
-        before.provider === 'openai-compatible-tts'
-          ? await window.companion.getSecretStatus('tts.openai-compatible-tts')
-          : null;
+      const secret = secretId ? await window.companion.getSecretStatus(secretId) : null;
       const tested = JSON.stringify([
-        before.provider,
-        before.baseUrl,
-        before.model,
-        before.voice,
-        before.format,
+        synthesisScope(before),
         before.speed,
         secret?.ok ? secret.value.revision : '',
       ]);
@@ -114,13 +122,18 @@ export function VoicePanel({ config, query }: { config: Config; query: string })
       matchesSearch(row.label + ' ' + (row.synonyms ?? ''), query),
   );
   const groups = [...new Set(rows.map((row) => row.group))];
-  const http = config.tts.provider === 'openai-compatible-tts';
+  const providerGroup =
+    config.tts.provider === 'elevenlabs'
+      ? 'ElevenLabs'
+      : config.tts.provider === 'custom-http'
+        ? 'Custom HTTP endpoint'
+        : 'OpenAI-compatible endpoint';
   if (
-    http &&
+    secretId &&
     matchesSearch('API key authentication password Test Connection', query) &&
-    !groups.includes('OpenAI-compatible endpoint')
+    !groups.includes(providerGroup)
   )
-    groups.splice(1, 0, 'OpenAI-compatible endpoint');
+    groups.splice(1, 0, providerGroup);
   if (
     config.tts.provider !== 'none' &&
     matchesSearch('Test Voice', query) &&
@@ -144,13 +157,50 @@ export function VoicePanel({ config, query }: { config: Config; query: string })
       ? [[config.tts.outputDeviceId, 'Unavailable output device'] as const]
       : []),
   ];
+  const elevenChoices: readonly (readonly [string, string])[] = [
+    ...(!config.tts.elevenlabs.voiceId
+      ? [['', voices.length ? 'Choose a voice' : 'Save a key to load voices'] as const]
+      : []),
+    ...voices.map((voice) => [voice.id, voice.name] as const),
+    ...(config.tts.elevenlabs.voiceId &&
+    !voices.some((voice) => voice.id === config.tts.elevenlabs.voiceId)
+      ? [[config.tts.elevenlabs.voiceId, 'Unavailable voice'] as const]
+      : []),
+  ];
+  const activeKeys = SETTINGS.filter(
+    (row) => row.panel === 'Voice' && (!row.visible || row.visible(config)),
+  ).map((row) => `tts.${row.key}`);
+  if (config.tts.provider === 'custom-http') activeKeys.push('tts.custom.headers');
+  const blocked = Object.keys(invalid).some(
+    (key) => activeKeys.includes(key) || key === 'secret.' + secretId,
+  );
+  const keyControl = secretId && matchesSearch('API key authentication password', query) && (
+    <SecretInput
+      key={secretId}
+      id={secretId}
+      controlId={
+        config.tts.provider === 'elevenlabs' ? 91 : config.tts.provider === 'custom-http' ? 101 : 87
+      }
+      local={config.tts.provider !== 'elevenlabs'}
+      verified={verified === signature}
+      onStatus={setCredentials}
+    />
+  );
   const renderRow = (row: (typeof rows)[number]) => (
     <SettingRow
       key={row.id}
       definition={row}
       config={config}
       verified={verified === signature}
-      choices={row.id === 84 ? voiceChoices : row.id === 106 ? deviceChoices : undefined}
+      choices={
+        row.id === 84
+          ? voiceChoices
+          : row.id === 92
+            ? elevenChoices
+            : row.id === 106
+              ? deviceChoices
+              : undefined
+      }
       models={
         row.id === 88
           ? ['tts-1', 'tts-1-hd', 'kokoro']
@@ -168,23 +218,15 @@ export function VoicePanel({ config, query }: { config: Config; query: string })
         <section className={styles.section} key={group}>
           <h2>{group}</h2>
           <div className={styles.group}>
+            {group === 'ElevenLabs' && keyControl}
             {rows
               .filter(
-                (row) => row.group === group && row.id !== 88 && row.id !== 89 && row.id !== 90,
+                (row) => row.group === group && ![88, 89, 90, 102, 103, 104, 105].includes(row.id),
               )
               .map(renderRow)}
             {group === 'OpenAI-compatible endpoint' && (
               <>
-                {matchesSearch('API key authentication password', query) && (
-                  <SecretInput
-                    key="tts.openai-compatible-tts"
-                    id="tts.openai-compatible-tts"
-                    controlId={87}
-                    local={true}
-                    verified={verified === signature}
-                    onStatus={setCredentials}
-                  />
-                )}
+                {keyControl}
                 {rows
                   .filter((row) => row.group === group && [88, 89, 90].includes(row.id))
                   .map(renderRow)}
@@ -192,11 +234,7 @@ export function VoicePanel({ config, query }: { config: Config; query: string })
                   <div className={styles.row}>
                     <button
                       className={styles.button}
-                      disabled={
-                        testing ||
-                        Boolean(invalid['tts.baseUrl']) ||
-                        Boolean(invalid['secret.tts.openai-compatible-tts'])
-                      }
+                      disabled={testing || blocked}
                       onClick={() => void test()}
                     >
                       Test Connection
@@ -208,15 +246,22 @@ export function VoicePanel({ config, query }: { config: Config; query: string })
                 )}
               </>
             )}
+            {group === 'Custom HTTP endpoint' && (
+              <>
+                {matchesSearch('Headers API key request', query) && (
+                  <VoiceHeaders headers={config.tts.custom.headers} />
+                )}
+                {keyControl}
+                {rows
+                  .filter((row) => row.group === group && [102, 103, 104, 105].includes(row.id))
+                  .map(renderRow)}
+              </>
+            )}
             {group === 'Playback' && matchesSearch('Test Voice', query) && (
               <div className={styles.row} data-control={111}>
                 <button
                   className={styles.button}
-                  disabled={
-                    testing ||
-                    Boolean(invalid['tts.baseUrl']) ||
-                    Boolean(invalid['secret.tts.openai-compatible-tts'])
-                  }
+                  disabled={testing || blocked}
                   onClick={() => void test()}
                 >
                   Test Voice
@@ -240,9 +285,6 @@ export function VoicePanel({ config, query }: { config: Config; query: string })
         >
           {status}
         </p>
-      )}
-      {['elevenlabs', 'custom-http'].includes(config.tts.provider) && (
-        <p className={styles.hint}>This provider is planned for the next build phase.</p>
       )}
     </>
   );
