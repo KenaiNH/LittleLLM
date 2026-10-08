@@ -8,4 +8,5 @@ export const CHANNELS={
   attachClipboard:'attach:clipboard',attachFile:'attach:file',attachRegion:'attach:region',
   windowMove:'window:move',windowIgnoreMouse:'window:set-ignore-mouse',windowResize:'window:resize',windowSettings:'window:settings',windowVisibility:'window:visibility',windowDpi:'window:dpi',
   stateChanged:'state:changed',toastShow:'toast:show',shellOpenExternal:'shell:open-external',shellOpenPath:'shell:open-path',
+  inputToggle:'input:toggle',inputClose:'input:close',inputDraft:'input:draft',inputSubmit:'input:submit',chatUiGet:'chat-ui:get',chatUiChanged:'chat-ui:changed',
 } as const;

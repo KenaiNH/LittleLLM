@@ -1,0 +1,13 @@
+.chatbox { width:100%; height:100%; background:rgba(120,151,214,.78); border:1px solid #e4e9ff; padding:5px; font-family:'Courier Prime',monospace; color:#fff; text-shadow:1.5px 2px #182642; }
+.inner { height:100%; border:1px solid rgba(204,217,255,.7); padding:18px 25px; position:relative; display:flex; flex-direction:column; gap:12px; }
+.name { font-size:24px; line-height:1.4; padding-right:55px; }
+.response { display:block; background:transparent; border:0; padding:0 35px 0 0; width:100%; min-height:0; flex:1; resize:none; color:inherit; text-shadow:inherit; font-size:26px; line-height:1.4; }
+.response::placeholder { color:#fff; opacity:.8; }
+.response:focus-visible { outline:0; }
+.send { position:absolute; right:23px; bottom:19px; width:14px; height:10px; background:transparent; border:0; padding:0; cursor:pointer; }
+.send img { display:block; width:110.71%; height:120%; }
+.send:disabled { opacity:.5; cursor:default; }
+.mic { position:absolute; top:17px; right:23px; width:44px; height:44px; border-radius:22px; border:1px solid rgba(204,217,255,.7); background:rgba(255,255,255,.1); display:grid; place-items:center; }
+.mic span { width:20px; height:20px; }
+.mic img { display:block; width:100%; height:106.67%; }
+.error { position:absolute; right:55px; bottom:12px; font-size:14px; }

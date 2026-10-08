@@ -1,5 +1,7 @@
 # Progress
 
+- Phase 6: Figma full-width input in a lazily created secure window; sprite click/double-click policy, Enter/Ctrl+Enter, Shift+Enter, IME-safe handling, Esc, remembered drafts and static echo bubble. Courier Prime is bundled locally; exported Figma surfaces and inset border are used directly, mirrored to point at the bottom-right sprite. Exact fill/opacity verified through read-only Figma Plugin API inspection. Bubble resizing persists the sprite origin, preventing a shifted restart position. 30 unit tests, lint/typecheck/build and 7 Electron smoke tests pass; updated input/persistence smoke tests and visual screenshots pass. Real generation replaces the phase-6 echo in phase 8. Sprite import, state-machine wiring, voice and Settings are still pending.
+
 - Read AGENTS.md and both complete specifications, including §§14, 16–18.
 - Retrieved Figma design context and screenshots for all eight Settings panels in light/dark, conditional-state boards, enabled Persona, and both TextChat specimens.
 - Created UI implementation plan before code. Figma reference output saved in docs/design.

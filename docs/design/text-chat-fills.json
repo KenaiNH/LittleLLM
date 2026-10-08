@@ -1,0 +1,121 @@
+[
+  {
+    "id": "2016:90",
+    "name": "Bubble surface",
+    "type": "VECTOR",
+    "fills": [
+      {
+        "type": "SOLID",
+        "visible": true,
+        "opacity": 0.7803921699523926,
+        "blendMode": "NORMAL",
+        "color": {
+          "r": 0.47058823704719543,
+          "g": 0.5921568870544434,
+          "b": 0.8392156958580017
+        },
+        "boundVariables": {}
+      }
+    ],
+    "strokes": [
+      {
+        "type": "SOLID",
+        "visible": true,
+        "opacity": 1,
+        "blendMode": "NORMAL",
+        "color": {
+          "r": 0.8941176533699036,
+          "g": 0.9137254953384399,
+          "b": 1
+        },
+        "boundVariables": {}
+      }
+    ],
+    "opacity": 1
+  },
+  {
+    "id": "2016:91",
+    "name": "Inner border",
+    "type": "VECTOR",
+    "fills": [],
+    "strokes": [
+      {
+        "type": "SOLID",
+        "visible": true,
+        "opacity": 0.7019608020782471,
+        "blendMode": "NORMAL",
+        "color": {
+          "r": 0.800000011920929,
+          "g": 0.8509804010391235,
+          "b": 1
+        },
+        "boundVariables": {}
+      }
+    ],
+    "opacity": 1
+  },
+  {
+    "id": "2016:92",
+    "name": "Speaker name",
+    "type": "TEXT",
+    "fills": [
+      {
+        "type": "SOLID",
+        "visible": true,
+        "opacity": 1,
+        "blendMode": "NORMAL",
+        "color": {
+          "r": 1,
+          "g": 1,
+          "b": 1
+        },
+        "boundVariables": {}
+      }
+    ],
+    "strokes": [],
+    "opacity": 1,
+    "fontName": {
+      "family": "Courier Prime",
+      "style": "Regular"
+    },
+    "fontSize": 22,
+    "lineHeight": {
+      "unit": "PERCENT",
+      "value": 139.9999976158142
+    }
+  },
+  {
+    "id": "2016:82",
+    "name": "Bottom chatbox",
+    "type": "FRAME",
+    "fills": [
+      {
+        "type": "SOLID",
+        "visible": true,
+        "opacity": 0.7803921699523926,
+        "blendMode": "NORMAL",
+        "color": {
+          "r": 0.47058823704719543,
+          "g": 0.5921568870544434,
+          "b": 0.8392156958580017
+        },
+        "boundVariables": {}
+      }
+    ],
+    "strokes": [
+      {
+        "type": "SOLID",
+        "visible": true,
+        "opacity": 1,
+        "blendMode": "NORMAL",
+        "color": {
+          "r": 0.8941176533699036,
+          "g": 0.9137254953384399,
+          "b": 1
+        },
+        "boundVariables": {}
+      }
+    ],
+    "opacity": 1
+  }
+]

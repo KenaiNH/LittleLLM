@@ -1,0 +1,7 @@
+.bubble { position:relative; width:560px; height:232px; padding:24px 30px 44px; display:flex; flex-direction:column; gap:12px; font:22px/1.4 'Courier Prime',monospace; color:#fff; text-shadow:1.5px 2px #182642; }
+.surface { position:absolute; inset:0; width:560px; height:232px; pointer-events:none; transform:scaleX(-1); }
+.border { position:absolute; left:5px; top:5px; width:550px; height:216px; pointer-events:none; transform:scaleX(-1); }
+.name,.text { position:relative; margin:0; }
+.text { white-space:pre-wrap; overflow:auto; overflow-wrap:anywhere; min-height:0; }
+.continuation { position:absolute; right:26px; top:177px; width:14px; height:10px; }
+.continuation img { display:block; width:110.71%; height:120%; }

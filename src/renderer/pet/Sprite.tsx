@@ -13,7 +13,6 @@ export function Sprite({assets,config,state,onComplete,fpsCap=60}:{assets:Sprite
   const asset=assets[selected]??assets.idle;const spec=config[selected]??config.idle;const scale=config.scale/(config.scaleMode==='fixed'?dpi:1);
   useEffect(()=>{const controller=new AbortController();let decoded:BitmapSet|undefined;setBitmaps(null);void decodeSpriteAssets(assets,controller.signal).then(value=>{decoded=value;setBitmaps({bitmaps:value,assets,dpi});setError(null);}).catch(()=>{if(!controller.signal.aborted)setError('Sprite images could not be decoded.');});return()=>{controller.abort();if(decoded)closeSpriteAssets(decoded);};},[assets,dpi]);
   useEffect(()=>{const removeDpi=window.companion.onDpi(setDpi),removeVisibility=window.companion.onVisibility(setVisible);const change=()=>setVisible(!document.hidden);document.addEventListener('visibilitychange',change);return()=>{removeDpi();removeVisibility();document.removeEventListener('visibilitychange',change);};},[]);
-  useEffect(()=>window.companion.resizePet(Math.ceil(asset.width*scale),Math.ceil(asset.height*scale)),[asset,scale]);
   useEffect(()=>{
     const canvas=ref.current,frames=bitmaps?.[selected];if(!canvas||!frames?.length)return;const ctx=canvas.getContext('2d');if(!ctx)return;
     canvas.width=Math.round(asset.width*scale*dpi);canvas.height=Math.round(asset.height*scale*dpi);
