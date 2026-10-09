@@ -25,6 +25,21 @@ test('Settings imports a user sheet into all states, previews, packs and survive
   try {
     let pet = await app.firstWindow();
     await pet.getByTestId('sprite').waitFor();
+    const placement = () =>
+      pet.evaluate(async () => {
+        const result = await window.companion.getPetViewport();
+        if (!result.ok) throw new Error('No viewport');
+        const v = result.value;
+        return {
+          right: Math.round(
+            v.workArea.x + v.workArea.width - v.window.x - v.sprite.x - v.sprite.width,
+          ),
+          bottom: Math.round(
+            v.workArea.y + v.workArea.height - v.window.y - v.sprite.y - v.sprite.height,
+          ),
+        };
+      });
+    await expect.poll(placement).toEqual({ right: 24, bottom: 24 });
     await pet.evaluate(() => window.companion.openSettings('Sprites'));
     await expect.poll(() => app.windows().length).toBe(2);
     const settings = app.windows().find((page) => page !== pet);
@@ -45,6 +60,7 @@ test('Settings imports a user sheet into all states, previews, packs and survive
       await section.getByLabel(`${state} frame scrubber`).press('End');
       await expect(section.getByLabel(`${state} frame scrubber`)).toHaveValue('2');
       await expect(section.getByRole('button', { name: `Play ${state} preview` })).toBeVisible();
+      await expect.poll(placement).toEqual({ right: 24, bottom: 24 });
     }
     const idle = settings.locator('[data-state-section=idle]');
     await idle.getByLabel('Frame width', { exact: true }).fill('32');
@@ -125,6 +141,7 @@ test('Settings imports a user sheet into all states, previews, packs and survive
     });
     pet = await app.firstWindow();
     await pet.getByTestId('sprite').waitFor();
+    await expect.poll(placement).toEqual({ right: 24, bottom: 24 });
     const assets = await pet.evaluate(() => window.companion.getSpriteAssets());
     if (!assets.ok) throw new Error(assets.error.userMessage);
     for (const state of ['idle', 'thinking', 'speaking'] as const) {

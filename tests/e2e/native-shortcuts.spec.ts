@@ -53,6 +53,17 @@ test('native hotkeys focus/restore input, toggle visibility, send clipboard and 
       backdrop.show();
       backdrop.focus();
     });
+    // Window activation is asynchronous on Windows. Establish the intended
+    // foreground before the shortcut captures the window to restore later.
+    await expect
+      .poll(() =>
+        app.evaluate(({ BrowserWindow }) =>
+          BrowserWindow.getAllWindows()
+            .find((win) => win.webContents.getURL().startsWith('data:'))
+            ?.isFocused(),
+        ),
+      )
+      .toBe(true);
     const key = async (code: number) => {
       const native = ffi
         .load('user32.dll')

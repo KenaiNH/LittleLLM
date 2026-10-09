@@ -4,6 +4,8 @@ The current scope excludes dictation, region selection, mouth/lip animation, aut
 
 ## Checked on this Windows x64 machine
 
+- Sprite placement follow-up: 134 non-voice units, build/type checking and lint passed. Final full Electron regression passed 23/24; the previously recorded bubble manual-scroll suspension intermittency recurred and both bubble checks passed in the isolated rerun. Placement/import/scale/state/anchor/snapping/restart checks passed, including all nine anchors and saved free/custom anchors. Initial position persistence was fixed; native shortcut testing now waits for the backdrop activation before invoking its focus shortcut. This does not certify mixed-DPI physical monitor behavior or remove the recorded scrolling intermittency.
+
 - Final usability review: **122 non-voice unit tests and 23 non-voice Electron checks passed**; build/type checking/lint passed. This supersedes the earlier failing runs below. Packaged tests cover fresh first-run model setup, real fixture HTTP connection/reply, restart persistence, developer-URL rejection, bundled user guides/license/font notices and renderer security. Small-work-area Settings navigation/reset/restart/search passed. Seventeen local guide links resolve.
 - The repeated animation failure came from requiring a sample strictly inside the middle 20–80% of a 500 ms blend; captured intermediates existed outside that slice. The check now verifies all observed intermediate pixel weights. The final renderer recovery assertion uses the same 15-second allowance as the native reload check. Earlier intermittent failures remain historical evidence; the final whole run passes without test retries.
 

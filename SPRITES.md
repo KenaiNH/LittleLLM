@@ -10,6 +10,12 @@ Each image must be at most 25 MiB, 8,192 px per dimension and 512 decoded frames
 
 Mouth animation and lip syncing are deferred. The retained asset-preparation controls accept 2–8 frames ordered **quietest → loudest**, with the closed mouth first. Use a horizontal strip or a square-cell grid, or an equal-size image sequence. Square grids with 2–8 cells are inferred automatically; other strips use the configured mouth frame count. Changing that count divides the strip width again. Keep mouth artwork separate from the base sprite. Importing these assets does not activate a speech-driven mouth overlay in this release.
 
+## Keeping the sprite in position
+
+General's default anchor and edge margin stay fixed when you replace artwork, change scale, or switch states. Dragging near a screen edge attaches that sprite edge to the work area; opening or resizing a chat bubble does not change its saved position. Edge placement uses the image canvas, including transparent padding. Away from screen edges, the configured artwork anchor stays at the same screen coordinate during size changes.
+
+If an older build already saved a displaced position, turn off **Restore sprite position on launch** in General and choose the desired **Default anchor** and **Edge margin** to reposition it. You can also drag it to a new position.
+
 ## Sprite Packs
 
 Export from Settings to obtain a ZIP with the exact current schema and artwork. Import previews its contents and requires confirmation before replacing active sprites. ZIP paths are relative, unique without regard to case and cannot traverse directories. Archives are limited to 128 MiB compressed, 256 MiB expanded, 2,000 entries and a 1 MiB manifest. Individual image limits still apply.

@@ -17,7 +17,8 @@ import { wheelSchema } from '../ipc/schemas';
 import { forwardWheel } from '../platform/win32/wheel';
 import { preventMouseActivation } from '../platform/win32/focus';
 import { geometryFitScale, scaleGeometry } from '../../shared/spriteGeometry';
-import { frameGeometry, anchoredOrigin, type SpriteGeometry } from '../../shared/spriteGeometry';
+import { frameGeometry, type SpriteGeometry } from '../../shared/spriteGeometry';
+import { capturePlacement, placedOrigin } from './spritePlacement';
 export async function createPetWindow(
   config: ConfigStore,
   settings: (panel: string) => void,
@@ -57,6 +58,13 @@ export async function createPetWindow(
     saved ?? defaultPosition(size, display.workArea, cfg.defaultAnchor, cfg.edgeMarginPx),
     size,
     display.workArea,
+  );
+  let placement = capturePlacement(
+    position,
+    geometry,
+    display.workArea,
+    cfg.edgeMarginPx,
+    saved ? undefined : cfg.defaultAnchor,
   );
   const win = new BrowserWindow({
     ...size,
@@ -101,6 +109,51 @@ export async function createPetWindow(
   const emitViewport = () => {
     if (!win.isDestroyed()) win.webContents.send(CHANNELS.windowViewportChanged, view());
   };
+  // Native move events also accompany layout/size changes. Only external moves
+  // may replace the logical placement or run drag snapping/persistence.
+  let expectedPosition = win.getPosition();
+  const setLayoutBounds = (bounds: PetViewport['window']) => {
+    const x = Math.round(bounds.x),
+      y = Math.round(bounds.y);
+    expectedPosition = [x, y];
+    win.setBounds({ ...bounds, x, y });
+    expectedPosition = win.getPosition();
+  };
+  const persistPlacement = () => {
+    if (win.isDestroyed()) return;
+    const current = screen.getDisplayMatching(win.getBounds()),
+      now = config.get().window;
+    const idle = idleGeometry(current.scaleFactor, current.workArea);
+    const point = clampPosition(
+      placedOrigin(placement, idle, current.workArea),
+      idle,
+      current.workArea,
+    );
+    config.set('window', { ...now, positions: { ...now.positions, [String(current.id)]: point } });
+  };
+  let bubbleSize: { width: number; height: number } | null = null;
+  const applyLayout = (current = screen.getDisplayMatching(win.getBounds())) => {
+    const cfg = config.get(),
+      limits = bubbleLimits(cfg, current.workArea, current.scaleFactor);
+    viewport = {
+      ...arrangePet(
+        {
+          ...placedOrigin(placement, geometry, current.workArea),
+          width: geometry.width,
+          height: geometry.height,
+        },
+        bubbleSize,
+        current.workArea,
+        cfg.bubble.bubblePlacement,
+        cfg.bubble.gapFromSpritePx,
+        geometry.anchor.x / geometry.width,
+        70 * limits.scale,
+      ),
+      dpi: current.scaleFactor,
+      dark: nativeTheme.shouldUseDarkColors,
+    };
+    setLayoutBounds(viewport.window);
+  };
   ipcMain.handle(CHANNELS.windowForwardWheel, (event, payload: unknown) => {
     try {
       if (
@@ -141,41 +194,14 @@ export async function createPetWindow(
         throw new Error('Untrusted layout sender');
       const request = petLayoutRequestSchema.parse(payload),
         bounds = win.getBounds(),
-        current = screen.getDisplayMatching(bounds),
-        cfg = config.get(),
-        limits = bubbleLimits(cfg, current.workArea, current.scaleFactor);
+        current = screen.getDisplayMatching(bounds);
       const nextGeometry: SpriteGeometry = {
         ...request.sprite,
         anchor: request.anchor ?? { x: request.sprite.width / 2, y: request.sprite.height },
       };
-      const sprite = {
-        ...anchoredOrigin(
-          { x: bounds.x + viewport.sprite.x, y: bounds.y + viewport.sprite.y },
-          geometry,
-          nextGeometry,
-        ),
-        ...request.sprite,
-      };
       geometry = nextGeometry;
-      viewport = {
-        ...arrangePet(
-          sprite,
-          request.bubble,
-          current.workArea,
-          cfg.bubble.bubblePlacement,
-          cfg.bubble.gapFromSpritePx,
-          geometry.anchor.x / geometry.width,
-          70 * limits.scale,
-        ),
-        dpi: current.scaleFactor,
-        dark: nativeTheme.shouldUseDarkColors,
-      };
-      const idle = idleGeometry(current.scaleFactor, current.workArea);
-      anchorOffset = {
-        x: viewport.sprite.x + geometry.anchor.x - idle.anchor.x,
-        y: viewport.sprite.y + geometry.anchor.y - idle.anchor.y,
-      };
-      win.setBounds(viewport.window);
+      bubbleSize = request.bubble;
+      applyLayout(current);
       return resultSchema(petViewportSchema).parse({ ok: true, value: viewport });
     } catch (error) {
       return { ok: false, error: normalizeError(error) };
@@ -189,9 +215,7 @@ export async function createPetWindow(
       win.setAlwaysOnTop(true, 'screen-saver');
       const bounds = win.getBounds();
       const current = screen.getDisplayMatching(bounds);
-      const p = clampPosition(bounds, bounds, current.workArea);
-      win.setPosition(p.x, p.y);
-      viewport = { ...viewport, dpi: current.scaleFactor };
+      applyLayout(current);
       win.webContents.send(CHANNELS.windowDpi, { scaleFactor: current.scaleFactor });
       emitViewport();
     }
@@ -201,7 +225,6 @@ export async function createPetWindow(
   powerMonitor.on('resume', reassert);
   nativeTheme.on('updated', emitViewport);
   let timer: ReturnType<typeof setTimeout> | undefined;
-  let anchorOffset = { x: 0, y: 0 };
   let artworkGeneration = 0;
   let windowConfig = cfg;
   const removeConfig = config.onChange((section, changed) => {
@@ -225,18 +248,18 @@ export async function createPetWindow(
             ? screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
             : (screen.getAllDisplays().find((value) => String(value.id) === now.displayTarget) ??
               screen.getPrimaryDisplay());
-        const idle = idleGeometry(target.scaleFactor, target.workArea),
-          bounds = win.getBounds();
+        const idle = idleGeometry(target.scaleFactor, target.workArea);
         const origin = now.restorePosition ? now.positions[String(target.id)] : undefined;
         const point =
           origin ?? defaultPosition(idle, target.workArea, now.defaultAnchor, now.edgeMarginPx);
-        const next = clampPosition(
-          { x: point.x - anchorOffset.x, y: point.y - anchorOffset.y },
-          bounds,
+        placement = capturePlacement(
+          point,
+          idle,
           target.workArea,
+          now.edgeMarginPx,
+          origin ? undefined : now.defaultAnchor,
         );
-        win.setPosition(Math.round(next.x), Math.round(next.y));
-        viewport = { ...viewport, dpi: target.scaleFactor };
+        applyLayout(target);
         win.webContents.send(CHANNELS.windowDpi, { scaleFactor: target.scaleFactor });
         emitViewport();
       } else if (now.keepOnScreen && !previous.keepOnScreen) reassert();
@@ -247,35 +270,30 @@ export async function createPetWindow(
       .then((value) => {
         if (epoch !== artworkGeneration || win.isDestroyed()) return;
         idleSize = value;
-        const idle = idleGeometry(screen.getDisplayMatching(win.getBounds()).scaleFactor);
-        anchorOffset = {
-          x: viewport.sprite.x + geometry.anchor.x - idle.anchor.x,
-          y: viewport.sprite.y + geometry.anchor.y - idle.anchor.y,
-        };
+        persistPlacement();
       })
       .catch(() => {
         /* Existing geometry stays recoverable until valid artwork is restored. */
       });
   });
   win.on('move', () => {
+    const bounds = win.getBounds();
+    if (bounds.x === expectedPosition[0] && bounds.y === expectedPosition[1]) return;
+    const current = screen.getDisplayMatching(bounds),
+      now = config.get().window;
+    const sprite = { x: bounds.x + viewport.sprite.x, y: bounds.y + viewport.sprite.y };
+    const snap = now.snapToEdges
+      ? snapPosition(sprite, geometry, current.workArea, now.snapDistancePx)
+      : sprite;
+    const point = now.keepOnScreen ? clampPosition(snap, geometry, current.workArea) : snap;
+    placement = capturePlacement(point, geometry, current.workArea, now.edgeMarginPx);
+    expectedPosition = win.getPosition();
     clearTimeout(timer);
     timer = setTimeout(() => {
       if (win.isDestroyed()) return;
-      const bounds = win.getBounds(),
-        current = screen.getDisplayMatching(bounds),
-        now = config.get().window;
-      const snap = now.snapToEdges
-        ? snapPosition(bounds, bounds, current.workArea, now.snapDistancePx)
-        : bounds;
-      const p = now.keepOnScreen ? clampPosition(snap, bounds, current.workArea) : snap;
-      if (p.x !== bounds.x || p.y !== bounds.y) win.setPosition(p.x, p.y);
-      config.set('window', {
-        ...now,
-        positions: {
-          ...now.positions,
-          [String(current.id)]: { x: p.x + anchorOffset.x, y: p.y + anchorOffset.y },
-        },
-      });
+      applyLayout();
+      persistPlacement();
+      emitViewport();
     }, 150);
   });
   win.on('show', () => win.webContents.send(CHANNELS.windowVisibility, { visible: true }));
@@ -298,10 +316,13 @@ export async function createPetWindow(
       return;
     const parsed = moveSchema.safeParse(value);
     if (!parsed.success) return;
-    const bounds = win.getBounds(),
-      area = screen.getDisplayNearestPoint(parsed.data).workArea,
-      p = config.get().window.keepOnScreen ? clampPosition(parsed.data, bounds, area) : parsed.data;
-    win.setPosition(Math.round(p.x), Math.round(p.y));
+    const sprite = { x: parsed.data.x + viewport.sprite.x, y: parsed.data.y + viewport.sprite.y };
+    const area = screen.getDisplayNearestPoint(sprite).workArea;
+    const point = config.get().window.keepOnScreen ? clampPosition(sprite, geometry, area) : sprite;
+    win.setPosition(
+      Math.round(point.x - viewport.sprite.x),
+      Math.round(point.y - viewport.sprite.y),
+    );
   });
   ipcMain.on(CHANNELS.windowResize, (event, value: unknown) => {
     if (event.sender !== win.webContents || event.senderFrame !== win.webContents.mainFrame) return;
@@ -318,10 +339,7 @@ export async function createPetWindow(
       size,
       area,
     );
-    anchorOffset = payload.data.anchor
-      ? { x: payload.data.anchor.x, y: payload.data.anchor.y }
-      : { x: 0, y: 0 };
-    win.setBounds({ ...p, ...size });
+    setLayoutBounds({ ...p, ...size });
   });
   win.webContents.on('context-menu', () =>
     Menu.buildFromTemplate([
@@ -338,6 +356,8 @@ export async function createPetWindow(
     powerMonitor.removeListener('resume', reassert);
     nativeTheme.removeListener('updated', emitViewport);
   });
+  // A first launch establishes its saved idle position; layout moves never do.
+  if (!saved) persistPlacement();
   created?.(win);
   await loadRenderer(win, 'pet');
   return win;
