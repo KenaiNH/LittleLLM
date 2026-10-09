@@ -180,6 +180,23 @@ export class PersonaManager {
       return this.apply(personaSchema.parse(next));
     });
   }
+  replaceConfig(cfg: Config, beforeCommit: () => void) {
+    return this.transaction(async () => {
+      const changed = cfg.persona.activeId !== this.config.get().persona.activeId;
+      const decision = changed ? await this.approveSwitch() : { approved: true, clear: false };
+      if (!decision.approved) return this.config.get();
+      if (cfg.persona.enabled && cfg.llm.promptPreset === 'helpful-companion')
+        cfg.llm = {
+          ...cfg.llm,
+          promptPreset: 'persona-driven',
+          systemPrompt: PROMPT_PRESETS['persona-driven'] ?? cfg.llm.systemPrompt,
+        };
+      beforeCommit();
+      const result = this.config.replace(cfg);
+      this.finishSwitch(decision.clear);
+      return result;
+    });
+  }
   importPack(
     sprite: Config['sprite'],
     bundled: Config['persona']['library'][number] | undefined,

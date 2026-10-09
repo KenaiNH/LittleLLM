@@ -8,6 +8,7 @@ import { VOICE_INPUT_ENABLED } from '../../shared/featureScope';
 import { activePersona, currentPersonaContext, resolvePersonaText } from '../llm/persona';
 import { GreetingScheduler } from '../llm/greeting';
 import { GreetingStore } from '../services/greetingStore';
+import { foregroundWindow, restoreForeground } from '../platform/win32/focus';
 import {
   sttUiSchema,
   sttCaptureSchema,
@@ -102,6 +103,9 @@ export class InputWindow {
   private lifecycle: StateController;
   private greetings: GreetingScheduler;
   private greetingId: string | null = null;
+  private previousFocus: ReturnType<typeof foregroundWindow> = null;
+  activityChanged: (() => void) | undefined;
+  private clipboardImport: (() => Promise<Attachment[]>) | undefined;
   private hideBubble = () => {
     this.state = { ...this.state, reply: null, error: null };
     this.broadcast();
@@ -166,16 +170,39 @@ export class InputWindow {
     let connection = config.get().llm;
     let speechConfig = config.get().tts;
     let captureConfig = JSON.stringify(config.get().stt);
+    let networkScope = JSON.stringify([
+      config.get().advanced.proxyMode,
+      config.get().advanced.proxyUrl,
+      config.get().advanced.proxyBypass,
+      config.get().advanced.allowSelfSigned,
+    ]);
+    let personaId = config.get().persona.activeId;
     const removeConfig = config.onChange((section, cfg) => {
       if (section === 'persona') {
         this.greetings.hide();
         this.voice?.abort();
+        if (personaId !== cfg.persona.activeId) {
+          this.cancelAll();
+          personaId = cfg.persona.activeId;
+        }
       }
       if (section === 'input' || section === 'bubble') this.position();
       if (section === 'bubble') this.lifecycle.settingsChanged();
       if (section === 'advanced' && !cfg.advanced.developerMode) {
         this.lifecycle.force('auto');
         if (cfg.stt.provider === 'mock') this.microphone?.abort();
+      }
+      if (section === 'advanced') {
+        const next = JSON.stringify([
+          cfg.advanced.proxyMode,
+          cfg.advanced.proxyUrl,
+          cfg.advanced.proxyBypass,
+          cfg.advanced.allowSelfSigned,
+        ]);
+        if (next !== networkScope) {
+          networkScope = next;
+          this.cancelAll();
+        }
       }
       if (section === 'stt' && JSON.stringify(cfg.stt) !== captureConfig) {
         this.microphone?.abort();
@@ -408,7 +435,7 @@ export class InputWindow {
       this.attachments.remove(p.id);
       return publishAttachments();
     });
-    handle(CHANNELS.attachClipboard, emptySchema, attachmentsSchema, async () => {
+    this.clipboardImport = async () => {
       await requireImages();
       const items = await clipboard.read();
       const item = items.find((value) =>
@@ -427,7 +454,13 @@ export class InputWindow {
         { bytes: Buffer.from(await image.arrayBuffer()), name: 'Clipboard image' },
       ]);
       return publishAttachments();
-    });
+    };
+    handle(
+      CHANNELS.attachClipboard,
+      emptySchema,
+      attachmentsSchema,
+      () => this.clipboardImport?.() ?? [],
+    );
     handle(CHANNELS.attachFile, attachmentFileSchema, attachmentsSchema, async (p) => {
       await requireImages();
       let paths = p.paths;
@@ -551,6 +584,37 @@ export class InputWindow {
   };
   get hasConversation() {
     return this.chat.hasConversation;
+  }
+  get busy() {
+    return Boolean(this.state.reply?.streaming || this.voice?.hasSpeech || this.pendingTurn);
+  }
+  forceState(state: import('../../shared/enums').SpriteState | 'auto') {
+    this.lifecycle.force(state);
+  }
+  cancelAll() {
+    this.pendingTurn = null;
+    this.microphone?.abort();
+    this.voice?.abort();
+    this.chat.abort();
+    this.state = { ...this.state, queuedMessage: false };
+    this.lifecycle.cancel(undefined, Boolean(this.state.reply));
+    this.broadcast();
+  }
+  async sendClipboard() {
+    const items = await clipboard.read();
+    if (
+      items.some((item) => item.types.some((type) => /^image\/(png|jpeg|webp|gif)$/.test(type)))
+    ) {
+      await this.clipboardImport?.();
+      await this.begin('');
+      return;
+    }
+    const item = items.find((item) => item.types.includes('text/plain'));
+    if (!item) return;
+    const value = await item.getType('text/plain');
+    const text = typeof value === 'string' ? value : await value.text();
+    if (text.length > 32000) throw new Error('Clipboard text exceeds 32,000 characters.');
+    if (text.trim()) await this.begin(text);
   }
   personaContext() {
     return currentPersonaContext(this.lifecycle.snapshot.state);
@@ -916,6 +980,13 @@ export class InputWindow {
     });
     this.win = win;
     secureWindow(win);
+    win.webContents.on('render-process-gone', () => {
+      this.cancelAll();
+      this.close();
+      if (!win.isDestroyed()) win.destroy();
+      this.win = null;
+      this.ready = null;
+    });
     win.setAlwaysOnTop(true, 'screen-saver');
     win.on('close', (event) => {
       if (!this.quitting) {
@@ -947,27 +1018,39 @@ export class InputWindow {
     });
   };
   private broadcast() {
+    this.activityChanged?.();
     if (this.queued) clearTimeout(this.queued);
     this.queued = null;
     for (const win of [this.pet, this.win])
       if (win && !win.isDestroyed()) win.webContents.send(CHANNELS.chatUiChanged, this.state);
   }
   async open() {
+    if (!this.state.inputOpen) this.previousFocus = foregroundWindow();
     this.state = { ...this.state, inputOpen: true };
     await this.initialize();
     if (!this.state.inputOpen || !this.win || this.win.isDestroyed()) return;
     this.position();
     this.win.show();
-    this.win.focus();
-    this.broadcast();
+    await new Promise<void>((resolve) =>
+      setImmediate(() => {
+        if (this.state.inputOpen && this.win && !this.win.isDestroyed()) {
+          this.win.focus();
+          this.broadcast();
+        }
+        resolve();
+      }),
+    );
   }
   close() {
+    const wasOpen = this.state.inputOpen;
     this.state = {
       ...this.state,
       inputOpen: false,
       draft: this.config.get().input.rememberDraft ? this.state.draft : '',
     };
+    this.win?.blur();
     this.win?.hide();
+    if (wasOpen) restoreForeground(this.previousFocus);
     this.broadcast();
   }
 }

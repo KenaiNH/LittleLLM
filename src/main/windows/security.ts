@@ -35,6 +35,17 @@ export function secureWindow(win: BrowserWindow): void {
         (permission === 'media' && details.mediaType === 'audio' && allowMicrophone(contents))),
   );
 }
+export function recoverRenderer(win: BrowserWindow, cancel: () => void = () => undefined) {
+  let attempts: number[] = [];
+  win.webContents.on('render-process-gone', () => {
+    cancel();
+    attempts = [...attempts.filter((time) => Date.now() - time < 60000), Date.now()];
+    if (attempts.length > 2 || win.isDestroyed()) return;
+    setTimeout(() => {
+      if (!win.isDestroyed()) win.webContents.reload();
+    }, 250);
+  });
+}
 export async function loadRenderer(win: BrowserWindow, view: string): Promise<void> {
   if (process.env.ELECTRON_RENDERER_URL)
     await win.loadURL(`${process.env.ELECTRON_RENDERER_URL}/?view=${encodeURIComponent(view)}`);

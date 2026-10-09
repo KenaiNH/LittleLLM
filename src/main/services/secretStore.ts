@@ -78,6 +78,10 @@ export class SecretStore {
     this.write(keys);
     return this.status(id);
   }
+  clearAll() {
+    this.write({});
+    this.blocked = false;
+  }
   private write(keys: z.infer<typeof fileSchema>['keys']) {
     const next = fileSchema.parse({ version: 1, keys });
     const temporary = this.file + '.tmp';

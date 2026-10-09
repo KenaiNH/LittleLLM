@@ -16,6 +16,9 @@ export function InputApp() {
   const [now, setNow] = useState(Date.now());
   const ref = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
+    if (config) requestAnimationFrame(() => ref.current?.focus());
+  }, [Boolean(config)]);
+  useEffect(() => {
     let active = true;
     void window.companion.getConfig().then((result) => {
       if (active && result.ok) setConfig(result.value);
@@ -25,6 +28,7 @@ export function InputApp() {
         setText(result.value.draft);
         setAttachments(result.value.attachments);
         setStt(result.value.stt);
+        if (result.value.inputOpen) requestAnimationFrame(() => ref.current?.focus());
       }
     });
     const removeConfig = window.companion.onConfig(setConfig),

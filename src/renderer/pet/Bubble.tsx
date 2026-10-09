@@ -19,6 +19,7 @@ export function Bubble({
   onStop,
   onRegenerate,
   error,
+  errorAction,
   attachments = [],
   userText = '',
   speechNotice,
@@ -34,6 +35,7 @@ export function Bubble({
   onStop?: () => void;
   onRegenerate?: () => void;
   error?: string;
+  errorAction?: import('../../shared/errors').AppError['action'];
   attachments?: Attachment[];
   userText?: string;
   speechNotice?: string | null;
@@ -263,6 +265,11 @@ export function Bubble({
         )}
       </div>
       <footer className={styles.footer}>
+        {errorAction?.kind === 'open-settings' && (
+          <button onClick={() => void window.companion.openSettings('Model')}>
+            {errorAction.label}
+          </button>
+        )}
         {cfg.showTokenCount && <span>{text.length} chars</span>}
         <button onClick={() => void window.companion.copyText(text)}>Copy reply</button>
         <button onClick={onRegenerate}>Regenerate</button>

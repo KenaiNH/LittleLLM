@@ -13,6 +13,7 @@ import { SpritesPanel } from './SpritesPanel';
 import { VoicePanel } from './VoicePanel';
 import { VoiceInputPanel } from './VoiceInputPanel';
 import { PersonaPanel, PERSONA_SEARCH_LABELS } from './PersonaPanel';
+import { AdvancedPanel, ADVANCED_SEARCH_LABELS } from './AdvancedPanel';
 import { VOICE_INPUT_ENABLED } from '../../shared/featureScope';
 import searchIcon from '../../../assets/figma/2004-411-imgSearch.svg';
 import chevron from '../../../assets/figma/16-205-imgChevronDown.svg';
@@ -27,8 +28,10 @@ const implemented = new Set<Panel>([
   'Voice Input',
   'Appearance',
   'Persona',
+  'Advanced',
 ]);
 const extras: Partial<Record<Panel, string[]>> = {
+  Advanced: ADVANCED_SEARCH_LABELS,
   Persona: PERSONA_SEARCH_LABELS,
   Voice: ['API key authentication password', 'Test Voice', 'Test Connection'],
   'Voice Input': [
@@ -85,7 +88,10 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
       removeEnvironment();
     };
   }, [initialize, receive]);
-  useEffect(() => setRestartLater(false), [config?.window.contentProtection]);
+  useEffect(
+    () => setRestartLater(false),
+    [config?.window.contentProtection, config?.advanced.hardwareAcceleration],
+  );
   const navigation = PANELS.filter(
     (name) =>
       !query ||
@@ -229,7 +235,8 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
     }
   };
   const restartRequired =
-    boot.current?.window.contentProtection !== config.window.contentProtection;
+    boot.current?.window.contentProtection !== config.window.contentProtection ||
+    boot.current?.advanced.hardwareAcceleration !== config.advanced.hardwareAcceleration;
   let local = false;
   try {
     const hostname = new URL(config.llm.baseUrl).hostname;
@@ -347,21 +354,62 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
           <span>Changes apply automatically</span>
         </header>
         <div className={styles.body} key={resetEpoch}>
+          {panel === 'Model' && environment?.firstRun && !query && (
+            <div className={styles.group}>
+              <p className={styles.hint}>Choose where your AI model runs to get started.</p>
+              <div className={styles.row}>
+                <button
+                  className={styles.button}
+                  onClick={() => {
+                    setQuery('');
+                    setTimeout(
+                      () =>
+                        document
+                          .querySelector<HTMLInputElement>('[data-control="62"] input')
+                          ?.focus(),
+                      0,
+                    );
+                  }}
+                >
+                  I have an API key
+                </button>
+                <button
+                  className={styles.button}
+                  onClick={() =>
+                    void useSettingsStore
+                      .getState()
+                      .patch('llm', {
+                        provider: 'openai-compatible',
+                        baseUrl: 'http://localhost:11434/v1',
+                      })
+                      .then((error) => {
+                        if (!error) void testConnection();
+                      })
+                  }
+                >
+                  I’m running a local model
+                </button>
+              </div>
+            </div>
+          )}
           {error && (
             <p role="alert" className={styles.error}>
               {error}
             </p>
           )}
           {groups.length === 0 &&
-            !['Persona', 'Sprites', 'Voice', 'Voice Input'].includes(panel) && (
+            !['Persona', 'Sprites', 'Voice', 'Voice Input', 'Advanced'].includes(panel) && (
               <p>No matching settings.</p>
             )}
           {panel === 'Persona' && <PersonaPanel config={config} query={query} />}
+          {panel === 'Advanced' && <AdvancedPanel config={config} query={query} />}
           {panel === 'Sprites' && <SpritesPanel config={config} query={query} />}
           {panel === 'Voice' && <VoicePanel config={config} query={query} />}
           {panel === 'Voice Input' && <VoiceInputPanel config={config} query={query} />}
           {groups
-            .filter(() => !['Persona', 'Sprites', 'Voice', 'Voice Input'].includes(panel))
+            .filter(
+              () => !['Persona', 'Sprites', 'Voice', 'Voice Input', 'Advanced'].includes(panel),
+            )
             .map((group) => (
               <section key={group} className={styles.section}>
                 <h2>{group}</h2>

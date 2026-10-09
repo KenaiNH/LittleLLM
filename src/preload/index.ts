@@ -1,4 +1,9 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
+import {
+  diagnosticActionSchema,
+  runtimeStatusSchema,
+  sessionPatchSchema,
+} from '../shared/diagnostics';
 import { personaActionSchema, personaStatusPreviewSchema } from '../shared/persona';
 import { configSchema } from '../shared/config';
 import { CHANNELS } from '../main/ipc/channels';
@@ -64,6 +69,24 @@ import {
   spritePatchSchema,
 } from '../shared/spriteImport';
 const api: CompanionAPI = {
+  diagnostics: async (action) =>
+    configResultSchema.parse(
+      await ipcRenderer.invoke(CHANNELS.diagnosticAction, diagnosticActionSchema.parse(action)),
+    ),
+  getRuntime: async () =>
+    resultSchema(runtimeStatusSchema).parse(await ipcRenderer.invoke(CHANNELS.runtimeGet, {})),
+  setSession: async (changes) =>
+    resultSchema(runtimeStatusSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.sessionSet, sessionPatchSchema.parse(changes)),
+    ),
+  onRuntime: (callback) => {
+    const listener = (_event: Electron.IpcRendererEvent, value: unknown) => {
+      const parsed = runtimeStatusSchema.safeParse(value);
+      if (parsed.success) callback(parsed.data);
+    };
+    ipcRenderer.on(CHANNELS.runtimeChanged, listener);
+    return () => ipcRenderer.removeListener(CHANNELS.runtimeChanged, listener);
+  },
   personaAction: async (action) =>
     resultSchema(configSchema).parse(
       await ipcRenderer.invoke(CHANNELS.personaAction, personaActionSchema.parse(action)),

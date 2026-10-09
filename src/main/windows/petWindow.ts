@@ -15,6 +15,8 @@ import { emptySchema, resultSchema } from '../ipc/schemas';
 import { normalizeError } from '../../shared/errors';
 import { wheelSchema } from '../ipc/schemas';
 import { forwardWheel } from '../platform/win32/wheel';
+import { preventMouseActivation } from '../platform/win32/focus';
+import { geometryFitScale, scaleGeometry } from '../../shared/spriteGeometry';
 import { frameGeometry, anchoredOrigin, type SpriteGeometry } from '../../shared/spriteGeometry';
 export async function createPetWindow(
   config: ConfigStore,
@@ -34,15 +36,16 @@ export async function createPetWindow(
     cfg.displayTarget === 'cursor'
       ? screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
       : (displays.find((d) => String(d.id) === cfg.displayTarget) ?? screen.getPrimaryDisplay());
-  const idleGeometry = (dpi: number) => {
+  const idleGeometry = (dpi: number, area = display.workArea) => {
     const sprite = config.get().sprite;
-    return frameGeometry(
+    const geometry = frameGeometry(
       idleSize.width,
       idleSize.height,
       sprite.scale / (sprite.scaleMode === 'fixed' ? dpi : 1),
       sprite.idle.anchor,
       sprite.flipHorizontal,
     );
+    return scaleGeometry(geometry, geometryFitScale(geometry, area, dpi));
   };
   let geometry: SpriteGeometry = idleGeometry(display.scaleFactor);
   const size = { width: Math.round(geometry.width), height: Math.round(geometry.height) };
@@ -76,8 +79,10 @@ export async function createPetWindow(
     },
   });
   secureWindow(win);
+  preventMouseActivation(win.getNativeWindowHandle());
   win.setAlwaysOnTop(true, 'screen-saver');
-  win.setVisibleOnAllWorkspaces(cfg.allWorkspaces, { visibleOnFullScreen: false });
+  if (process.platform !== 'win32')
+    win.setVisibleOnAllWorkspaces(cfg.allWorkspaces, { visibleOnFullScreen: false });
   win.setContentProtection(cfg.contentProtection);
   let viewport: PetViewport = {
     ...arrangePet({ ...position, ...size }, null, display.workArea, 'auto', 12),
@@ -162,7 +167,7 @@ export async function createPetWindow(
         dpi: current.scaleFactor,
         dark: nativeTheme.shouldUseDarkColors,
       };
-      const idle = idleGeometry(current.scaleFactor);
+      const idle = idleGeometry(current.scaleFactor, current.workArea);
       anchorOffset = {
         x: viewport.sprite.x + geometry.anchor.x - idle.anchor.x,
         y: viewport.sprite.y + geometry.anchor.y - idle.anchor.y,
@@ -203,7 +208,8 @@ export async function createPetWindow(
       windowConfig = now;
       if (now.showInTaskbar !== previous.showInTaskbar) win.setSkipTaskbar(!now.showInTaskbar);
       if (now.allWorkspaces !== previous.allWorkspaces)
-        win.setVisibleOnAllWorkspaces(now.allWorkspaces, { visibleOnFullScreen: false });
+        if (process.platform !== 'win32')
+          win.setVisibleOnAllWorkspaces(now.allWorkspaces, { visibleOnFullScreen: false });
       if (
         now.displayTarget !== previous.displayTarget ||
         (!now.restorePosition &&
@@ -216,7 +222,7 @@ export async function createPetWindow(
             ? screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
             : (screen.getAllDisplays().find((value) => String(value.id) === now.displayTarget) ??
               screen.getPrimaryDisplay());
-        const idle = idleGeometry(target.scaleFactor),
+        const idle = idleGeometry(target.scaleFactor, target.workArea),
           bounds = win.getBounds();
         const origin = now.restorePosition ? now.positions[String(target.id)] : undefined;
         const point =

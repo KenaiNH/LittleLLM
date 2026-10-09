@@ -1,4 +1,8 @@
 export const CHANNELS = {
+  diagnosticAction: 'diagnostics:action',
+  runtimeGet: 'runtime:get',
+  runtimeChanged: 'runtime:changed',
+  sessionSet: 'session:set',
   personaAction: 'persona:action',
   personaPreview: 'persona:preview',
   personaTest: 'persona:test',

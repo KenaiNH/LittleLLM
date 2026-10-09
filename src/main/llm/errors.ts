@@ -7,6 +7,19 @@ export class ProviderError extends Error {
 export function networkCode(error: unknown): string | undefined {
   if (!error || typeof error !== 'object') return;
   const item = error as { code?: unknown; cause?: unknown };
+  if (error instanceof Error) {
+    const chromium = /net::(ERR_[A-Z_]+)/.exec(error.message)?.[1];
+    const codes: Record<string, string> = {
+      ERR_CONNECTION_REFUSED: 'ECONNREFUSED',
+      ERR_NAME_NOT_RESOLVED: 'ENOTFOUND',
+      ERR_CONNECTION_RESET: 'ECONNRESET',
+      ERR_CONNECTION_CLOSED: 'ECONNRESET',
+      ERR_TIMED_OUT: 'ETIMEDOUT',
+      ERR_CONNECTION_TIMED_OUT: 'ETIMEDOUT',
+      ERR_CERT_AUTHORITY_INVALID: 'CERT_INVALID',
+    };
+    if (chromium) return codes[chromium] ?? chromium;
+  }
   return typeof item.code === 'string' ? item.code : networkCode(item.cause);
 }
 export function providerError(error: unknown, baseUrl: string, signal: AbortSignal): AppError {
@@ -16,9 +29,26 @@ export function providerError(error: unknown, baseUrl: string, signal: AbortSign
       : { code: 'ABORTED', userMessage: 'Cancelled', retryable: false };
   if (error instanceof ProviderError) return error.normalized;
   const code = networkCode(error);
+  const action = { label: 'Open Settings', kind: 'open-settings' as const };
+  if (code === 'CERT_INVALID' || code?.startsWith('ERR_CERT_'))
+    return {
+      code: 'NETWORK_UNREACHABLE',
+      userMessage:
+        'The server certificate could not be verified. Check your endpoint and certificate settings.',
+      retryable: false,
+      action,
+    };
+  if (code === 'ETIMEDOUT')
+    return {
+      code: 'TIMEOUT',
+      userMessage: 'The model took too long to respond.',
+      retryable: true,
+      action,
+    };
   if (code === 'ENOTFOUND' || code === 'EAI_AGAIN')
     return {
       code: 'DNS_FAILURE',
+      action,
       userMessage: 'The model server address could not be found.',
       retryable: true,
     };
@@ -27,6 +57,7 @@ export function providerError(error: unknown, baseUrl: string, signal: AbortSign
       loopback = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
     return {
       code: 'CONNECTION_REFUSED',
+      action,
       userMessage: loopback
         ? `Nothing is listening at ${url.origin}${url.pathname}. Is your local model container running?`
         : 'The model server refused the connection.',

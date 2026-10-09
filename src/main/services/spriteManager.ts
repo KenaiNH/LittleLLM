@@ -135,9 +135,9 @@ export class SpriteManager {
       frameCount,
     });
   }
-  private async validate(sprite: SpriteConfig) {
+  async validate(sprite: SpriteConfig, budget = this.config.get().advanced.spriteCacheMb) {
     try {
-      await this.loader.assets(sprite, this.config.get().advanced.spriteCacheMb);
+      await this.loader.assets(sprite, budget);
     } catch {
       throw new SpriteImportError(
         'These frames do not fit the selected sheet dimensions, frame count or sprite cache budget. Check the metadata and matching frame sizes.',
@@ -282,13 +282,13 @@ export class SpriteManager {
     await writeFile(temporary, bytes, { flag: 'wx' });
     await rename(temporary, join(root, 'default.png'));
   }
-  resetAll() {
+  resetAll(apply = true) {
     return this.transaction(async () => {
       for (const state of ['idle', 'thinking', 'speaking'] as const)
         await this.restoreDefault(state);
       const sprite = spriteSchema.parse({});
       await this.validate(sprite);
-      return this.config.set('sprite', sprite);
+      return apply ? this.config.set('sprite', sprite) : this.config.get();
     });
   }
   async exportPack(): Promise<{ manifest: SpritePack; files: Record<string, Uint8Array> }> {

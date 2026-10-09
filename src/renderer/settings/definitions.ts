@@ -79,9 +79,137 @@ const eleven = (cfg: Config) => cfg.tts.provider === 'elevenlabs';
 const customVoice = (cfg: Config) => cfg.tts.provider === 'custom-http';
 const enabledStt = (cfg: Config) => cfg.stt.provider !== 'none';
 const httpStt = (cfg: Config) => cfg.stt.provider === 'openai-compatible-stt';
+const advanced = (
+  key: keyof Config['advanced'],
+  definition: Omit<Setting, 'section' | 'key' | 'panel'>,
+) => field('advanced', key, { ...definition, panel: 'Advanced' });
 const stt = (key: keyof Config['stt'], definition: Omit<Setting, 'section' | 'key' | 'panel'>) =>
   field('stt', key, { ...definition, panel: 'Voice Input' });
 export const SETTINGS: Setting[] = [
+  advanced('clickThrough', {
+    id: 156,
+    group: 'Interaction',
+    label: 'Click-through mode',
+    kind: 'select',
+    options: OPTIONS.clickThrough,
+  }),
+  advanced('alphaThreshold', {
+    id: 157,
+    group: 'Interaction',
+    label: 'Transparency threshold',
+    kind: 'range',
+    min: 1,
+    max: 254,
+    visible: (cfg) => cfg.advanced.clickThrough === 'alpha-mask',
+    hint: 'Pixels with alpha below this value let clicks pass through to whatever is behind the companion.',
+  }),
+  advanced('hitTestEveryNFrames', {
+    id: 158,
+    group: 'Interaction',
+    label: 'Hit-test sample rate',
+    kind: 'select',
+    options: OPTIONS.hitTestEveryNFrames,
+    visible: (cfg) => cfg.advanced.clickThrough === 'alpha-mask',
+  }),
+  advanced('dragEnabled', {
+    id: 159,
+    group: 'Interaction',
+    label: 'Allow dragging the sprite',
+    kind: 'toggle',
+  }),
+  advanced('dragModifier', {
+    id: 160,
+    group: 'Interaction',
+    label: 'Drag requires modifier key',
+    kind: 'select',
+    options: OPTIONS.dragModifier,
+    visible: (cfg) => cfg.advanced.dragEnabled,
+  }),
+  advanced('fpsCap', {
+    id: 161,
+    group: 'Performance',
+    label: 'Animation frame rate cap',
+    kind: 'select',
+    options: OPTIONS.fpsCap,
+  }),
+  advanced('pauseWhenHidden', {
+    id: 162,
+    group: 'Performance',
+    label: 'Pause animation when sprite is not visible',
+    kind: 'toggle',
+  }),
+  advanced('reduceOnBattery', {
+    id: 163,
+    group: 'Performance',
+    label: 'Reduce frame rate on battery power',
+    kind: 'toggle',
+  }),
+  advanced('hardwareAcceleration', {
+    id: 164,
+    group: 'Performance',
+    label: 'Hardware acceleration',
+    kind: 'toggle',
+    restart: true,
+  }),
+  advanced('spriteCacheMb', {
+    id: 165,
+    group: 'Performance',
+    label: 'Sprite cache size',
+    kind: 'select',
+    options: OPTIONS.spriteCacheMb,
+  }),
+  advanced('proxyMode', {
+    id: 166,
+    group: 'Network',
+    label: 'Proxy',
+    kind: 'select',
+    options: OPTIONS.proxyMode,
+  }),
+  advanced('proxyUrl', {
+    id: 167,
+    group: 'Network',
+    label: 'Proxy URL',
+    kind: 'text',
+    maxLength: 2000,
+    placeholder: 'http://host:port or socks5://host:port',
+    visible: (cfg) => cfg.advanced.proxyMode === 'manual',
+    hint: 'Enter a proxy URL to enable manual routing. An empty URL uses a direct connection.',
+  }),
+  advanced('proxyBypass', {
+    id: 168,
+    group: 'Network',
+    label: 'Bypass proxy for',
+    kind: 'text',
+    maxLength: 2000,
+    visible: (cfg) => cfg.advanced.proxyMode === 'manual',
+    hint: 'localhost, 127.0.0.1 recommended for local models',
+  }),
+  advanced('allowSelfSigned', {
+    id: 169,
+    group: 'Network',
+    label: '⚠ Allow self-signed certificates',
+    kind: 'toggle',
+    hint: 'Only enable this for local endpoints you control.',
+  }),
+  advanced('logLevel', {
+    id: 170,
+    group: 'Data & Diagnostics',
+    label: 'Log level',
+    kind: 'select',
+    options: OPTIONS.logLevel,
+  }),
+  advanced('redactPrompts', {
+    id: 171,
+    group: 'Data & Diagnostics',
+    label: 'Redact prompts and replies from logs',
+    kind: 'toggle',
+  }),
+  advanced('developerMode', {
+    id: 178,
+    group: 'Developer',
+    label: 'Developer mode',
+    kind: 'toggle',
+  }),
   stt('provider', {
     id: 187,
     group: 'Provider',
@@ -696,6 +824,10 @@ export const SETTINGS: Setting[] = [
     group: 'Window Behavior',
     label: 'Show on all virtual desktops',
     kind: 'toggle',
+    disabled: () => true,
+    disabledHint:
+      'Automatic pinning is deferred. Use Windows Task View to show the companion on all desktops.',
+    hint: 'Automatic pinning is deferred. Enable Show in taskbar, press Win+Tab, right-click LittleLLM and choose Show this window on all desktops.',
   }),
   general('contentProtection', {
     id: 8,

@@ -17,7 +17,12 @@ import type { z } from 'zod';
 import type { ttsTestSchema } from './tts';
 import type { SttFrame, SttCapture, SttFeedback } from './stt';
 export type Result<T> = { ok: true; value: T } | { ok: false; error: AppError };
+import type { DiagnosticAction, RuntimeStatus, SessionPatch } from './diagnostics';
 export interface CompanionAPI {
+  diagnostics(action: DiagnosticAction): Promise<Result<Config>>;
+  getRuntime(): Promise<Result<RuntimeStatus>>;
+  setSession(changes: SessionPatch): Promise<Result<RuntimeStatus>>;
+  onRuntime(callback: (status: RuntimeStatus) => void): () => void;
   personaAction(action: PersonaAction): Promise<Result<Config>>;
   previewPersona(): Promise<Result<PersonaPreview>>;
   testPersona(): Promise<Result<string>>;

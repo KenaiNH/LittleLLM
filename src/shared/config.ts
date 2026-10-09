@@ -370,7 +370,27 @@ export const advancedSchema = z
       .union([z.literal(64), z.literal(128), z.literal(256), z.literal(512)])
       .default(128),
     proxyMode: en('proxyMode').default('system'),
-    proxyUrl: z.string().max(2000).default(''),
+    proxyUrl: z
+      .string()
+      .max(2000)
+      .refine((value) => {
+        if (!value) return true;
+        try {
+          const url = new URL(value);
+          return (
+            ['http:', 'socks5:'].includes(url.protocol) &&
+            Boolean(url.hostname) &&
+            !url.username &&
+            !url.password &&
+            (!url.pathname || url.pathname === '/') &&
+            !url.search &&
+            !url.hash
+          );
+        } catch {
+          return false;
+        }
+      }, 'Enter an http://host:port or socks5://host:port proxy URL.')
+      .default(''),
     proxyBypass: z.string().max(2000).default('localhost, 127.0.0.1'),
     allowSelfSigned: z.boolean().default(false),
     logLevel: en('logLevel').default('warn'),

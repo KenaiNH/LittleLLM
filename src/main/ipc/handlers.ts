@@ -54,6 +54,14 @@ import {
 } from '../../shared/persona';
 import type { PersonaManager } from '../services/personaManager';
 import { buildSystemPrompt, currentPersonaContext, personaExamples } from '../llm/persona';
+import type { NativeRuntime } from '../services/nativeRuntime';
+import { Diagnostics, DiagnosticError } from '../services/diagnostics';
+import { FutureConfigError } from '../services/configRecovery';
+import {
+  diagnosticActionSchema,
+  runtimeStatusSchema,
+  sessionPatchSchema,
+} from '../../shared/diagnostics';
 export function registerHandlers(
   config: ConfigStore,
   settings: (panel: string) => void,
@@ -61,9 +69,11 @@ export function registerHandlers(
   secrets: SecretStore,
   history: ConversationStore,
   personas: PersonaManager,
+  native: NativeRuntime,
 ): void {
   const masks = new AlphaMaskCache(app.getPath('userData'), sprites);
   const spriteManager = new SpriteManager(config, sprites);
+  const diagnostics = new Diagnostics(config, secrets, personas, spriteManager, native);
   const handle = <S extends z.ZodTypeAny, R extends z.ZodTypeAny>(
     channel: string,
     request: S,
@@ -87,7 +97,12 @@ export function registerHandlers(
       } catch (error) {
         return {
           ok: false,
-          error: error instanceof ProviderError ? error.normalized : normalizeError(error),
+          error:
+            error instanceof ProviderError
+              ? error.normalized
+              : error instanceof FutureConfigError || error instanceof DiagnosticError
+                ? { code: 'FILE_INVALID', userMessage: error.message, retryable: false }
+                : normalizeError(error),
         };
       }
     });
@@ -235,6 +250,21 @@ export function registerHandlers(
   handle(CHANNELS.configGet, emptySchema, configResultSchema.options[0].shape.value, () =>
     config.get(),
   );
+  handle(CHANNELS.runtimeGet, emptySchema, runtimeStatusSchema, () => native.status());
+  handle(
+    CHANNELS.sessionSet,
+    sessionPatchSchema,
+    runtimeStatusSchema,
+    (changes) => native.setSession(changes),
+    true,
+  );
+  handle(
+    CHANNELS.diagnosticAction,
+    diagnosticActionSchema,
+    configResultSchema.options[0].shape.value,
+    (request) => diagnostics.action(request),
+    true,
+  );
   handle(CHANNELS.secretSet, secretSetSchema, secretStatusSchema, (p) =>
     secrets.set(p.id, p.value),
   );
@@ -303,6 +333,7 @@ export function registerHandlers(
       node: process.versions.node,
       configPath: join(app.getPath('userData'), 'config.json'),
       packaged: app.isPackaged,
+      firstRun: config.firstRun,
       updateFeedConfigured: false,
       historyWarning: history.warning,
     });
@@ -347,6 +378,7 @@ export function registerHandlers(
       Voice: ['tts'],
       'Voice Input': ['stt'],
       Persona: ['persona'],
+      Advanced: ['advanced'],
     };
     const selected = sections[p.panel];
     if (!selected) throw new Error('Panel reset is not implemented yet');

@@ -2,7 +2,13 @@ import { useCallback, useState } from 'react';
 import type { SpriteAssets, SpriteAsset } from '../../shared/sprites';
 import type { SpriteConfig, SpriteStateConfig } from '../../shared/config';
 import type { SpriteState } from '../../shared/enums';
-import { frameGeometry, unionGeometry, type SpriteGeometry } from '../../shared/spriteGeometry';
+import {
+  frameGeometry,
+  unionGeometry,
+  geometryFitScale,
+  scaleGeometry,
+  type SpriteGeometry,
+} from '../../shared/spriteGeometry';
 export type SpriteLayer = {
   selected: SpriteState;
   asset: SpriteAsset;
@@ -26,6 +32,10 @@ export function useSpriteScene(
   config: SpriteConfig | undefined,
   state: SpriteState,
   dpi: number,
+  area: { width: number; height: number } = {
+    width: window.screen.availWidth,
+    height: window.screen.availHeight,
+  },
 ) {
   const [scene, setScene] = useState<SpriteScene | null>(null);
   if (assets && config) {
@@ -45,6 +55,8 @@ export function useSpriteScene(
       asset,
       spec,
       scale,
+      area.width,
+      area.height,
       config.flipHorizontal,
       config.opacity,
       config.pixelated,
@@ -68,13 +80,19 @@ export function useSpriteScene(
           (config.pixelated === 'auto' && Math.max(asset.width, asset.height) <= 128),
       };
       const previous = config.transition === 'crossfade' ? (scene?.geometry ?? null) : null;
+      const geometry = previous ? unionGeometry(previous, target.geometry) : target.geometry;
+      const fit = geometryFitScale(geometry, area, dpi);
+      const fitted = (layer: SpriteLayer) => ({
+        ...layer,
+        geometry: scaleGeometry(layer.geometry, fit),
+      });
       setScene({
         id: (scene?.id ?? 0) + 1,
         key,
-        target,
-        geometry: previous ? unionGeometry(previous, target.geometry) : target.geometry,
-        previous,
-        layers: previous ? [...(scene?.layers ?? []), target] : [target],
+        target: fitted(target),
+        geometry: scaleGeometry(geometry, fit),
+        previous: previous ? scaleGeometry(previous, fit) : null,
+        layers: (previous ? [...(scene?.layers ?? []), target] : [target]).map(fitted),
         duration: config.crossfadeMs,
       });
     }

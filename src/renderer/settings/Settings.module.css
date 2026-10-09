@@ -473,6 +473,23 @@
   align-items: flex-start;
   gap: 8px;
 }
+.about {
+  width: 100%;
+  margin: 0;
+}
+.about div {
+  display: flex;
+  gap: 16px;
+  padding: 4px 0;
+}
+.about dt {
+  min-width: 120px;
+  color: var(--muted);
+}
+.about dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
 .headerPair {
   display: flex;
   width: 100%;

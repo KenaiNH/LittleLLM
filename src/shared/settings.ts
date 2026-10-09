@@ -43,6 +43,7 @@ export const settingsEnvironmentSchema = z
     node: z.string(),
     configPath: z.string(),
     packaged: z.boolean(),
+    firstRun: z.boolean().default(false),
     updateFeedConfigured: z.boolean(),
     historyWarning: z.string().nullable(),
   })

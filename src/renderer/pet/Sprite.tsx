@@ -12,12 +12,16 @@ export function Sprite({
   state,
   onFadeEnd,
   fpsCap = 60,
+  pauseWhenHidden = true,
+  showFps = false,
 }: {
   assets: SpriteAssets;
   scene: SpriteScene;
   state: SpriteState;
   onFadeEnd: (id: number) => void;
   fpsCap?: number;
+  pauseWhenHidden?: boolean;
+  showFps?: boolean;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const [decodedSet, setBitmaps] = useState<{
@@ -28,6 +32,7 @@ export function Sprite({
   const [dpi, setDpi] = useState(window.devicePixelRatio);
   const [visible, setVisible] = useState(!document.hidden);
   const [error, setError] = useState<string | null>(null);
+  const stats = useRef<HTMLOutputElement>(null);
   const bitmaps =
     decodedSet?.assets === assets && decodedSet.dpi === dpi ? decodedSet.bitmaps : null;
   const run = useRef<{
@@ -102,14 +107,19 @@ export function Sprite({
     const offscreen = composite.getContext('2d');
     if (!ctx || !offscreen) return;
     let handle = 0,
+      count = 0,
+      started = performance.now(),
+      totalPaint = 0,
       lastFrame = -1,
       lastProgress = -1,
       lastPaint = -Infinity,
       previousTime: number | null = null;
     const paint = (now: number) => {
       if (now - lastPaint >= 1000 / fpsCap) {
+        const paintStarted = performance.now();
         lastPaint = now;
-        if (visible && previousTime !== null) animation.elapsed += Math.max(0, now - previousTime);
+        if ((visible || !pauseWhenHidden) && previousTime !== null)
+          animation.elapsed += Math.max(0, now - previousTime);
         previousTime = now;
         const tick = animation.clock.tick(now),
           bitmap = frames[tick.frame];
@@ -152,9 +162,17 @@ export function Sprite({
           animation.previous = null;
           onFadeEnd(scene.id);
         }
+        count++;
+        totalPaint += performance.now() - paintStarted;
+        if (showFps && now - started >= 1000 && stats.current) {
+          stats.current.textContent = `${((count * 1000) / (now - started)).toFixed(1)} FPS · ${(totalPaint / count).toFixed(2)} ms/frame`;
+          count = 0;
+          totalPaint = 0;
+          started = now;
+        }
       }
       if (
-        visible &&
+        (visible || !pauseWhenHidden) &&
         ((frames.length > 1 && !animation.clock.finished) ||
           (scene.previous && animation.elapsed < scene.duration))
       )
@@ -165,14 +183,14 @@ export function Sprite({
       cancelAnimationFrame(handle);
       animation.clock.pause();
     };
-  }, [bitmaps, dpi, fpsCap, onFadeEnd, scene, state, visible]);
+  }, [bitmaps, dpi, fpsCap, onFadeEnd, scene, state, visible, pauseWhenHidden, showFps]);
   return (
     <>
       <canvas
         ref={ref}
         data-testid="sprite"
         data-state={state}
-        data-running={visible}
+        data-running={visible || !pauseWhenHidden}
         aria-label={state + ' companion sprite'}
         className={styles.sprite}
         style={{
@@ -181,6 +199,23 @@ export function Sprite({
           imageRendering: scene.target.pixelated ? 'pixelated' : 'auto',
         }}
       />
+      {showFps && (
+        <output
+          ref={stats}
+          aria-label="Sprite FPS and frame time"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            font: '11px Consolas',
+            background: '#000c',
+            color: '#fff',
+            pointerEvents: 'none',
+          }}
+        >
+          Static frame · 0 FPS
+        </output>
+      )}
       {error && <span role="alert">{error}</span>}
     </>
   );

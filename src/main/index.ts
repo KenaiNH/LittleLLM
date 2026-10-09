@@ -1,6 +1,11 @@
 import { app, dialog, protocol, net } from 'electron';
 import { pathToFileURL } from 'node:url';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { NativeRuntime } from './services/nativeRuntime';
+import { Logger } from './services/logger';
+import { configureNetwork } from './services/network';
+import { recoverConfig } from './services/configRecovery';
 import { ConfigStore } from './services/configStore';
 import { openSettings } from './windows/settingsWindow';
 import { createPetWindow } from './windows/petWindow';
@@ -19,10 +24,21 @@ protocol.registerSchemesAsPrivileged([
 ]);
 const testData = process.env.LITTLELLM_TEST_USER_DATA;
 if (testData) app.setPath('userData', testData);
+try {
+  if (
+    !recoverConfig(JSON.parse(readFileSync(join(app.getPath('userData'), 'config.json'), 'utf8')))
+      .config.advanced.hardwareAcceleration
+  )
+    app.disableHardwareAcceleration();
+} catch {
+  /* ConfigStore handles missing, invalid and future configurations after ready. */
+}
+app.setAppUserModelId('com.littlellm.companion');
+let runtime: NativeRuntime | undefined;
 if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
-  app.on('second-instance', () => openSettings('General'));
+  app.on('second-instance', () => runtime?.focus());
   void app.whenReady().then(async () => {
     mkdirSync(app.getPath('userData'), { recursive: true });
     let config: ConfigStore;
@@ -64,12 +80,32 @@ if (!app.requestSingleInstanceLock()) {
     const history = new ConversationStore(app.getPath('userData'));
     const personas = new PersonaManager(config);
     await personas.patch({});
-    registerHandlers(config, openSettings, sprites, secrets, history, personas);
+    const logger = new Logger(app.getPath('userData'), () => config.get());
+    app.on('web-contents-created', (_event, contents) =>
+      contents.on('render-process-gone', (_event, details) =>
+        logger.write('error', 'renderer.gone', {
+          reason: details.reason,
+          exitCode: details.exitCode,
+        }),
+      ),
+    );
+    app.on('child-process-gone', (_event, details) =>
+      logger.write('error', 'child.gone', {
+        type: details.type,
+        reason: details.reason,
+        exitCode: details.exitCode,
+      }),
+    );
+    config.onChange((section) => logger.write('debug', 'settings.changed', { section }));
+    await configureNetwork(config);
+    runtime = new NativeRuntime(config, personas, openSettings, logger);
+    registerHandlers(config, openSettings, sprites, secrets, history, personas, runtime);
     await createPetWindow(
       config,
       openSettings,
       (pet) => {
         const input = new InputWindow(config, pet, secrets, history);
+        runtime?.attach(pet, input);
         personas.bind({
           hasConversation: () => input.hasConversation,
           clearConversation: () => input.clearConversation(),
@@ -79,6 +115,9 @@ if (!app.requestSingleInstanceLock()) {
       async () =>
         (await sprites.assets(config.get().sprite, config.get().advanced.spriteCacheMb)).idle,
     );
+    logger.write('info', 'app.ready', { version: app.getVersion(), packaged: app.isPackaged });
+    if (config.firstRun && (!testData || process.env.LITTLELLM_TEST_FIRST_RUN === '1'))
+      openSettings('Model');
     if (config.backupPath && !testData)
       await dialog.showMessageBox({
         type: 'warning',

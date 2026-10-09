@@ -56,4 +56,11 @@ export class ConfigStore {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
   }
+  replace(value: Config) {
+    const cfg = configSchema.parse(value);
+    this.store.store = cfg;
+    for (const section of Object.keys(configSections) as ConfigSection[])
+      for (const listener of this.listeners) listener(section, cfg);
+    return cfg;
+  }
 }

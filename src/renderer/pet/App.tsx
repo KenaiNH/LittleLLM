@@ -10,10 +10,13 @@ import { useSpriteScene } from './useSpriteScene';
 import { useSpeech } from './useSpeech';
 import { useMicrophone } from './useMicrophone';
 import mic from '../../../assets/figma/2016-81-imgMic.svg';
+import { useRuntime } from '../useRuntime';
+import { MaskOverlay } from './MaskOverlay';
 export function PetApp() {
   const { config, assets, state, error, initialize, setState } = usePetStore();
   useSpeech(config);
   useMicrophone(config);
+  const runtime = useRuntime();
   const [ui, setUi] = useState<ChatUi | null>(null),
     [viewport, setViewport] = useState<PetViewport | null>(null),
     [bubbleSize, setBubbleSize] = useState<{ width: number; height: number } | null>(null);
@@ -22,6 +25,7 @@ export function PetApp() {
     config?.sprite,
     state,
     viewport?.dpi ?? window.devicePixelRatio,
+    viewport?.workArea,
   );
   useSpriteInteraction(config, scene);
   useEffect(() => {
@@ -117,6 +121,7 @@ export function PetApp() {
             viewport={viewport}
             onMeasure={measure}
             error={ui.error?.userMessage}
+            errorAction={ui.error?.action}
             speaking={ui.speaking}
             speechNotice={ui.speechNotice}
             queuedMessage={ui.queuedMessage}
@@ -132,8 +137,16 @@ export function PetApp() {
             scene={scene}
             state={state}
             onFadeEnd={finish}
-            fpsCap={config.advanced.fpsCap === 'display' ? 240 : Number(config.advanced.fpsCap)}
+            fpsCap={Math.min(
+              config.advanced.fpsCap === 'display' ? 240 : Number(config.advanced.fpsCap),
+              config.advanced.reduceOnBattery && runtime?.onBattery ? 15 : Infinity,
+            )}
+            pauseWhenHidden={config.advanced.pauseWhenHidden}
+            showFps={config.advanced.developerMode && Boolean(runtime?.session.showFps)}
           />
+          {config.advanced.developerMode && runtime?.session.showMaskOverlay && (
+            <MaskOverlay scene={scene} threshold={config.advanced.alphaThreshold} />
+          )}
           {ui?.stt.microphoneOpen && (
             <button
               data-interactive

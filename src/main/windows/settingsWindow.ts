@@ -1,5 +1,5 @@
 import { BrowserWindow } from 'electron';
-import { preloadPath, secureWindow, loadRenderer } from './security';
+import { preloadPath, secureWindow, loadRenderer, recoverRenderer } from './security';
 import { CHANNELS } from '../ipc/channels';
 let settings: BrowserWindow | undefined;
 export const getSettingsWindow = () => settings;
@@ -27,6 +27,7 @@ export function openSettings(panel: string): void {
   const win = settings;
   win.removeMenu();
   secureWindow(win);
+  recoverRenderer(win);
   win.once('ready-to-show', () => win.show());
   win.on('closed', () => {
     settings = undefined;
