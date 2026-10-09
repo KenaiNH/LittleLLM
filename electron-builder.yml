@@ -12,9 +12,14 @@ asarUnpack:
   - node_modules/koffi/**
   - node_modules/@koromix/**
 win:
+  executableName: LittleLLM
   target:
     - target: nsis
       arch: [x64, arm64]
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: LittleLLM
+  runAfterFinish: true
