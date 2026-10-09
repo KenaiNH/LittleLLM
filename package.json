@@ -2,6 +2,10 @@
   "name": "littlellm",
   "version": "0.1.0",
   "private": true,
+  "license": "GPL-3.0-only",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "description": "Windows desktop AI sprite companion",
   "author": {
     "name": "KenaiNH",
@@ -14,11 +18,14 @@
     "build": "npm run typecheck && electron-vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:nonvoice": "node scripts/check-nonvoice.mjs unit",
     "lint": "eslint .",
     "format": "prettier --write .",
     "smoke": "playwright test",
+    "smoke:nonvoice": "node scripts/check-nonvoice.mjs electron",
     "smoke:local": "node scripts/check-local-model.mjs",
     "package": "npm run prepare:windows && npm run build && electron-builder --win nsis --x64 --arm64",
+    "package:x64": "npm run prepare:windows && npm run build && electron-builder --win nsis --x64",
     "prepare:windows": "node scripts/prepare-windows-native.mjs",
     "assets": "node scripts/create-placeholders.mjs"
   },

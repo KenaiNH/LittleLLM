@@ -8,7 +8,7 @@ Static sources may also contain GIF, APNG or animated WebP frames. Sheet cells s
 
 Each image must be at most 25 MiB, 8,192 px per dimension and 512 decoded frames. All decoded active assets must fit the configured sprite cache budget. Raw sequence bytes are bounded by the greater of 256 MiB and that budget. Invalid imports preserve the last valid configuration.
 
-Mouth artwork contains 2–8 frames ordered **quietest → loudest**, with the closed mouth first. Use a horizontal strip or a square-cell grid, or an equal-size image sequence. Square grids with 2–8 cells are inferred automatically; other strips use the configured mouth frame count. Changing that count divides the strip width again. Keep mouth artwork separate from the base sprite and use its X/Y offsets to align it. The Settings test tone previews drivers; runtime speech compositing integrates with the TTS pipeline.
+Mouth animation and lip syncing are deferred. The retained asset-preparation controls accept 2–8 frames ordered **quietest → loudest**, with the closed mouth first. Use a horizontal strip or a square-cell grid, or an equal-size image sequence. Square grids with 2–8 cells are inferred automatically; other strips use the configured mouth frame count. Changing that count divides the strip width again. Keep mouth artwork separate from the base sprite. Importing these assets does not activate a speech-driven mouth overlay in this release.
 
 ## Sprite Packs
 

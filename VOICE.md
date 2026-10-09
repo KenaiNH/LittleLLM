@@ -14,7 +14,17 @@ Custom HTTP requires a request URL. POST submits the JSON body template; GET tur
 
 Choose Raw audio bytes, Base64 string in JSON field, or URL in JSON field, and select the actual audio format. PCM means signed 16-bit little-endian mono at 24 kHz. JSON modes use a field path such as `data.audio` or `data.0.audio`; base64 mode also reads SSE JSON events at that path. URL mode fetches HTTP(S) audio without forwarding request headers or credentials. Redirects, unsafe paths and over-budget responses are rejected. Invalid templates stay visible while the last valid saved settings remain active.
 
-Previously verified on Windows: actual installed-voice enumeration, WinRT synthesis, non-silent Web Audio playback, Esc cancellation, provider-Off audio inactivity and output enumeration with microphone permission denied. Custom HTTP's configurable binary/JSON-base64/JSON-URL and GET modes played PCM through the production renderer in Electron acceptance tests; these are local protocol fixtures, not a claim about every third-party engine. OpenAI-compatible audio transport was covered by HTTP protocol fixtures. This evidence covers voice output before voice-input capture was added. Further voice testing is skipped by explicit user instruction; current microphone/STT behavior is implemented but runtime-unverified. Mouth animation and lip syncing are deferred to low-priority future features; Test Voice has no mouth preview.
+Previously verified on Windows: actual installed-voice enumeration, WinRT synthesis, non-silent Web Audio playback, Esc cancellation, provider-Off audio inactivity and output enumeration with microphone permission denied. Custom HTTP's configurable binary/JSON-base64/JSON-URL and GET modes played PCM through the production renderer in Electron acceptance tests; these are local protocol fixtures, not a claim about every third-party engine. OpenAI-compatible audio transport was covered by HTTP protocol fixtures. Further voice testing is skipped by explicit user instruction. All microphone/STT groundwork is disabled in this release. Mouth animation and lip syncing are deferred to low-priority future features; Test Voice has no mouth preview.
+
+## Optional Kokoro-FastAPI Docker setup (unverified)
+
+The upstream project's [CPU container instructions](https://github.com/remsky/Kokoro-FastAPI#quickest-start-docker-run) use this image. With Docker Desktop running Linux containers:
+
+```powershell
+docker run -d --name littlellm-kokoro -p 127.0.0.1:8880:8880 ghcr.io/remsky/kokoro-fastapi-cpu:latest
+```
+
+In **Settings → Voice**, select **OpenAI-compatible**, base URL `http://localhost:8880/v1`, model `kokoro`, voice `af_heart`, and no API key. Keep the container running; `docker start littlellm-kokoro` starts it again and `docker stop littlellm-kokoro` stops it. The upstream image can change; pin a reviewed release tag for a reproducible deployment. No container, voice playback or Kokoro test was run during the release review, as requested by the user.
 
 ## Voice input — deferred
 

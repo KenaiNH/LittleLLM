@@ -6,6 +6,22 @@ files:
   - out/**
   - assets/**
   - package.json
+  - LICENSE
+extraFiles:
+  - README.md
+  - LICENSE
+  - VOICE.md
+  - PERSONA.md
+  - SPRITES.md
+  - from: node_modules/@fontsource/inter/LICENSE
+    to: licenses/Inter.txt
+  - from: node_modules/@fontsource/courier-prime/LICENSE
+    to: licenses/Courier-Prime.txt
+  - from: node_modules/@fontsource/cousine/LICENSE
+    to: licenses/Cousine.txt
+  - from: docs
+    to: docs
+    filter: ['**/*.md']
 asarUnpack:
   - node_modules/sharp/**
   - node_modules/@img/**
@@ -17,6 +33,7 @@ win:
     - target: nsis
       arch: [x64, arm64]
 nsis:
+  license: LICENSE
   oneClick: false
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: always

@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { fileURLToPath } from 'node:url';
 export const preloadPath = fileURLToPath(new URL('../preload/index.cjs', import.meta.url));
 let allowOutput: (contents: Electron.WebContents | null) => boolean = () => false;
@@ -47,7 +47,7 @@ export function recoverRenderer(win: BrowserWindow, cancel: () => void = () => u
   });
 }
 export async function loadRenderer(win: BrowserWindow, view: string): Promise<void> {
-  if (process.env.ELECTRON_RENDERER_URL)
+  if (!app.isPackaged && process.env.ELECTRON_RENDERER_URL)
     await win.loadURL(`${process.env.ELECTRON_RENDERER_URL}/?view=${encodeURIComponent(view)}`);
   else
     await win.loadFile(fileURLToPath(new URL('../renderer/index.html', import.meta.url)), {

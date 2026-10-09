@@ -1,6 +1,6 @@
 # UI and implementation plan
 
-Prepared before application code. Sources read in full: AGENTS.md, desktop_companion_spec (1).md v5, settings_window_spec (4).md v3, including main §§14, 16–18. Download suffixes are retained. Figma is visual authority; specifications govern functionality, architecture and settings inventory, with §16 binding.
+Prepared before application code. Sources read in full: AGENTS.md, desktop_companion_spec.md v5, settings_window_spec.md v3, including main §§14, 16–18. Release review removed the download suffixes so specification filenames match AGENTS.md; contents are unchanged. Figma is visual authority; specifications govern functionality, architecture and settings inventory, with §16 binding.
 
 ## Figma inventory
 
@@ -97,6 +97,8 @@ Implement debounced static/generated greetings on visibility, per-launch/per-sho
 Validate pure prompt golden strings, variables/empty sections/limits, examples surviving budget trimming, card/import/switch policies, greeting debounce/typing/failure/history and provider mappings. Run relevant non-voice unit tests, strict build/lint and Windows Electron Persona/Settings/chat acceptance; review both palettes against Figma. Update progress/coverage and commit before phase 19.
 
 ## Phase 19 implementation detail (revised scope)
+
+Release usability review: verify documented installation and first-run chat against the packaged executable, bundle offline user guides/license, align About with the repository license, protect environment/signing material in Git ignore rules, provide reproducible non-voice check commands, and preserve all existing voice/performance deferrals. Verify installer build, settings persistence and documentation/assets in the package. Do not publish a release or claim clean-machine acceptance without actual evidence.
 
 Re-inspected Figma Advanced light/dark (16:824, 2004:886); reuse its shell, Interaction, Performance, Network, Data & Diagnostics, Developer and About groups. Required lower controls are represented on supporting board 16:1172. Use existing buttons/rows and an inline type-to-confirm reset, without adding application screens. Automatic updater, dictation debug controls and automatic Windows desktop pinning are deferred by user; preserve their schemas and document manual Task View pinning.
 

@@ -1,6 +1,6 @@
-﻿# Discrepancies and decisions
+# Discrepancies and decisions
 
-1. Spec paths have download suffixes: use desktop_companion_spec (1).md and settings_window_spec (4).md; no canonical copies existed.
+1. RESOLVED during release review: downloaded specification filenames originally had suffixes (1)/(4). Renamed them to desktop_companion_spec.md and settings_window_spec.md so AGENTS.md resolves directly; specification contents are unchanged.
 2. MCP page listing returned only Settings, but direct node 2012:2 exposed TextChat. The user supplied that direct link; both pages are inspected.
 3. Older Settings frames have seven-item navigation; Persona specimens have eight. Use the latter and required Ctrl+1–8 order without changing visual styling.
 4. RESOLVED by user: anchored bubble pairs with sprite; the full-width bottom text box is for user response. Implement a separate secure input window so its width does not expand the transparent pet window across the display.

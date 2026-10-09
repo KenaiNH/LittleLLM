@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, screen } from 'electron';
 import { preloadPath, secureWindow, loadRenderer, recoverRenderer } from './security';
 import { CHANNELS } from '../ipc/channels';
 let settings: BrowserWindow | undefined;
@@ -10,12 +10,18 @@ export function openSettings(panel: string): void {
     settings.webContents.send(CHANNELS.settingsPanel, panel);
     return;
   }
+  const area = screen.getDisplayNearestPoint(screen.getCursorScreenPoint()).workArea;
+  // Leave room for native-frame/DPI rounding at the work-area edges.
+  const width = Math.min(960, Math.max(1, area.width - 16));
+  const height = Math.min(680, Math.max(1, area.height - 16));
   settings = new BrowserWindow({
     title: 'Settings',
-    width: 960,
-    height: 680,
-    minWidth: 820,
-    minHeight: 560,
+    width,
+    height,
+    minWidth: Math.min(820, width),
+    minHeight: Math.min(560, height),
+    x: area.x + Math.floor((area.width - width) / 2),
+    y: area.y + Math.floor((area.height - height) / 2),
     show: false,
     webPreferences: {
       preload: preloadPath,

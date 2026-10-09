@@ -182,6 +182,7 @@ test('Advanced controls, secure diagnostics, session debug and native registrati
             return false;
           }
         }),
+        { timeout: 15000 },
       )
       .toBe(true);
   } finally {

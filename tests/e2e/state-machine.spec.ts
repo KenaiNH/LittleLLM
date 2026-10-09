@@ -124,13 +124,16 @@ test('state lifecycle holds frames, blends alpha, aligns anchors, pauses dwell a
           .fadeSamples,
     );
     const mid = samples.filter(
-      (sample) => sample.state === 'thinking' && sample.fade > 0.2 && sample.fade < 0.8,
+      (sample) => sample.state === 'thinking' && sample.fade > 0 && sample.fade < 1,
     );
+    // Scheduling can skip the center of a 500 ms blend. Validate every actual
+    // intermediate composite against its recorded weight, rather than requiring
+    // the host to paint within a particular timing slice.
     expect(mid.length).toBeGreaterThanOrEqual(1);
     for (const sample of mid) {
       expect(sample.pixel[3]).toBe(255);
-      expect(sample.pixel[0]).toBeGreaterThan(20);
-      expect(sample.pixel[2]).toBeGreaterThan(20);
+      expect(Math.abs((sample.pixel[0] ?? 0) - 255 * (1 - sample.fade))).toBeLessThanOrEqual(2);
+      expect(Math.abs((sample.pixel[2] ?? 0) - 255 * sample.fade)).toBeLessThanOrEqual(2);
     }
     await pet.screenshot({ path: 'docs/design/phase9-speaking.png' });
     await new Promise((resolve) => setTimeout(resolve, 10500));

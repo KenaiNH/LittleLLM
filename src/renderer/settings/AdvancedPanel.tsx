@@ -215,7 +215,7 @@ export function AdvancedPanel({ config, query }: { config: Config; query: string
                         Node: environment?.node ?? '—',
                         schemaVersion: config.schemaVersion,
                         'Config file': environment?.configPath ?? '—',
-                        License: 'Not specified (private project)',
+                        License: 'GNU GPL v3 (see LICENSE in the installation folder)',
                       }).map(([label, value]) => (
                         <div key={label}>
                           <dt>{label}</dt>

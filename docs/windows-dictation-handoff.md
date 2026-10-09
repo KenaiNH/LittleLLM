@@ -4,7 +4,7 @@ Status: outside the current release by explicit user instruction on October 8, 2
 
 ## Read before resuming
 
-Read AGENTS.md, both complete specifications in `docs/specifications/`, `docs/implementation-plan.md`, `docs/progress.md`, and `docs/DISCREPANCIES.md` entries 7, 33, 34 and 37. File names currently have download suffixes: `desktop_companion_spec (1).md` and `settings_window_spec (4).md`. Figma governs visuals; main governs architecture/runtime/security; Settings governs controls/options. Further voice testing was explicitly skipped, so do not treat static checks as runtime acceptance or restart microphone testing without revisiting that instruction.
+Read AGENTS.md, both complete specifications in `docs/specifications/`, `docs/implementation-plan.md`, `docs/progress.md`, and `docs/DISCREPANCIES.md` entries 7, 33, 34 and 37. Specification filenames are `desktop_companion_spec.md` and `settings_window_spec.md`, matching AGENTS.md. Figma governs visuals; main governs architecture/runtime/security; Settings governs controls/options. Further voice testing was explicitly skipped, so do not treat static checks as runtime acceptance or restart microphone testing without revisiting that instruction.
 
 ## Why it was deferred
 
