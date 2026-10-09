@@ -1,4 +1,5 @@
 import type { Config, ConfigSection } from './config';
+import type { PersonaAction, PersonaPreview } from './persona';
 import type { AppError } from './errors';
 import type { SpriteAssets, SpriteMasks } from './sprites';
 import type { ChatUi } from './chatUi';
@@ -17,6 +18,11 @@ import type { ttsTestSchema } from './tts';
 import type { SttFrame, SttCapture, SttFeedback } from './stt';
 export type Result<T> = { ok: true; value: T } | { ok: false; error: AppError };
 export interface CompanionAPI {
+  personaAction(action: PersonaAction): Promise<Result<Config>>;
+  previewPersona(): Promise<Result<PersonaPreview>>;
+  testPersona(): Promise<Result<string>>;
+  importPersona(): Promise<Result<Config>>;
+  exportPersona(id: string): Promise<Result<boolean>>;
   startStt(action?: 'toggle' | 'start' | 'test-microphone'): Promise<Result<null>>;
   stopStt(): Promise<Result<null>>;
   abortStt(): Promise<Result<null>>;

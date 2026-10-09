@@ -4,6 +4,45 @@ import { ChatService } from '../../src/main/llm/chatService';
 import { configSchema } from '../../src/shared/config';
 import type { ChatEvent } from '../../src/shared/llm';
 import type { ChatMessage, LLMProvider } from '../../src/main/llm/types';
+it('keeps greetings assistant-only and preserves them when regenerating the previous user reply', async () => {
+  const cfg = configSchema.parse({}),
+    events: ChatEvent[] = [],
+    requests: ChatMessage[][] = [];
+  const provider: LLMProvider = {
+    id: 'fixture',
+    supportsImages: false,
+    async *chat(messages) {
+      requests.push(messages);
+      yield { type: 'text', text: 'reply' };
+      yield { type: 'done' };
+    },
+  };
+  const service = new ChatService(
+    () => cfg,
+    (event) => events.push(event),
+    undefined,
+    () => provider,
+  );
+  service.addGreeting('hello');
+  const request = service.start('question');
+  await vi.waitFor(() =>
+    expect(events.some((event) => event.requestId === request && event.delta.type === 'done')).toBe(
+      true,
+    ),
+  );
+  service.addGreeting('welcome back');
+  const regen = service.regenerate();
+  await vi.waitFor(() =>
+    expect(events.some((event) => event.requestId === regen && event.delta.type === 'done')).toBe(
+      true,
+    ),
+  );
+  expect(requests[1]).toEqual([
+    { role: 'assistant', content: 'hello' },
+    { role: 'assistant', content: 'welcome back' },
+    { role: 'user', content: 'question' },
+  ]);
+});
 it('keeps a replacement started synchronously by an abort listener cancellable', async () => {
   const cfg = configSchema.parse({}),
     events: ChatEvent[] = [];

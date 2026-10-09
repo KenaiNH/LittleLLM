@@ -10,6 +10,7 @@ import { InputWindow } from './windows/inputWindow';
 import { OutputImages } from './services/outputImages';
 import { SecretStore } from './services/secretStore';
 import { ConversationStore } from './services/conversationStore';
+import { PersonaManager } from './services/personaManager';
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'companion',
@@ -61,12 +62,19 @@ if (!app.requestSingleInstanceLock()) {
     });
     const secrets = new SecretStore(app.getPath('userData'));
     const history = new ConversationStore(app.getPath('userData'));
-    registerHandlers(config, openSettings, sprites, secrets, history);
+    const personas = new PersonaManager(config);
+    await personas.patch({});
+    registerHandlers(config, openSettings, sprites, secrets, history, personas);
     await createPetWindow(
       config,
       openSettings,
       (pet) => {
-        new InputWindow(config, pet, secrets, history);
+        const input = new InputWindow(config, pet, secrets, history);
+        personas.bind({
+          hasConversation: () => input.hasConversation,
+          clearConversation: () => input.clearConversation(),
+          context: () => input.personaContext(),
+        });
       },
       async () =>
         (await sprites.assets(config.get().sprite, config.get().advanced.spriteCacheMb)).idle,

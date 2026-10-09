@@ -9,6 +9,7 @@ import {
   spriteStateSchema,
   mouthSchema,
   relativePathSchema,
+  type Config,
   type SpriteConfig,
   type SpriteStateConfig,
 } from '../../shared/config';
@@ -327,7 +328,10 @@ export class SpriteManager {
       files,
     };
   }
-  importPack(pack: { manifest: SpritePack; files: Record<string, Uint8Array> }) {
+  importPack(
+    pack: { manifest: SpritePack; files: Record<string, Uint8Array> },
+    finalize?: (sprite: Config['sprite'], packId: string) => Promise<Config>,
+  ) {
     return this.transaction(async () => {
       const sprite = structuredClone(pack.manifest.sprite),
         created: string[] = [],
@@ -381,6 +385,7 @@ export class SpriteManager {
           spec.source = `imports/${id}/${source}`;
         }
         await this.validate(sprite);
+        if (finalize) return await finalize(sprite, packId);
         const persona = this.config.get().persona;
         if (pack.manifest.persona && persona.packPersonaPolicy !== 'ignore') {
           if (persona.library.length >= 50)

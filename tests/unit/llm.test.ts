@@ -246,7 +246,7 @@ describe('history and prompt access', () => {
         { user: 'new', assistant: 'recent' },
       ],
       'current',
-      { ...cfg, contextMode: 'token-budget', tokenBudget: 512 },
+      { ...cfg, maxTokens: 64, contextMode: 'token-budget', tokenBudget: 512 },
       'system',
       examples,
     );

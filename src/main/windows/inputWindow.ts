@@ -5,6 +5,9 @@ import { join } from 'node:path';
 import type { SpeechService } from '../tts/speechService';
 import type { SttSession } from '../stt/sttSession';
 import { VOICE_INPUT_ENABLED } from '../../shared/featureScope';
+import { activePersona, currentPersonaContext, resolvePersonaText } from '../llm/persona';
+import { GreetingScheduler } from '../llm/greeting';
+import { GreetingStore } from '../services/greetingStore';
 import {
   sttUiSchema,
   sttCaptureSchema,
@@ -97,6 +100,8 @@ export class InputWindow {
   private ready: Promise<void> | null = null;
   private quitting = false;
   private lifecycle: StateController;
+  private greetings: GreetingScheduler;
+  private greetingId: string | null = null;
   private hideBubble = () => {
     this.state = { ...this.state, reply: null, error: null };
     this.broadcast();
@@ -140,11 +145,32 @@ export class InputWindow {
       },
       undefined,
       history,
+      () => this.personaContext(),
     );
+    this.greetings = new GreetingScheduler(
+      () => config.get(),
+      () =>
+        Boolean(
+          this.state.inputOpen ||
+          this.win?.isFocused() ||
+          this.state.reply?.streaming ||
+          this.voice?.hasSpeech ||
+          this.pendingTurn,
+        ),
+      () => this.greet(),
+      new GreetingStore(app.getPath('userData')),
+    );
+    pet.on('show', () => this.greetings.show());
+    pet.on('hide', () => this.greetings.hide());
+    if (pet.isVisible()) this.greetings.show();
     let connection = config.get().llm;
     let speechConfig = config.get().tts;
     let captureConfig = JSON.stringify(config.get().stt);
     const removeConfig = config.onChange((section, cfg) => {
+      if (section === 'persona') {
+        this.greetings.hide();
+        this.voice?.abort();
+      }
       if (section === 'input' || section === 'bubble') this.position();
       if (section === 'bubble') this.lifecycle.settingsChanged();
       if (section === 'advanced' && !cfg.advanced.developerMode) {
@@ -507,6 +533,7 @@ export class InputWindow {
       removeConfig();
       if (this.queued) clearTimeout(this.queued);
       this.lifecycle.dispose();
+      this.greetings.hide();
       screen.removeListener('display-metrics-changed', this.position);
       screen.removeListener('display-removed', this.position);
       app.removeListener('before-quit', this.beforeQuit);
@@ -519,8 +546,75 @@ export class InputWindow {
     this.voice?.abort();
     this.chat.abort();
     this.lifecycle.dispose();
+    this.greetings.hide();
     this.quitting = true;
   };
+  get hasConversation() {
+    return this.chat.hasConversation;
+  }
+  personaContext() {
+    return currentPersonaContext(this.lifecycle.snapshot.state);
+  }
+  clearConversation() {
+    this.pendingTurn = null;
+    this.voice?.abort();
+    this.chat.clear();
+    this.lifecycle.cancel();
+    this.state = {
+      ...this.state,
+      reply: null,
+      error: null,
+      queuedMessage: false,
+      speechNotice: null,
+    };
+    this.broadcast();
+  }
+  private speechConfig() {
+    const cfg = this.config.get(),
+      voice = activePersona(cfg)?.voiceOverride;
+    const result = structuredClone(cfg.tts);
+    if (voice) {
+      result.voice = voice;
+      result.elevenlabs.voiceId = voice;
+    }
+    return result;
+  }
+  private greet() {
+    const cfg = this.config.get(),
+      card = activePersona(cfg);
+    if (!card || this.quitting) return;
+    const generated = cfg.persona.greeting.mode === 'generated';
+    const text = resolvePersonaText(
+      generated ? cfg.persona.greeting.prompt : cfg.persona.greeting.text,
+      cfg,
+      this.personaContext(),
+    ).text;
+    if (!text.trim()) return;
+    const id = randomUUID();
+    this.greetingId = id;
+    this.state = {
+      ...this.state,
+      reply: {
+        requestId: id,
+        name: card.name,
+        text: generated ? '' : text,
+        streaming: generated,
+        userText: '',
+        attachments: [],
+      },
+      error: null,
+      speechNotice: null,
+    };
+    this.lifecycle.begin(id);
+    if (generated) this.chat.startGreeting(text, id);
+    else {
+      this.chat.addGreeting(text);
+      this.lifecycle.output(id);
+      this.lifecycle.complete(id);
+    }
+    this.broadcast();
+    if (cfg.persona.greeting.speak) this.startSpeech(id);
+  }
   private async ensureMicrophone(): Promise<SttSession> {
     if (!VOICE_INPUT_ENABLED)
       throw new Error('Voice input is deferred to a future release. Typed chat remains available.');
@@ -711,7 +805,7 @@ export class InputWindow {
       attachments: [],
       reply: {
         requestId,
-        name: 'Companion',
+        name: activePersona(this.config.get())?.name ?? 'Companion',
         text: '',
         streaming: true,
         userText: turn.userText,
@@ -725,8 +819,12 @@ export class InputWindow {
     if (!this.config.get().input.keepOpenAfterSend) this.close();
     else this.broadcast();
     // Optional audio initialization cannot delay or prevent text generation.
+    this.startSpeech(requestId);
+    return requestId;
+  }
+  private startSpeech(requestId: string) {
     if (this.config.get().tts.provider !== 'none') {
-      const speechConfig = structuredClone(this.config.get().tts);
+      const speechConfig = this.speechConfig();
       void this.ensureVoice()
         .then((voice) => {
           const reply = this.state.reply;
@@ -735,7 +833,7 @@ export class InputWindow {
             !reply ||
             reply.requestId !== requestId ||
             this.quitting ||
-            synthesisScope(this.config.get().tts) !== synthesisScope(speechConfig)
+            synthesisScope(this.speechConfig()) !== synthesisScope(speechConfig)
           )
             return;
           voice.begin(requestId, speechConfig);
@@ -747,7 +845,6 @@ export class InputWindow {
           this.broadcast();
         });
     }
-    return requestId;
   }
   private delta(event: ChatEvent) {
     for (const win of [this.pet, this.win])
@@ -755,6 +852,15 @@ export class InputWindow {
         win.webContents.send(CHANNELS.llmDelta, chatEventSchema.parse(event));
     const reply = this.state.reply;
     if (!reply || reply.requestId !== event.requestId) return;
+    if (event.requestId === this.greetingId && event.delta.type === 'error') {
+      if (event.delta.error.code !== 'ABORTED')
+        console.warn(`Generated greeting failed: ${event.delta.error.code}`);
+      this.voice?.abort();
+      this.lifecycle.cancel();
+      this.state = { ...this.state, reply: null, error: null, speechNotice: null };
+      this.broadcast();
+      return;
+    }
     if (event.delta.type === 'text') {
       if (event.delta.text) this.lifecycle.output(event.requestId);
       this.voice?.push(event.requestId, event.delta.text);

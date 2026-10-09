@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { applyTTSFields } from '../../shared/ttsCustom';
+import { applyPersonaFields } from '../../shared/personaFields';
 import {
   configSections,
   spriteStateSchema,
@@ -64,7 +65,11 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     const config = latest;
     if (!config) return 'Settings have not loaded yet.';
     const valid = configSections[section].safeParse(
-      section === 'tts' ? applyTTSFields(config.tts, changes) : { ...config[section], ...changes },
+      section === 'tts'
+        ? applyTTSFields(config.tts, changes)
+        : section === 'persona'
+          ? applyPersonaFields(config.persona, changes)
+          : { ...config[section], ...changes },
     );
     if (!valid.success) return valid.error.issues[0]?.message ?? 'Enter a valid value.';
     let message: string | null = null;

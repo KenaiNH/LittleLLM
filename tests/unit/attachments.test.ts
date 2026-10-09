@@ -137,7 +137,13 @@ it('budgets image cost and trims whole old exchanges while retaining current ima
   const low = historyMessages(
     old,
     'current',
-    { ...cfg.llm, imageDetail: 'low', contextMode: 'token-budget', tokenBudget: 512 },
+    {
+      ...cfg.llm,
+      maxTokens: 64,
+      imageDetail: 'low',
+      contextMode: 'token-budget',
+      tokenBudget: 512,
+    },
     'system',
     [],
     [image],

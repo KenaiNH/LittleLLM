@@ -1,4 +1,9 @@
 export const CHANNELS = {
+  personaAction: 'persona:action',
+  personaPreview: 'persona:preview',
+  personaTest: 'persona:test',
+  personaImport: 'persona:import',
+  personaExport: 'persona:export',
   configGet: 'config:get',
   configSet: 'config:set',
   configPatch: 'config:patch',

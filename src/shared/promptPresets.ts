@@ -1,8 +1,10 @@
 import { defaults } from './config';
 export const PROMPT_PRESETS: Record<string, string> = {
   'helpful-companion': defaults().llm.systemPrompt,
-  'persona-driven':
-    'You are a desktop companion. Keep replies brief and conversational —\nusually one to three sentences. Use Markdown only when it genuinely helps.',
+  'persona-driven': defaults().llm.systemPrompt.replace(
+    ' Do not describe your own appearance or actions.',
+    '',
+  ),
   'concise-assistant':
     'You are a concise desktop assistant. Answer directly in one to three sentences unless the user asks for more detail.',
   'playful-character':

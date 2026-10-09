@@ -15,6 +15,7 @@ export function SettingRow({
   testing = false,
   fallbackValue,
   choices,
+  onSave,
 }: {
   definition: Setting;
   config: Config;
@@ -24,6 +25,7 @@ export function SettingRow({
   testing?: boolean;
   fallbackValue?: unknown;
   choices?: readonly (readonly [string, string])[];
+  onSave?: (value: unknown) => Promise<string | null>;
 }) {
   const { patch, invalid, drafts, draft, markInvalid, environment } = useSettingsStore();
   let value: unknown = config[d.section];
@@ -104,8 +106,9 @@ export function SettingRow({
         changes.voice = 'alloy';
     }
     const [target, ...path] = d.key.split('.');
-    const error =
-      d.section === 'sprite' && path.length && target
+    const error = onSave
+      ? await onSave(next)
+      : d.section === 'sprite' && path.length && target
         ? await useSettingsStore
             .getState()
             .patchState(target as import('../../shared/spriteImport').SpriteTarget, {
@@ -270,6 +273,7 @@ export function SettingRow({
       ...common,
       value: text,
       maxLength: d.maxLength,
+      placeholder: d.placeholder,
       onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         edit(event.target.value),
       onBlur: () => {
@@ -371,7 +375,9 @@ export function SettingRow({
       )}
       {key === 'llm.systemPrompt' && config.persona.enabled && (
         <div className={styles.hint}>
-          A persona is active and will be added to this prompt.{' '}
+          {config.persona.injection === 'replace'
+            ? 'Not sent while the persona replaces it.'
+            : 'A persona is active and will be added to this prompt.'}{' '}
           <button
             className={styles.textButton}
             onClick={() => void window.companion.openSettings('Persona')}

@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
+import { personaActionSchema, personaStatusPreviewSchema } from '../shared/persona';
 import { configSchema } from '../shared/config';
 import { CHANNELS } from '../main/ipc/channels';
 import {
@@ -63,6 +64,22 @@ import {
   spritePatchSchema,
 } from '../shared/spriteImport';
 const api: CompanionAPI = {
+  personaAction: async (action) =>
+    resultSchema(configSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.personaAction, personaActionSchema.parse(action)),
+    ),
+  previewPersona: async () =>
+    resultSchema(personaStatusPreviewSchema).parse(
+      await ipcRenderer.invoke(CHANNELS.personaPreview, {}),
+    ),
+  testPersona: async () =>
+    resultSchema(z.string().max(16000)).parse(await ipcRenderer.invoke(CHANNELS.personaTest, {})),
+  importPersona: async () =>
+    resultSchema(configSchema).parse(await ipcRenderer.invoke(CHANNELS.personaImport, {})),
+  exportPersona: async (id) =>
+    resultSchema(z.boolean()).parse(
+      await ipcRenderer.invoke(CHANNELS.personaExport, { id: z.string().uuid().parse(id) }),
+    ),
   startStt: async (action = 'toggle') =>
     resultSchema(z.null()).parse(
       await ipcRenderer.invoke(CHANNELS.sttStart, sttActionSchema.parse({ action })),

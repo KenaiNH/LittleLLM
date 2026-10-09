@@ -36,6 +36,7 @@ import { SETTINGS_FONTS } from '../../shared/settings';
 import { join } from 'node:path';
 import { getSettingsWindow } from '../windows/settingsWindow';
 import type { ConfigSection } from '../../shared/config';
+import { personaSchema } from '../../shared/config';
 import type { ConversationStore } from '../services/conversationStore';
 import { SpriteManager } from '../services/spriteManager';
 import {
@@ -46,12 +47,20 @@ import {
 import { boundedFile } from '../services/spriteFiles';
 import { readSpritePack, writeSpritePack, PACK_FILE_LIMIT } from '../services/spritePacks';
 import { writeFile } from 'node:fs/promises';
+import {
+  personaActionSchema,
+  personaStatusPreviewSchema,
+  personaFileSchema,
+} from '../../shared/persona';
+import type { PersonaManager } from '../services/personaManager';
+import { buildSystemPrompt, currentPersonaContext, personaExamples } from '../llm/persona';
 export function registerHandlers(
   config: ConfigStore,
   settings: (panel: string) => void,
   sprites: SpriteLoader,
   secrets: SecretStore,
   history: ConversationStore,
+  personas: PersonaManager,
 ): void {
   const masks = new AlphaMaskCache(app.getPath('userData'), sprites);
   const spriteManager = new SpriteManager(config, sprites);
@@ -199,7 +208,9 @@ export function registerHandlers(
         noLink: true,
       });
       if (answer.response !== 1) return config.get();
-      await spriteManager.importPack(pack);
+      await spriteManager.importPack(pack, (sprite, id) =>
+        personas.importPack(sprite, pack.manifest.persona, id),
+      );
       return broadcast();
     },
     true,
@@ -335,6 +346,7 @@ export function registerHandlers(
       Sprites: ['sprite'],
       Voice: ['tts'],
       'Voice Input': ['stt'],
+      Persona: ['persona'],
     };
     const selected = sections[p.panel];
     if (!selected) throw new Error('Panel reset is not implemented yet');
@@ -367,6 +379,7 @@ export function registerHandlers(
     }
     for (const section of selected) {
       if (section === 'sprite') await spriteManager.resetAll();
+      else if (section === 'persona') await personas.replace(personaSchema.parse({}));
       else config.reset(section);
     }
     return { config: broadcast(), reset: true };
@@ -377,10 +390,16 @@ export function registerHandlers(
   handle(CHANNELS.spriteMask, emptySchema, spriteMasksSchema, async () =>
     masks.masks(await sprites.assets(config.get().sprite, config.get().advanced.spriteCacheMb)),
   );
-  handle(CHANNELS.configSet, configSetSchema, configResultSchema.options[0].shape.value, (p) => {
-    config.set(p.section, p.value);
-    return broadcast();
-  });
+  handle(
+    CHANNELS.configSet,
+    configSetSchema,
+    configResultSchema.options[0].shape.value,
+    async (p) => {
+      if (p.section === 'persona') await personas.replace(p.value);
+      else config.set(p.section, p.value);
+      return broadcast();
+    },
+  );
   handle(
     CHANNELS.configPatch,
     configPatchSchema,
@@ -388,6 +407,7 @@ export function registerHandlers(
     async (p) => {
       if (p.section === 'sprite') await spriteManager.patch(p.value);
       else if (p.section === 'tts') config.set('tts', applyTTSFields(config.get().tts, p.value));
+      else if (p.section === 'persona') await personas.patch(p.value);
       else config.set(p.section, { ...config.get()[p.section], ...p.value });
       return broadcast();
     },
@@ -396,8 +416,9 @@ export function registerHandlers(
     CHANNELS.configReset,
     configResetSchema,
     configResultSchema.options[0].shape.value,
-    (p) => {
-      config.reset(p.section);
+    async (p) => {
+      if (p.section === 'persona') await personas.replace(personaSchema.parse({}));
+      else config.reset(p.section);
       return broadcast();
     },
   );
@@ -418,4 +439,143 @@ export function registerHandlers(
     await clipboard.writeText(p.text);
     return null;
   });
+  handle(
+    CHANNELS.personaAction,
+    personaActionSchema,
+    configResultSchema.options[0].shape.value,
+    async (action) => {
+      await personas.action(action);
+      return broadcast();
+    },
+    true,
+  );
+  handle(
+    CHANNELS.personaPreview,
+    emptySchema,
+    personaStatusPreviewSchema,
+    () => personas.preview(),
+    true,
+  );
+  handle(
+    CHANNELS.personaTest,
+    emptySchema,
+    z.string().max(16000),
+    async () => {
+      const cfg = config.get(),
+        provider = providerFor(cfg),
+        controller = new AbortController();
+      const owner = settingsOwner();
+      const cancel = () => controller.abort();
+      owner.once('closed', cancel);
+      const removeConfig = config.onChange((section) => {
+        if (section === 'llm' || section === 'persona') cancel();
+      });
+      const timer = setTimeout(() => controller.abort(), 45000);
+      let text = '';
+      try {
+        for await (const delta of provider.chat(
+          [
+            ...personaExamples(cfg),
+            { role: 'user', content: 'Say hello and tell me one thing about yourself.' },
+          ],
+          {
+            signal: controller.signal,
+            model: cfg.llm.model,
+            systemPrompt: buildSystemPrompt(cfg, currentPersonaContext()).text,
+            temperature: cfg.llm.temperature,
+            topP: cfg.llm.topP,
+            maxTokens: cfg.llm.maxTokens,
+            stream: cfg.llm.stream,
+          },
+        )) {
+          if (delta.type === 'error') throw new ProviderError(delta.error);
+          if (delta.type === 'text') {
+            text += delta.text;
+            if (text.length > 16000) throw new Error('Persona test exceeds its response budget.');
+          }
+          if (delta.type === 'done') return text;
+        }
+        throw new Error('The persona test did not finish.');
+      } finally {
+        clearTimeout(timer);
+        controller.abort();
+        owner.removeListener('closed', cancel);
+        removeConfig();
+      }
+    },
+    true,
+  );
+  handle(
+    CHANNELS.personaImport,
+    emptySchema,
+    configResultSchema.options[0].shape.value,
+    async () => {
+      const owner = settingsOwner(),
+        chosen = await dialog.showOpenDialog(owner, {
+          title: 'Import persona',
+          properties: ['openFile'],
+          filters: [{ name: 'Persona JSON', extensions: ['persona.json', 'json'] }],
+        });
+      if (chosen.canceled || !chosen.filePaths[0]) return config.get();
+      const file = personaFileSchema.parse(
+        JSON.parse((await boundedFile(chosen.filePaths[0], 65536)).toString('utf8')),
+      );
+      const answer = await dialog.showMessageBox(owner, {
+        type: 'question',
+        title: 'Import persona preview',
+        message: `Import “${file.name}”?`,
+        detail: `${file.description}\n\nSpeech style: ${file.speechStyle || '(none)'}\nExamples: ${file.exampleDialogue.length}\nPersonal context: ${file.userNotes || '(none)'}\n\nPreferred voice is omitted unless selected below. The file on disk remains unchanged.`,
+        buttons: ['Cancel', 'Import'],
+        cancelId: 0,
+        defaultId: 0,
+        ...(file.voiceOverride
+          ? {
+              checkboxLabel: `Include preferred voice: ${file.voiceOverride}`,
+              checkboxChecked: false,
+            }
+          : {}),
+        noLink: true,
+      });
+      if (answer.response !== 1) return config.get();
+      const { schemaVersion: _version, ...card } = file;
+      void _version;
+      await personas.importCard({
+        ...card,
+        voiceOverride: answer.checkboxChecked ? file.voiceOverride : undefined,
+      });
+      return broadcast();
+    },
+    true,
+  );
+  handle(
+    CHANNELS.personaExport,
+    z.object({ id: z.string().uuid() }).strict(),
+    z.boolean(),
+    async (p) => {
+      const card = config.get().persona.library.find((item) => item.id === p.id);
+      if (!card) throw new Error('Select a persona first.');
+      const owner = settingsOwner(),
+        consent = await dialog.showMessageBox(owner, {
+          type: 'info',
+          message: 'Export includes personal context and your name.',
+          detail: 'The persona file contains no API keys.',
+          buttons: ['Cancel', 'Continue'],
+          cancelId: 0,
+          defaultId: 0,
+          noLink: true,
+        });
+      if (consent.response !== 1) return false;
+      const chosen = await dialog.showSaveDialog(owner, {
+        title: 'Export persona',
+        defaultPath: `${card.name.replace(/[<>:"/\\|?*]/g, '_')}.persona.json`,
+        filters: [{ name: 'Persona JSON', extensions: ['json'] }],
+      });
+      if (chosen.canceled || !chosen.filePath) return false;
+      const body = JSON.stringify(personaFileSchema.parse({ ...card, schemaVersion: 1 }), null, 2);
+      if (Buffer.byteLength(body) > 65536) throw new Error('Persona file exceeds 64 KB.');
+      await writeFile(chosen.filePath, body, { mode: 0o600 });
+      return true;
+    },
+    true,
+  );
 }

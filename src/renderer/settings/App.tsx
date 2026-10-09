@@ -12,6 +12,7 @@ import { AppearancePreview } from './AppearancePreview';
 import { SpritesPanel } from './SpritesPanel';
 import { VoicePanel } from './VoicePanel';
 import { VoiceInputPanel } from './VoiceInputPanel';
+import { PersonaPanel, PERSONA_SEARCH_LABELS } from './PersonaPanel';
 import { VOICE_INPUT_ENABLED } from '../../shared/featureScope';
 import searchIcon from '../../../assets/figma/2004-411-imgSearch.svg';
 import chevron from '../../../assets/figma/16-205-imgChevronDown.svg';
@@ -25,8 +26,10 @@ const implemented = new Set<Panel>([
   'Voice',
   'Voice Input',
   'Appearance',
+  'Persona',
 ]);
 const extras: Partial<Record<Panel, string[]>> = {
+  Persona: PERSONA_SEARCH_LABELS,
   Voice: ['API key authentication password', 'Test Voice', 'Test Connection'],
   'Voice Input': [
     'API key password permission Input level Test Microphone Test Connection Privacy',
@@ -215,7 +218,8 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
         (panel === 'Voice' && key.startsWith('secret.tts.')) ||
         (panel === 'Voice Input' && key.startsWith('secret.stt.')) ||
         (panel === 'General' && key.startsWith('hotkeys.')) ||
-        (panel === 'Sprites' && key.startsWith('sprite.'));
+        (panel === 'Sprites' && key.startsWith('sprite.')) ||
+        (panel === 'Persona' && key.startsWith('persona.'));
       useSettingsStore.setState((state) => ({
         invalid: Object.fromEntries(Object.entries(state.invalid).filter(([key]) => !belongs(key))),
         drafts: Object.fromEntries(Object.entries(state.drafts).filter(([key]) => !belongs(key))),
@@ -348,12 +352,16 @@ export function SettingsApp({ initialPanel }: { initialPanel: Panel }) {
               {error}
             </p>
           )}
-          {groups.length === 0 && <p>No matching settings.</p>}
+          {groups.length === 0 &&
+            !['Persona', 'Sprites', 'Voice', 'Voice Input'].includes(panel) && (
+              <p>No matching settings.</p>
+            )}
+          {panel === 'Persona' && <PersonaPanel config={config} query={query} />}
           {panel === 'Sprites' && <SpritesPanel config={config} query={query} />}
           {panel === 'Voice' && <VoicePanel config={config} query={query} />}
           {panel === 'Voice Input' && <VoiceInputPanel config={config} query={query} />}
           {groups
-            .filter(() => !['Sprites', 'Voice', 'Voice Input'].includes(panel))
+            .filter(() => !['Persona', 'Sprites', 'Voice', 'Voice Input'].includes(panel))
             .map((group) => (
               <section key={group} className={styles.section}>
                 <h2>{group}</h2>

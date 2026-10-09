@@ -41,6 +41,7 @@ export type Setting = {
   restart?: boolean;
   rows?: number;
   maxLength?: number;
+  placeholder?: string;
   visible?: (cfg: Config) => boolean;
   disabled?: (cfg: Config) => boolean;
   disabledHint?: string;

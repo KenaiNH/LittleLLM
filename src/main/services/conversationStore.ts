@@ -19,7 +19,7 @@ const schema = z
       .array(
         z
           .object({
-            user: z.string().max(32000),
+            user: z.string().max(32000).optional(),
             assistant: z.string().max(512000),
             images: z.array(chatImageSchema).max(10).optional(),
           })
