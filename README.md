@@ -5,7 +5,7 @@ Windows desktop AI sprite companion built with Electron, TypeScript, React and Z
 ## Run from this repository
 
 ```powershell
-cd C:\Users\Kenai\LittleLLM
+cd "your directory"
 npm.cmd ci
 npm.cmd run dev
 ```
