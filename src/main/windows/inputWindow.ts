@@ -80,6 +80,7 @@ export class InputWindow {
     reply: null,
     error: null,
     speechNotice: null,
+    toast: null,
     speaking: false,
     queuedMessage: false,
     stt: sttUiSchema.parse({}),
@@ -105,6 +106,16 @@ export class InputWindow {
   private greetingId: string | null = null;
   private previousFocus: ReturnType<typeof foregroundWindow> = null;
   activityChanged: (() => void) | undefined;
+  private toastTimer: ReturnType<typeof setTimeout> | undefined;
+  notify(message: string) {
+    clearTimeout(this.toastTimer);
+    this.state = { ...this.state, toast: message.slice(0, 100) };
+    this.broadcast();
+    this.toastTimer = setTimeout(() => {
+      this.state = { ...this.state, toast: null };
+      this.broadcast();
+    }, 2000);
+  }
   private clipboardImport: (() => Promise<Attachment[]>) | undefined;
   private hideBubble = () => {
     this.state = { ...this.state, reply: null, error: null };

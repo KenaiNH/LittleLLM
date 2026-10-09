@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import type { Config } from '../../shared/config';
 import type { AudioPlayer } from '../audio/AudioPlayer';
 export function useSpeech(config: Config | null) {
@@ -50,4 +50,5 @@ export function useSpeech(config: Config | null) {
       player.current = null;
     };
   }, []);
+  return useCallback(() => player.current?.diagnostics() ?? { rms: 0, queue: 0 }, []);
 }

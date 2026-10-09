@@ -74,7 +74,7 @@ export async function configureNetwork(config: ConfigStore) {
   // Main providers retain WHATWG streams and cancellation while Windows/PAC/SOCKS
   // settings now govern the actual requests, rather than Node's direct fetch.
   globalThis.fetch = async (input, init) => {
-    await pending.catch(() => undefined);
+    await pending;
     return network.fetch(input instanceof URL ? input.href : input, {
       ...init,
       credentials: 'omit',

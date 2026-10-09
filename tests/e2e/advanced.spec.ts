@@ -165,8 +165,24 @@ test('Advanced controls, secure diagnostics, session debug and native registrati
         { timeout: 15000 },
       )
       .toBe(true);
+    // Playwright marks the original Page as crashed permanently. Verify the
+    // recovered native webContents, including its renderer-to-main API.
     await expect
-      .poll(async () => (await pet.evaluate(() => window.companion.getRuntime())).ok)
+      .poll(() =>
+        app.evaluate(async ({ BrowserWindow }) => {
+          const win = BrowserWindow.getAllWindows().find(
+            (win) => !win.webContents.getURL().includes('settings'),
+          );
+          if (!win) return false;
+          try {
+            return await win.webContents.executeJavaScript(
+              'Boolean(document.querySelector("canvas[data-testid=sprite]")) && window.companion.getRuntime().then(result => result.ok)',
+            );
+          } catch {
+            return false;
+          }
+        }),
+      )
       .toBe(true);
   } finally {
     await app.close();

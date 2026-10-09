@@ -48,7 +48,10 @@ export async function createPetWindow(
     return scaleGeometry(geometry, geometryFitScale(geometry, area, dpi));
   };
   let geometry: SpriteGeometry = idleGeometry(display.scaleFactor);
-  const size = { width: Math.round(geometry.width), height: Math.round(geometry.height) };
+  const size = {
+    width: Math.max(1, Math.round(geometry.width)),
+    height: Math.max(1, Math.round(geometry.height)),
+  };
   const saved = cfg.restorePosition ? cfg.positions[String(display.id)] : undefined;
   const position = clampPosition(
     saved ?? defaultPosition(size, display.workArea, cfg.defaultAnchor, cfg.edgeMarginPx),

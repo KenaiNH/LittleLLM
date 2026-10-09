@@ -24,6 +24,7 @@ export const chatUiSchema = z
       .nullable(),
     error: appErrorSchema.nullable(),
     speechNotice: z.string().max(300).nullable().default(null),
+    toast: z.string().max(100).nullable().default(null),
     speaking: z.boolean().default(false),
     queuedMessage: z.boolean().default(false),
     stt: sttUiSchema.default({}),

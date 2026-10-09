@@ -12,9 +12,10 @@ import { useMicrophone } from './useMicrophone';
 import mic from '../../../assets/figma/2016-81-imgMic.svg';
 import { useRuntime } from '../useRuntime';
 import { MaskOverlay } from './MaskOverlay';
+import { DebugStatus } from './DebugStatus';
 export function PetApp() {
   const { config, assets, state, error, initialize, setState } = usePetStore();
-  useSpeech(config);
+  const audioMetrics = useSpeech(config);
   useMicrophone(config);
   const runtime = useRuntime();
   const [ui, setUi] = useState<ChatUi | null>(null),
@@ -110,6 +111,24 @@ export function PetApp() {
       style={{ width: viewport?.window.width ?? 128, height: viewport?.window.height ?? 128 }}
     >
       {error && <span role="alert">{error}</span>}
+      {ui?.toast && (
+        <output
+          role="status"
+          data-interactive
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            font: '13px Inter',
+            background: '#11161d',
+            color: '#f5f7fa',
+            padding: '6px 10px',
+            zIndex: 5,
+          }}
+        >
+          {ui.toast}
+        </output>
+      )}
       {ui?.reply && config && viewport && (
         <div
           className={styles.layer}
@@ -144,6 +163,9 @@ export function PetApp() {
             pauseWhenHidden={config.advanced.pauseWhenHidden}
             showFps={config.advanced.developerMode && Boolean(runtime?.session.showFps)}
           />
+          {config.advanced.developerMode && runtime?.session.showFps && (
+            <DebugStatus state={state} metrics={audioMetrics} />
+          )}
           {config.advanced.developerMode && runtime?.session.showMaskOverlay && (
             <MaskOverlay scene={scene} threshold={config.advanced.alphaThreshold} />
           )}

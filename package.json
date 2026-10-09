@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "description": "Windows desktop AI sprite companion",
+  "author": {
+    "name": "KenaiNH",
+    "email": "onmegkh123@gmail.com"
+  },
   "type": "module",
   "main": "out/main/index.js",
   "scripts": {
@@ -14,7 +18,8 @@
     "format": "prettier --write .",
     "smoke": "playwright test",
     "smoke:local": "node scripts/check-local-model.mjs",
-    "package": "npm run build && electron-builder --win nsis",
+    "package": "npm run prepare:windows && npm run build && electron-builder --win nsis --x64 --arm64",
+    "prepare:windows": "node scripts/prepare-windows-native.mjs",
     "assets": "node scripts/create-placeholders.mjs"
   },
   "dependencies": {
@@ -49,6 +54,7 @@
     "eslint": "^9.39.5",
     "globals": "^17.13.0",
     "prettier": "^3.9.9",
+    "tar": "^7.5.22",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.1",
     "vite": "^7.3.7",

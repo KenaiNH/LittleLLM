@@ -51,6 +51,15 @@ export class AudioPlayer {
     if (old.outputDeviceId !== config.outputDeviceId && this.context)
       void this.route(this.context).catch(() => undefined);
   }
+  diagnostics() {
+    let rms = 0;
+    if (this.analyser && this.context?.state === 'running') {
+      const samples = new Float32Array(this.analyser.fftSize);
+      this.analyser.getFloatTimeDomainData(samples);
+      rms = Math.sqrt(samples.reduce((sum, value) => sum + value * value, 0) / samples.length);
+    }
+    return { rms, queue: this.sources.size };
+  }
   private async route(context: AudioContext) {
     try {
       await (context as OutputContext).setSinkId(

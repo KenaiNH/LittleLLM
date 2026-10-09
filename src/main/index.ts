@@ -6,6 +6,7 @@ import { NativeRuntime } from './services/nativeRuntime';
 import { Logger } from './services/logger';
 import { configureNetwork } from './services/network';
 import { recoverConfig } from './services/configRecovery';
+import { performanceProbe } from './services/performanceProbe';
 import { ConfigStore } from './services/configStore';
 import { openSettings } from './windows/settingsWindow';
 import { createPetWindow } from './windows/petWindow';
@@ -100,7 +101,7 @@ if (!app.requestSingleInstanceLock()) {
     await configureNetwork(config);
     runtime = new NativeRuntime(config, personas, openSettings, logger);
     registerHandlers(config, openSettings, sprites, secrets, history, personas, runtime);
-    await createPetWindow(
+    const pet = await createPetWindow(
       config,
       openSettings,
       (pet) => {
@@ -115,6 +116,13 @@ if (!app.requestSingleInstanceLock()) {
       async () =>
         (await sprites.assets(config.get().sprite, config.get().advanced.spriteCacheMb)).idle,
     );
+    if (testData && process.env.LITTLELLM_MEASURE_PERFORMANCE === '1') {
+      void performanceProbe(
+        pet,
+        testData,
+        Number(process.env.LITTLELLM_MEASURE_STARTED) || Date.now(),
+      );
+    }
     logger.write('info', 'app.ready', { version: app.getVersion(), packaged: app.isPackaged });
     if (config.firstRun && (!testData || process.env.LITTLELLM_TEST_FIRST_RUN === '1'))
       openSettings('Model');

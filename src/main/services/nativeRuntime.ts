@@ -9,8 +9,8 @@ import {
   screen,
 } from 'electron';
 import { fileURLToPath } from 'node:url';
-import { existsSync, lstatSync, readdirSync, unlinkSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, lstatSync, readdirSync, unlinkSync, realpathSync } from 'node:fs';
+import { join, sep } from 'node:path';
 import type { ConfigStore } from './configStore';
 import type { InputWindow } from '../windows/inputWindow';
 import type { PersonaManager } from './personaManager';
@@ -167,7 +167,7 @@ export class NativeRuntime {
     this.publish();
   }
   private login() {
-    if (!app.isPackaged) return;
+    if (!app.isPackaged || process.env.LITTLELLM_TEST_USER_DATA) return;
     try {
       app.setLoginItemSettings({
         openAtLogin: this.config.get().window.launchAtLogin,
@@ -202,7 +202,11 @@ export class NativeRuntime {
         if (!persona.enabled || persona.library.length < 2) return;
         const at = persona.library.findIndex((card) => card.id === persona.activeId),
           next = persona.library[(at + 1) % persona.library.length];
-        if (next) await this.personas.action({ type: 'select', id: next.id });
+        if (next) {
+          await this.personas.action({ type: 'select', id: next.id });
+          if (this.config.get().persona.activeId === next.id)
+            this.input?.notify('Persona: ' + next.name);
+        }
         this.broadcastConfig();
       },
     };
@@ -279,6 +283,8 @@ export class NativeRuntime {
   private cacheFiles() {
     const directory = join(app.getPath('userData'), 'cache', 'tts');
     if (!existsSync(directory)) return [];
+    if (!realpathSync(directory).startsWith(realpathSync(app.getPath('userData')) + sep))
+      throw new Error('Audio cache leaves managed storage.');
     if (lstatSync(directory).isSymbolicLink())
       throw new Error('Audio cache must be a regular directory.');
     return readdirSync(directory)
