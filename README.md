@@ -1,6 +1,6 @@
 # LittleLLM
 
-Windows desktop AI sprite companion built with Electron, TypeScript, React and Zustand. The companion starts at the bottom-right by default. Visual defaults follow the existing Figma design.
+Windows desktop AI sprite companion built with Electron, TypeScript, React and Zustand. The companion starts at the bottom-right by default.
 
 ## Run from this repository
 
@@ -10,7 +10,7 @@ npm.cmd ci
 npm.cmd run dev
 ```
 
-For a production build, run `npm.cmd run build`. `npm.cmd run package` builds Windows x64 and arm64 NSIS installers into `dist/`. Installer builds are unsigned unless signing credentials are supplied separately.
+For a production build, run `npm.cmd run build`. `npm.cmd run package` builds Windows x64 and arm64 NSIS installers into `dist/`. Installer builds are unsigned.
 
 Click the sprite to open the response input. **Ctrl + Shift + Space** opens and focuses it; **Ctrl + Shift + H** shows or hides the companion. **Esc** cancels an active response. Right-click the sprite or the system-tray icon to open **Settings**. Closing to tray keeps the app running; choose **Quit** in the tray menu to exit.
 
