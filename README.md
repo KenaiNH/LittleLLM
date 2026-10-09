@@ -23,7 +23,7 @@ First launch opens Model settings. Choose a provider and endpoint/model, enter a
 These commands are only needed to develop or build LittleLLM:
 
 ```powershell
-cd C:\Users\Kenai\LittleLLM
+cd "your directory"
 npm.cmd ci
 npm.cmd run dev
 ```
