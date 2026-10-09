@@ -26,7 +26,7 @@ Use a clean Windows 10/11 x64 VM or a separate test computer. Sandbox is unavail
 3. Configure a running local provider or a hosted account, use Test Connection, send a typed message and receive a reply. Import replacement sprites in Settings; quit and relaunch to verify settings/artwork persist.
 4. Check show/hide, input focus, tray Settings/Quit, shortcut conflicts and close-to-tray behavior. Toggle launch-on-login on, sign out/in and verify startup; toggle it off and verify it stops starting. Check first-run setup does not repeat on every launch.
 5. Quit and install a newer build over the existing installation; verify personal settings/artwork remain. Uninstall through Windows Apps and check the executable/shortcuts/startup registration are removed. Check preserved user-data behavior separately; do not call uninstall a data wipe.
-6. Record Windows version, installer SHA-256, app/source version and results. Resolve failures before publishing. Publish the matching source and installer together; attach artifacts to GitHub Releases rather than committing `dist/`.
+6. Record Windows version, installer SHA-256, app/source version and results. Resolve failures before publishing. Publish the matching source and installer together; GitHub Releases are the preferred download. Finished binaries can also be committed using the configured Git LFS rules; intermediate build folders remain ignored.
 
 ### Additional acceptance and current limitations
 

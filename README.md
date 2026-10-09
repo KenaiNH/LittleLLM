@@ -6,7 +6,7 @@ Windows desktop AI sprite companion built with Electron, TypeScript, React and Z
 
 ## Install and open on Windows
 
-1. Get the installer from the **Assets** section of a published [GitHub release](https://github.com/KenaiNH/LittleLLM/releases), then run **LittleLLM Setup 0.1.0.exe**. If no installer has been published, ask the maintainer for the built installer or use the developer build instructions below. Downloading the repository's source ZIP does not install the app. Locally built installers are in `dist/`, which is intentionally excluded from Git.
+1. Get the installer from the **Assets** section of a published [GitHub release](https://github.com/KenaiNH/LittleLLM/releases), then run **LittleLLM Setup 0.1.0.exe**. If no installer has been published, ask the maintainer for the built installer or use the developer build instructions below. Downloading the repository's source ZIP does not install the app. Locally built installers are in `dist/`; finished release files can be tracked, while intermediate build folders stay ignored.
 2. Follow the installer and choose an installation folder. Leave **Run LittleLLM** selected on the final screen to open the app.
 3. After installation, open **LittleLLM** from the desktop shortcut or the Windows Start menu. You can also double-click **LittleLLM.exe** inside the installation folder you selected.
 
@@ -46,6 +46,8 @@ Optional local voice output is documented in [VOICE.md](VOICE.md), including Kok
 These commands are only needed to develop or build LittleLLM:
 
 Install Node.js **22.12 or newer** and npm, clone this repository (or extract its source ZIP), and open PowerShell in its folder:
+
+The installer and release ZIPs use **Git LFS** because they exceed GitHub's ordinary file-size limit. To retrieve tracked binaries from a clone, install Git LFS and run `git lfs install` followed by `git lfs pull`. A small text file beginning `version https://git-lfs.github.com/spec/v1` is a pointer, not the downloaded executable. Published GitHub release assets remain the preferred user download.
 
 ```powershell
 cd "your directory"

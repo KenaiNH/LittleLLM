@@ -1,0 +1,3 @@
+e052725260ba371f30122d1d2f4aef36336e7c75cc9be23a74f0c8d725e7d92d  LittleLLM Setup 0.1.0.exe
+03c8dbb6120f81fba90cc552c08836d8ed383a238a10957a697ff81e22167f6c  LittleLLM-0.1.0-source.zip
+a11acd2e3c1252f5340a0f22db661a633ba4e9301e6808e0f8c36273862b9fce  LittleLLM-0.1.0-windows-x64-release.zip

@@ -1,6 +1,12 @@
 node_modules/
 out/
-dist/
+# Keep intermediate build folders ignored, but allow finished release files.
+/dist/*
+!/dist/LittleLLM Setup *.exe
+!/dist/LittleLLM Setup *.exe.blockmap
+!/dist/LittleLLM-*-windows-*-release.zip
+!/dist/LittleLLM-*-source.zip
+!/dist/SHA256SUMS.txt
 coverage/
 test-results/
 playwright-report/

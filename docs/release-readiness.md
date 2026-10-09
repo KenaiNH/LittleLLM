@@ -16,7 +16,7 @@ Status: **Windows x64 release candidate; production sign-off pending clean-machi
 
 The production-only npm audit reported zero known vulnerabilities on this review. The complete dependency tree reported eight moderate development findings; no broad dependency upgrade or audit fix was applied. The tracked credential-pattern scan found only the deliberately public self-signed local TLS fixture (`tests/fixtures/tls/localhost.key`), which is not a production credential. This scan is a check, not a guarantee that arbitrary secret formats cannot exist.
 
-The x64 installer is unsigned. Built artifacts belong in GitHub Releases, together with access to the matching source; `dist/` is intentionally not committed. Installed config/history/backups and exported personal persona context are not intended for public bug-report attachments.
+The x64 installer is unsigned. Finished installer/release archives can be tracked using Git LFS; source archives, blockmaps and checksums are also allowed. Intermediate `dist/` folders stay ignored. GitHub Releases remain the preferred user download, together with access to the matching source. Installed config/history/backups and exported personal persona context are not intended for public bug-report attachments.
 
 ## Evidence and outstanding acceptance
 
