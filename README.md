@@ -4,8 +4,6 @@ An always-on-top animated desktop companion for any AI model. Bring your own spr
 
 The sprite sits above your other windows, animates through **idle**, **thinking**, and **speaking** states, and answers in a scrollable chat bubble. Click it to type. Everything else — sprites, persona, model backend, voice output, voice input — is configurable in a settings window and works with either a hosted API or a model running locally in Docker.
 
-![Screenshot placeholder](docs/screenshot.png)
-
 ---
 
 ## Table of contents
